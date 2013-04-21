@@ -1,4 +1,6 @@
-# jongo
+# Jongo
+
+![arch](http://jongo.googlecode.com/hg/src/main/resources/jongo.png)
 
 ## A RESTful Interface for JDBC
 
@@ -46,7 +48,7 @@ You can find more news & articles in my [blog](http://monocaffe.blogspot.com/sea
 
 ## Installation
 
-For installation instructions check the [Wiki] (wiki/Installation)
+For installation instructions check the [Wiki](https://github.com/ubersoldat/jongo/wiki/Installation)
 
 * * *
 
