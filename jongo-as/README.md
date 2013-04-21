@@ -1,6 +1,13 @@
-jongo
-=====
+# jongo-as
 
-A RESTful Interface for JDBC
+Jongo implementation for Application Servers. Generates a WAR that should work in any application server.
 
-Jongo is a Java server (with embedded Jetty) which provides CRUD operations over any JDBC supported RDBMS using REST.
+Tested in:
+
+- [x] Tomcat 6,7
+- [ ] JBoss
+- [ ] Weblogic
+- [ ] Glassfish
+- [ ] Websphere
+- [ ] Cherokee
+- [ ] TomEE
