@@ -40,6 +40,7 @@ This are some projects where Jongo is ideal:
 * OAuth authentication
 * More RDBMS dialects
 * NoSQL database dialects
+* First Level Cache
 
 You can find more news & articles in my [blog](http://monocaffe.blogspot.com/search/label/jongo)
 
