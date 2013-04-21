@@ -1,6 +1,43 @@
 *.class
+*.orig
 
 # Package Files #
 *.jar
 *.war
 *.ear
+
+# Eclipse Files #
+.project
+.classpath
+.metadata
+.settings/
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
+
+# folders #
+target/
+apps/
+logs/
+
+# Other stuff #
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
