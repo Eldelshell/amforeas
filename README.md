@@ -43,6 +43,10 @@ This are some projects where Jongo is ideal:
 
 You can find more news & articles in my [blog](http://monocaffe.blogspot.com/search/label/jongo)
 
+## Installation
+
+For installation instructions check the [Wiki] (wiki/Installation)
+
 * * *
 
 ## Examples
@@ -381,3 +385,24 @@ For example, a user table with a birthday field of type DATE, and a lastupdate T
   "id":0
  }
 ```
+
+## Technology
+
+### RESTful
+Neither REST nor RESTful webservices are a defined standard but The [Atom Publishing Protocol](http://atomenabled.org/developers/protocol/atom-protocol-spec.php)
+gives a pretty good layout to conform to. Jongo tries to follow the conventions on this document.
+
+### Java
+Jongo works as a stand alone server or daemon and uses the following open source projects:
+
+* NetBeans
+* Maven 3
+* Jakarta Commons DBUtils
+* Jakarta Commons DBCP
+* Jakarta Commons Lang
+* JAX-RS & Jackson
+* Logback
+* Joda Time
+* JUnit & Mockito
+
+# Changelog
