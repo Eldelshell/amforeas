@@ -1,6 +1,15 @@
-jongo
-=====
+# Extras
 
-A RESTful Interface for JDBC
+Here you can find different stuff which should make your life easier when using Jongo
 
-Jongo is a Java server (with embedded Jetty) which provides CRUD operations over any JDBC supported RDBMS using REST.
+## ExtJS
+An example ExtJS MVC single page web application using Jongo on the backend
+
+## SQL
+SQL files to generate the demo database in different RDBMS
+
+## Python
+Python modules that create models from Jongo
+
+## jongo.jmx
+Stress test Jongo with JMeter
