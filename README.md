@@ -43,6 +43,8 @@ This are some projects where Jongo is ideal:
 
 You can find more news & articles in my [blog](http://monocaffe.blogspot.com/search/label/jongo)
 
+* * *
+
 ## Examples
 This examples are from data when running Jongo en demo mode.
 
@@ -130,6 +132,8 @@ Server: Jetty(8.1.2.v20120308)
 
 Depending on RDBMS support, SQL errors will be mapped to HTTP errors.  
 
+* * *
+
 ### Create (POST) a resource
 To insert (POST) a new registry in the user table, we perform the following:
 
@@ -152,6 +156,8 @@ Server: Jetty(8.1.2.v20120308)
 ```
 
 The HTTP response code changed to 201 (Created) which means the entity was created successfully.
+
+* * *
 
 ### Update (PUT) a resource
 
@@ -188,6 +194,8 @@ Server: Jetty(8.1.2.v20120308)
 }
 ```
 
+* * *
+
 ### Delete (DELETE) a resource
 
 To delete you use a DELETE request with the ID in the table.
@@ -205,6 +213,8 @@ Server: Jetty(8.1.2.v20120308)
 ```json
 {"success":true,"cells":[ {}]}
 ```
+
+* * *
 
 ### Tables and meta
 
@@ -276,6 +286,8 @@ Server: Jetty(8.1.2.v20120308)
 ```
 In this case, the HEAD response doesn't include any body, but your table metadata is included in a header with the name of it.
 
+* * *
+
 ## Querying
 
 Apart of using GET requests, you can also use two more ways of querying
@@ -303,6 +315,8 @@ As you can see, you call your stored procedure `/jongo/demo1/call/get_year_sales
   {"name":"out_total", "outParameter":true, "type":"INTEGER", "index":2}
 ]
 ```
+
+* * *
 
 ### Jongo also provides JongoDynamicFinders inspired by Grails
 
