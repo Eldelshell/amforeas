@@ -1,0 +1,44 @@
+<assembly>
+  <id>distribution</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <!-- include all runtime libraries in the /lib folder of the output file -->
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/lib</outputDirectory>
+      <scope>runtime</scope>
+      <excludes>
+        <exclude>hsqldb*.jar</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+
+  <fileSets>
+    <!-- Put configuration files in conf-->
+    <fileSet>
+      <directory>src/main/resources/</directory>
+      <outputDirectory>/etc</outputDirectory>
+      <includes>
+        <include>*.properties</include>
+        <include>*.xml</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>src/main/webapp/</directory>
+      <outputDirectory>/webapp</outputDirectory>
+    </fileSet>
+    
+    <!-- Put the startup script -->
+    <fileSet>
+      <directory>src/main/resources/</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>jongo.sh</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+    
+</assembly>

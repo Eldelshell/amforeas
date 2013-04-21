@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    
+  <!-- Console -->  
+    
+  <appender name="S" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %c{1}:%L [%p] %m%n</pattern>
+    </encoder>
+  </appender>
+  
+  <!-- HTML Rolling Appender
+  
+  <appender name="H" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/jongo.html</file>
+    <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+        <layout class="ch.qos.logback.classic.html.HTMLLayout">
+            <pattern>%msg%n</pattern>
+        </layout>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>logs/jongo.html.%i</fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>3</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>1024KB</MaxFileSize>
+    </triggeringPolicy>
+  </appender>
+  
+  -->
+  
+  <!-- Plain Text Rolling Appender -->
+  
+  <appender name="R" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <Append>true</Append>
+    <File>logs/jongo.log</File>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %c{1}:%L [%p] %m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>logs/jongo.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+  </appender>
+  
+  <logger name="org.mortbay" level="INFO"/>
+  <logger name="com.sun.jersey" level="OFF"/>
+  <logger name="org.slf4j" level="OFF"/>
+
+  <root level="DEBUG">
+    <appender-ref ref="S"/>
+    <appender-ref ref="R"/>
+<!--    <appender-ref ref="H"/>-->
+  </root>
+</configuration>

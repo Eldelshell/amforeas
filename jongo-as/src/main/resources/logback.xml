@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    
+  <!-- Console -->  
+    
+  <appender name="S" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] [%c{1}:%L] [%p] %m%n</pattern>
+    </encoder>
+  </appender>
+  
+  <!-- Plain Text Rolling Appender -->
+  
+  <appender name="MAIN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <Append>true</Append>
+    <File>${catalina.home}/logs/jongo/jongo.log</File>
+    <encoder>
+      <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] [%c{1}:%L] [%p] %m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.home}/logs/jongo/old/jongo.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+  </appender>
+  
+  <appender name="PERFORMANCE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <Append>true</Append>
+    <File>${catalina.home}/logs/jongo/performance.log</File>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.home}/logs/jongo/old/performance.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <maxHistory>5</maxHistory>
+    </rollingPolicy>
+  </appender>
+  
+  <logger name="org.eclipse" level="INFO"/>
+  <logger name="com.sun.jersey" level="OFF"/>
+  <logger name="org.slf4j" level="OFF"/>
+  
+  <logger name="org.jongo" level="DEBUG">
+    <appender-ref ref="MAIN"/>
+  </logger>
+  
+  <logger name="org.jongo.PerformanceLogger" level="DEBUG">
+    <appender-ref ref="PERFORMANCE"/>
+  </logger>
+  
+  
+  <root level="INFO">
+    <appender-ref ref="S"/>
+  </root>
+</configuration>
