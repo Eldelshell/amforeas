@@ -358,3 +358,26 @@ Here we are telling Jongo to find all `demo1.user` entities where id is between 
    ]
 }
 ```
+
+## Date, Timestamp, Time
+
+Jongo uses JodaTime to handle all this conversions. Specifically, we use the ISODateTimeFormat. So if you want to communicate with Jongo and read/write this data types, you must use the ISO format.
+
+Date columns use the format `yyyy-MM-dd` as specified in the date() method.
+
+Datetime columns use the format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ` as specified in the dateTime() method.
+
+Time columns use the format `HH:mm:ss.SSSZZ` as specified in the time() method.
+
+For example, a user table with a birthday field of type DATE, and a lastupdate TIMESTAMP is returned as this:
+
+```json
+{
+  "birthday":"1982-12-13",
+  "credit":"32.50",
+  "lastupdate":"2011-12-12T22:19:14.931+01:00",
+  "name":"foo",
+  "age":30,
+  "id":0
+ }
+```
