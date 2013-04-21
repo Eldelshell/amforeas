@@ -1,4 +1,6 @@
-# jongo
+# Jongo
+
+![arch](http://jongo.googlecode.com/hg/src/main/resources/jongo.png)
 
 ## A RESTful Interface for JDBC
 
