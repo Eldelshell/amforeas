@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>jongo-jetty</artifactId>
-  <version>0.3</version>
+  <version>0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>jongo-jetty</name>
@@ -18,7 +18,7 @@
     <dependency>
       <groupId>jongo</groupId>
       <artifactId>jongo-core</artifactId>
-      <version>0.3</version>
+      <version>0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>

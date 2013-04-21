@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>jongo-core</artifactId>
-    <version>0.3</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>jongo-core</name>
