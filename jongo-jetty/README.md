@@ -1,6 +1,5 @@
-jongo
-=====
+# jongo-jetty
 
-A RESTful Interface for JDBC
+Jetty implementation of Jongo.
 
-Jongo is a Java server (with embedded Jetty) which provides CRUD operations over any JDBC supported RDBMS using REST.
+Runs as a Java application without any dependency... except for Java (JDK) of course
