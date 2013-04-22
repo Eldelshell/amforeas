@@ -30,8 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Dialect for Oracle 8g+ RDBMS.
- * @author Alejandro Ayuso 
+ * Dialect for H2 RDBMS.
+ * @author samarjit samanta
  */
 public class H2Dialect extends SQLDialect {
     
