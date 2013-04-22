@@ -17,7 +17,15 @@
   </developers>
   
   <contributors>
-      <contributor></contributor>
+  	<contributor>
+      <name>samarjit samanta</name>
+      <roles>
+        <role>h2 implementation</role>
+      </roles>
+      <properties>
+        <github>https://github.com/samarjit</github>
+      </properties>
+    </contributor>
   </contributors>
   
   <licenses>
@@ -29,7 +37,7 @@
   
   <description>RESTful interface for JDBC</description>
   
-  <url>http://code.google.com/p/jongo</url>
+  <url>https://github.com/ubersoldat/jongo</url>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
