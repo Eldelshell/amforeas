@@ -39,7 +39,7 @@
   <logger name="com.sun.jersey" level="OFF"/>
   <logger name="org.slf4j" level="OFF"/>
   
-  <logger name="org.jongo" level="DEBUG">
+  <logger name="jongo" level="DEBUG">
     <appender-ref ref="MAIN"/>
   </logger>
   

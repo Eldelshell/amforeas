@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- This web.xml file is not required when using Servlet 3.0 container, 
+     see implementation details http://jersey.java.net/nonav/documentation/latest/jax-rs.html#d4e194 -->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <servlet>
         <servlet-name>Jongo Web Application</servlet-name>
@@ -17,7 +19,6 @@
         </init-param>
         
         <!-- comment to use JAX marshalling -->
-        
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
             <param-value>jongo.filter.DefaultFormatFilter</param-value>
@@ -26,6 +27,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Jongo Web Application</servlet-name>
-        <url-pattern>/jongo/*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>

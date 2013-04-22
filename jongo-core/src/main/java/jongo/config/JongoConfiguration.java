@@ -51,6 +51,7 @@ public class JongoConfiguration {
     private static final String p_prefix_db_port = ".jdbc.port";
     private static final String p_prefix_db_readonly = ".jdbc.readonly";
     private static final String p_prefix_db_max_connections = ".jdbc.max.connections";
+    private static final String p_prefix_db_url = ".jdbc.url";
     
     private static JongoConfiguration instance;
     
@@ -74,7 +75,7 @@ public class JongoConfiguration {
             instance = new JongoConfiguration();
             Properties prop = getProperties(instance);
             
-            l.debug("Registering the shutdown hook");
+            l.debug("Registering the shutdown hook!");
             Runtime.getRuntime().addShutdownHook(new JongoShutdown());
             
             if(demo){
@@ -187,6 +188,7 @@ public class JongoConfiguration {
      */
     private static DatabaseConfiguration generateDatabaseConfiguration(final Properties prop, final String name){
         l.debug("Obtain configuration options for alias " + name);
+        
         JDBCDriver driver = JDBCDriver.valueOf(prop.getProperty(name + p_prefix_db_driver));
         String username =   prop.getProperty(name + p_prefix_db_username);
         String password =   prop.getProperty(name + p_prefix_db_password);
@@ -195,7 +197,10 @@ public class JongoConfiguration {
         Integer port =      integerValueOf(prop, name + p_prefix_db_port, driver.getDefaultPort());
         Integer max =       integerValueOf(prop, name + p_prefix_db_max_connections, Integer.valueOf(25));
         Boolean readOnly =  Boolean.valueOf(prop.getProperty(name + p_prefix_db_readonly));
+        String url  =       prop.getProperty(name+p_prefix_db_url);
         DatabaseConfiguration c = DatabaseConfiguration.instanceOf(name, driver, username, password, database, host, port, max, readOnly);
+        c.setUrl(url);
+        l.debug("Loaded DB config "+c.toString());
         return c;
     }
     

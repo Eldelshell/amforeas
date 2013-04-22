@@ -78,6 +78,8 @@ public class DatabaseConfiguration {
     protected final Integer maxConnections;
 
     private boolean loaded = false;
+    
+    protected String url = null;
 
     private DatabaseConfiguration(String alias, JDBCDriver driver, String username, String password, String database, String host, Integer port, Integer max, boolean readOnly) {
         this.alias = alias;
@@ -157,35 +159,50 @@ public class DatabaseConfiguration {
         return maxConnections;
     }
     
-    /**
+    
+    public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	/**
      * Generates the appropriate JDBC URL for the current {@link jongo.enums.JDBCDriver}
      * @return a JDBC URL String
      */
     public String toJdbcURL(){
         final StringBuilder b = new StringBuilder("jdbc:");
-        switch(driver){
-            case HSQLDB_MEM:
-                b.append("hsqldb:mem:").append(database);
-                break;
-            case HSQLDB_FILE:
-                b.append("hsqldb:file:").append(database);
-                break;
-            case MSSQL:
-                b.append("microsoft:sqlserver://").append(host).append(":").append(port).append(";databasename=").append(database);
-                break;
-            case MSSQL_JTDS:
-                b.append("jtds:sqlserver://").append(host).append(":").append(port).append("/").append(database);
-                break;
-            case MySQL:
-                b.append("mysql://").append(host).append(":").append(port).append("/").append(database);
-                break;
-            case ORACLE:
-                b.append("oracle:thin:@//").append(host).append(":").append(port).append("/").append(database);
-                break;
-            case PostgreSQL:
-                b.append("postgresql://").append(host).append(":").append(port).append("/").append(database);
-                break;
-        }
+        if(url != null && !"".equals(url)){
+        	b.setLength(0);
+        	b.append(url);
+        }else{
+	        switch(driver){
+	            case HSQLDB_MEM:
+	                b.append("hsqldb:mem:").append(database);
+	                break;
+	            case HSQLDB_FILE:
+	                b.append("hsqldb:file:").append(database);
+	                break;
+	            case MSSQL:
+	                b.append("microsoft:sqlserver://").append(host).append(":").append(port).append(";databasename=").append(database);
+	                break;
+	            case MSSQL_JTDS:
+	                b.append("jtds:sqlserver://").append(host).append(":").append(port).append("/").append(database);
+	                break;
+	            case MySQL:
+	                b.append("mysql://").append(host).append(":").append(port).append("/").append(database);
+	                break;
+	            case ORACLE:
+	                b.append("oracle:thin:@//").append(host).append(":").append(port).append("/").append(database);
+	                break;
+	            case PostgreSQL:
+	                b.append("postgresql://").append(host).append(":").append(port).append("/").append(database);
+	                break;
+	            default: l.error("JDBC url could not be determined for "+driver);    
+	        }
+    	}
         return b.toString();
     }
 
