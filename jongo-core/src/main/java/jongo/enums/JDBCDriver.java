@@ -30,11 +30,19 @@ public enum JDBCDriver {
     ORACLE          ("oracle.jdbc.driver.OracleDriver",                 Integer.valueOf(1521)),
     MSSQL_JTDS      ("net.sourceforge.jtds.jdbc.Driver",                Integer.valueOf(1433)),
     MSSQL           ("com.microsoft.jdbc.sqlserver.SQLServerDriver",    Integer.valueOf(1433)),
-    H2              ("org.h2.Driver",                                   Integer.valueOf(0));
+    H2_MEM          ("org.h2.Driver",                                   Integer.valueOf(0)),
+    H2_FILE         ("org.h2.Driver",                                   Integer.valueOf(0)),
+    H2_REMOTE       ("org.h2.Driver",                                   Integer.valueOf(0));
     
     private final String name;
     private final Integer port;
     
+    /**
+     * Constructor which builds an enum with the default driver class string
+     * and the default port.
+     * @param driverName class string name of the driver
+     * @param port default port used by the driver
+     */
     private JDBCDriver(final String driverName, final Integer port){
     	this.name = driverName;
         this.port = port;
