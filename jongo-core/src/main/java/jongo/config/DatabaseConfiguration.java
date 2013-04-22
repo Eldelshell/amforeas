@@ -19,6 +19,7 @@ package jongo.config;
 
 import jongo.enums.JDBCDriver;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +80,9 @@ public class DatabaseConfiguration {
 
     private boolean loaded = false;
     
+    /**
+     * Database connection JDBC URL
+     */
     protected String url = null;
 
     private DatabaseConfiguration(String alias, JDBCDriver driver, String username, String password, String database, String host, Integer port, Integer max, boolean readOnly) {
@@ -173,14 +177,15 @@ public class DatabaseConfiguration {
      * @return a JDBC URL String
      */
     public String toJdbcURL(){
-        final StringBuilder b = new StringBuilder("jdbc:");
-        if(url != null && !"".equals(url)){
-        	b.setLength(0);
-        	b.append(url);
+        
+        if(StringUtils.isNotBlank(this.url)){
+        	l.debug("Connect to database using JDBC URL {}", this.url);
+        	return url;
         }else{
+        	final StringBuilder b = new StringBuilder("jdbc:");
 	        switch(driver){
 	            case HSQLDB_MEM:
-	                b.append("hsqldb:mem:").append(database);
+	            	b.append("hsqldb:mem:").append(database);
 	                break;
 	            case HSQLDB_FILE:
 	                b.append("hsqldb:file:").append(database);
@@ -200,10 +205,20 @@ public class DatabaseConfiguration {
 	            case PostgreSQL:
 	                b.append("postgresql://").append(host).append(":").append(port).append("/").append(database);
 	                break;
-	            default: l.error("JDBC url could not be determined for "+driver);    
+	            case H2_MEM:
+	            	b.append("h2:mem:").append(database);
+	            	break;
+	            case H2_FILE:
+	            	b.append("h2:file:").append(database);
+	            	break;
+	            case H2_REMOTE:
+	            	b.append("h2:tcp://").append(host).append(":").append(port).append("/").append(database);
+	            	break;
+	            default: l.error("JDBC url could not be determined for {}", driver);    
 	        }
+	        l.debug("Connect to database using JDBC URL {}", b);
+	        return b.toString();
     	}
-        return b.toString();
     }
 
     @Override
