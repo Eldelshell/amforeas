@@ -36,7 +36,6 @@ public enum JDBCDriver {
     private final Integer port;
     
     private JDBCDriver(final String driverName, final Integer port){
-    	System.out.println("drivers================="+driverName);
     	this.name = driverName;
         this.port = port;
     }
