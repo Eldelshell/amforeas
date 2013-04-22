@@ -36,8 +36,13 @@ public class DialectFactory {
                 dialect = new MSSQLDialect(); 
                 break;
                 
+            case H2_MEM:
+            case H2_FILE:
+            case H2_REMOTE:
+            	dialect = new H2Dialect();
+            	break;
+            
             case MySQL: dialect = new MySQLDialect(); break;
-            case H2:dialect = new H2Dialect(); break;
             case ORACLE: dialect = new OracleDialect(); break;
             case PostgreSQL: dialect = new PostgreSQLDialect(); break;
             default: dialect = new SQLDialect(); break;
