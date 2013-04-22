@@ -504,7 +504,6 @@ public class RestController {
     private JongoResponse handleException(final Throwable t, final String resource){
         JongoResponse response;
         StringBuilder b;
-        l.debug("stack trace:",t);
         if(t instanceof SQLException){
             SQLException ex = (SQLException)t;
             b = new StringBuilder("Received a SQLException ");
