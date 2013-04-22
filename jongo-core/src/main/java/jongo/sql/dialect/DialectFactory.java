@@ -37,6 +37,7 @@ public class DialectFactory {
                 break;
                 
             case MySQL: dialect = new MySQLDialect(); break;
+            case H2:dialect = new H2Dialect(); break;
             case ORACLE: dialect = new OracleDialect(); break;
             case PostgreSQL: dialect = new PostgreSQLDialect(); break;
             default: dialect = new SQLDialect(); break;
