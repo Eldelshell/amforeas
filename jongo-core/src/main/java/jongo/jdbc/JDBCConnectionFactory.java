@@ -60,7 +60,7 @@ public class JDBCConnectionFactory {
         if(instance == null){
             instance = new JDBCConnectionFactory();
             for(DatabaseConfiguration db : configuration.getDatabases()){
-                l.debug("Registering Connection Pool for " + db.getDatabase());
+                l.debug("Registering Connection Pool for {}", db.getDatabase());
                 GenericObjectPool pool = new GenericObjectPool(null, db.getMaxConnections());
                 ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(db.toJdbcURL(), db.getUsername(), db.getPassword());
                 PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory, pool, null, null, db.isReadOnly(), true);
@@ -110,7 +110,7 @@ public class JDBCConnectionFactory {
      */
     public static void closeConnections() throws SQLException{
         for(DatabaseConfiguration dbcfg : configuration.getDatabases()){
-            l.debug("Shutting down JDBC connection " + dbcfg.getDatabase());
+            l.debug("Shutting down JDBC connection {}", dbcfg.getDatabase());
             getConnection(dbcfg).close();
         }
     }
