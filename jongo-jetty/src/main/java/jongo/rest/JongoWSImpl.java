@@ -20,8 +20,24 @@ package jongo.rest;
 
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import jongo.JongoUtils;
 import jongo.JongoWS;
@@ -32,22 +48,19 @@ import jongo.jdbc.OrderParam;
 import jongo.rest.xstream.JongoError;
 import jongo.rest.xstream.Usage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  *
  * @author Alejandro Ayuso <alejandroayuso@gmail.com>
  */
 @Path("/")
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class JongoWSImpl implements JongoWS {
     
-    private static final Logger l = LoggerFactory.getLogger(JongoWSImpl.class);
+//    private static final Logger l = LoggerFactory.getLogger(JongoWSImpl.class);
     private static final Usage u = Usage.getInstance();
     
     @GET
     @Path("{alias}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
     public Response dbMeta(@PathParam("alias") String alias) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.DBMETA);
@@ -62,7 +75,6 @@ public class JongoWSImpl implements JongoWS {
     
     @HEAD
     @Path("{alias}/{table}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
     public Response resourceMeta(@PathParam("alias") String alias, @PathParam("table") String table) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.RSMETA);
@@ -77,7 +89,6 @@ public class JongoWSImpl implements JongoWS {
     
     @GET
     @Path("{alias}/{table}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
     public Response getAll(@PathParam("alias") String alias, @PathParam("table") String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @Context final UriInfo ui) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READALL);
@@ -89,6 +100,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).getAllResources(table, limit, order).getResponse();
         }catch(IllegalArgumentException e){
+        	//TODO Fix NPE!
             response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             u.addRead(p.end(), response.getStatus());
@@ -98,7 +110,6 @@ public class JongoWSImpl implements JongoWS {
     
     @GET
     @Path("{alias}/{table}/{id}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
     public Response get(@PathParam("alias") String alias, @PathParam("table") String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @PathParam("id") String id, @Context final UriInfo ui) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
@@ -120,7 +131,6 @@ public class JongoWSImpl implements JongoWS {
 
     @POST
     @Path("{alias}/{table}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
     public Response insert(@PathParam("alias") String alias, @PathParam("table") final String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, final String jsonRequest) {
@@ -138,7 +148,6 @@ public class JongoWSImpl implements JongoWS {
     
     @POST
     @Path("{alias}/{table}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Override
     public Response insert(@PathParam("alias") String alias, @PathParam("table") final String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, final MultivaluedMap<String, String> formParams) {
@@ -158,7 +167,6 @@ public class JongoWSImpl implements JongoWS {
 
     @PUT
     @Path("{alias}/{table}/{id}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
     public Response update(@PathParam("alias") String alias, @PathParam("table") final String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @PathParam("id") final String id, final String jsonRequest) {
@@ -176,7 +184,6 @@ public class JongoWSImpl implements JongoWS {
     
     @DELETE
     @Path("{alias}/{table}/{id}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
     public Response delete(@PathParam("alias") String alias, @PathParam("table") final String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @PathParam("id") final String id) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.UPDATE);
@@ -194,7 +201,6 @@ public class JongoWSImpl implements JongoWS {
     
     @GET
     @Path("{alias}/{table}/{column}/{arg}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
     public Response find(@PathParam("alias") String alias, @PathParam("table") String table, @PathParam("column") final String col, @PathParam("arg") final String arg, @Context final UriInfo ui) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
@@ -215,7 +221,6 @@ public class JongoWSImpl implements JongoWS {
     
     @GET
     @Path("{alias}/{table}/dynamic/{query}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
     public Response findBy(@PathParam("alias") String alias, @PathParam("table") final String table, @PathParam("query") String query, @QueryParam("args") List<String> values, @Context final UriInfo ui) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
@@ -237,7 +242,6 @@ public class JongoWSImpl implements JongoWS {
     @POST
     @Path("{alias}/call/{query}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
     public Response storedProcedure(@PathParam("alias") String alias, @PathParam("query") String query, final String jsonRequest) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
