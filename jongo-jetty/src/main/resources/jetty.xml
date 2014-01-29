@@ -14,6 +14,7 @@
     <Call name="setHandler">
       <Arg>
         <New class="org.eclipse.jetty.webapp.WebAppContext">
+          <!-- Change this to webapp/ in live/demo mode -->
           <Set name="war">src/main/webapp</Set>
           <Set name="contextPath">/</Set>
         </New>
