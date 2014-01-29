@@ -2,8 +2,10 @@ package jongo.jdbc;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.ws.rs.core.MultivaluedMap;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso

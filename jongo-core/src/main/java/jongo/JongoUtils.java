@@ -34,7 +34,7 @@ import jongo.exceptions.JongoBadRequestException;
 import jongo.exceptions.StartupException;
 import jongo.jdbc.StoredProcedureParam;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.DateTime;

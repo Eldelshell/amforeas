@@ -22,7 +22,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import jongo.sql.Table;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *

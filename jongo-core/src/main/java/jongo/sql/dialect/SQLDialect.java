@@ -20,9 +20,13 @@ package jongo.sql.dialect;
 
 import jongo.jdbc.LimitParam;
 import jongo.jdbc.OrderParam;
-import jongo.sql.*;
+import jongo.sql.Delete;
+import jongo.sql.DynamicFinder;
+import jongo.sql.Insert;
+import jongo.sql.Select;
+import jongo.sql.Update;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

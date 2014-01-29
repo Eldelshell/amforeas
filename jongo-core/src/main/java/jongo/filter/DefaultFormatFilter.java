@@ -18,11 +18,9 @@
 
 package jongo.filter;
 
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -33,9 +31,13 @@ import jongo.rest.xstream.JongoHead;
 import jongo.rest.xstream.JongoSuccess;
 import jongo.rest.xstream.Row;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerResponse;
+import com.sun.jersey.spi.container.ContainerResponseFilter;
 
 /**
  * Default filter which is used by Jongo to modify the requests and responses. Here's were we generate the

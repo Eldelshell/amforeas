@@ -18,7 +18,8 @@
 package jongo.jdbc;
 
 import javax.ws.rs.core.MultivaluedMap;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * An object to represent the two limit parameters (limit & offset) which are then translated to

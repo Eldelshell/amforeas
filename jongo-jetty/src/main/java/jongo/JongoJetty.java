@@ -19,7 +19,8 @@
 package jongo;
 
 import java.io.IOException;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.xml.XmlConfiguration;
@@ -29,7 +30,7 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * @author Alejandro Ayuso <alejandroayuso@gmail.com>
+ * @author Alejandro Ayuso
  */
 public class JongoJetty{
     

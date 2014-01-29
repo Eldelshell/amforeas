@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.ws.rs.core.Response;
 
 import jongo.config.JongoConfiguration;
@@ -29,10 +30,20 @@ import jongo.jdbc.JDBCExecutor;
 import jongo.jdbc.LimitParam;
 import jongo.jdbc.OrderParam;
 import jongo.jdbc.StoredProcedureParam;
-import jongo.rest.xstream.*;
-import jongo.sql.*;
+import jongo.rest.xstream.JongoError;
+import jongo.rest.xstream.JongoHead;
+import jongo.rest.xstream.JongoResponse;
+import jongo.rest.xstream.JongoSuccess;
+import jongo.rest.xstream.Row;
+import jongo.sql.Delete;
+import jongo.sql.DynamicFinder;
+import jongo.sql.Insert;
+import jongo.sql.Select;
+import jongo.sql.SelectParam;
+import jongo.sql.Table;
+import jongo.sql.Update;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

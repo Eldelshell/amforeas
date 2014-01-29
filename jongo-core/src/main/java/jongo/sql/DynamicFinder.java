@@ -27,7 +27,7 @@ import jongo.exceptions.JongoBadRequestException;
 import jongo.jdbc.LimitParam;
 import jongo.jdbc.OrderParam;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
