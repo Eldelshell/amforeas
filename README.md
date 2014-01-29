@@ -388,6 +388,17 @@ For example, a user table with a birthday field of type DATE, and a lastupdate T
  }
 ```
 
+## Supported RDBMS
+| RDBMS  | Supported | Tested |
+|:------------- |:-------------:|:-------------:|
+| Mysql | Yes | Yes |
+| Postgres | Yes | Yes |
+| MSSQL| Yes | No |
+| Oracle | Yes | Kind of |
+| HSQLDB | Yes | Yes |
+| H2 | Yes | Yes |
+| Derby | Yes | Yes |
+
 ## Technology
 
 ### RESTful
