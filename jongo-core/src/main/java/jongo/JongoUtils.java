@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.ws.rs.core.MultivaluedMap;
+import javax.xml.bind.DatatypeConverter;
 
 import jongo.config.JongoConfiguration;
 import jongo.exceptions.JongoBadRequestException;
@@ -40,7 +42,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.BASE64Encoder;
 
 /**
  * Collection of commonly used methods and constants.
@@ -296,8 +297,7 @@ public class JongoUtils {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(input.getBytes("UTF-8"));
             byte[] rawData = digest.digest();
-            BASE64Encoder bencoder = new BASE64Encoder();
-            ret = bencoder.encode(rawData);
+            ret = DatatypeConverter.printBase64Binary(rawData);
         } catch (Exception ex) {
             l.error(ex.getMessage());
         }
