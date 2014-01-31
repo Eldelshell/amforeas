@@ -50,7 +50,7 @@ import jongo.rest.xstream.Usage;
 
 /**
  *
- * @author Alejandro Ayuso <alejandroayuso@gmail.com>
+ * @author Alejandro Ayuso
  */
 @Path("/")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -58,6 +58,8 @@ public class JongoWSImpl implements JongoWS {
     
 //    private static final Logger l = LoggerFactory.getLogger(JongoWSImpl.class);
     private static final Usage u = Usage.getInstance();
+    
+    @Context UriInfo ui;
     
     @GET
     @Path("{alias}")
@@ -90,7 +92,7 @@ public class JongoWSImpl implements JongoWS {
     @GET
     @Path("{alias}/{table}")
     @Override
-    public Response getAll(@PathParam("alias") String alias, @PathParam("table") String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @Context final UriInfo ui) {
+    public Response getAll(@PathParam("alias") String alias, @PathParam("table") String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READALL);
         MultivaluedMap<String, String> pathParams = ui.getQueryParameters();
         LimitParam limit = LimitParam.valueOf(pathParams);
@@ -100,8 +102,9 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).getAllResources(table, limit, order).getResponse();
         }catch(IllegalArgumentException e){
-        	//TODO Fix NPE!
             response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+        }catch(Exception e){
+        	response = new JongoError(alias, Response.Status.INTERNAL_SERVER_ERROR, e.getMessage()).getResponse();
         }finally{
             u.addRead(p.end(), response.getStatus());
         }
@@ -111,7 +114,7 @@ public class JongoWSImpl implements JongoWS {
     @GET
     @Path("{alias}/{table}/{id}")
     @Override
-    public Response get(@PathParam("alias") String alias, @PathParam("table") String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @PathParam("id") String id, @Context final UriInfo ui) {
+    public Response get(@PathParam("alias") String alias, @PathParam("table") String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @PathParam("id") String id) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
         MultivaluedMap<String, String> pathParams = ui.getQueryParameters();
         LimitParam limit = LimitParam.valueOf(pathParams);
@@ -202,7 +205,7 @@ public class JongoWSImpl implements JongoWS {
     @GET
     @Path("{alias}/{table}/{column}/{arg}")
     @Override
-    public Response find(@PathParam("alias") String alias, @PathParam("table") String table, @PathParam("column") final String col, @PathParam("arg") final String arg, @Context final UriInfo ui) {
+    public Response find(@PathParam("alias") String alias, @PathParam("table") String table, @PathParam("column") final String col, @PathParam("arg") final String arg) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
         MultivaluedMap<String, String> pathParams = ui.getQueryParameters();
         LimitParam limit = LimitParam.valueOf(pathParams);
@@ -222,7 +225,7 @@ public class JongoWSImpl implements JongoWS {
     @GET
     @Path("{alias}/{table}/dynamic/{query}")
     @Override
-    public Response findBy(@PathParam("alias") String alias, @PathParam("table") final String table, @PathParam("query") String query, @QueryParam("args") List<String> values, @Context final UriInfo ui) {
+    public Response findBy(@PathParam("alias") String alias, @PathParam("table") final String table, @PathParam("query") String query, @QueryParam("args") List<String> values) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
         MultivaluedMap<String, String> pathParams = ui.getQueryParameters();
         LimitParam limit = LimitParam.valueOf(pathParams);

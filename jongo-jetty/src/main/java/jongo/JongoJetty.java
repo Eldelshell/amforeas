@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
- *
+ * Main class of Jongo. Reads configuration file and starts jetty embedded.
  * @author Alejandro Ayuso
  */
 public class JongoJetty{
@@ -65,7 +65,7 @@ public class JongoJetty{
         try {
             jettyXml = Resource.newSystemResource(jettyFile);
         } catch (IOException ex) {
-            l.warn("Failed to read Jetty Configuration file: " + jettyFile + ". Trying with jetty.xml");
+            l.warn("Failed to read Jetty Configuration file: {}. Trying with jetty.xml", jettyFile);
         }
         
         if(jettyXml == null){
