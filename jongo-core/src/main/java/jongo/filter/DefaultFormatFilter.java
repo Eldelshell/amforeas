@@ -31,6 +31,7 @@ import jongo.rest.xstream.JongoHead;
 import jongo.rest.xstream.JongoSuccess;
 import jongo.rest.xstream.Row;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,54 +159,9 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
         String res;
         l.debug("Formatting Success Response");
         if(isXMLCompatible(mime)){
-            StringBuilder b = new StringBuilder("<response><success>");
-            b.append(response.isSuccess());b.append("</success><resource>");
-            b.append(response.getResource());b.append("</resource><rows>");
-            for(Row r : response.getRows()){
-                b.append("<row roi=\"");
-                b.append(r.getRoi());
-                b.append("\"><cells>");
-                for (String key : r.getCells().keySet()) {
-                    String val = r.getCells().get(key);
-                    b.append("<");
-                    b.append(key.toLowerCase());
-                    b.append(">");
-                    b.append(val);
-                    b.append("</");
-                    b.append(key.toLowerCase());
-                    b.append(">");
-                }
-                b.append("</cells></row>");
-            }
-            b.append("</rows></response>");
-            res = b.toString();
+            res = formatSuccessXMLResponse(response);
         }else{
-            StringBuilder b = new StringBuilder("{");
-            b.append("\"success\":");b.append(response.isSuccess());
-            b.append(",\"cells\":[ "); //this last space is important!
-            for(Row r : response.getRows()){
-                List<String> args = new ArrayList<String>();
-                for (String key : r.getCells().keySet()) {
-                    String val = r.getCells().get(key);
-                    if (StringUtils.isNumeric(val)) {
-                        if (StringUtils.isWhitespace(val)) {
-                            args.add("\"" + key.toLowerCase() + "\"" + ":" + "\"\"");
-                        } else {
-                            args.add("\"" + key.toLowerCase() + "\"" + ":" + val);
-                        }
-                    } else {
-                        args.add("\"" + key.toLowerCase() + "\"" + ":" + "\"" + val + "\"");
-                    }
-                }
-
-                b.append("{");
-                b.append(StringUtils.join(args, ","));
-                b.append("}");
-                b.append(",");
-            }
-            b.deleteCharAt(b.length() - 1);
-            b.append("]}");
-            res = b.toString();
+            res = formatSuccessJSONResponse(response);
         }
         
         return Response.status(status)
@@ -213,6 +169,59 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
                 .header("Content-Count", response.getRows().size())
                 .header(HttpHeaders.CONTENT_LOCATION, response.getResource())
                 .build();
+    }
+    
+    private String formatSuccessJSONResponse(final JongoSuccess response){
+    	final StringBuilder b = new StringBuilder("{");
+        b.append("\"success\":");b.append(response.isSuccess());
+        b.append(",\"cells\":[ "); //this last space is important!
+        for(Row r : response.getRows()){
+            List<String> args = new ArrayList<String>();
+            for (String key : r.getCells().keySet()) {
+                String val = StringEscapeUtils.escapeJson(r.getCells().get(key));
+                if (StringUtils.isNumeric(val)) {
+                    if (StringUtils.isWhitespace(val)) {
+                        args.add("\"" + key.toLowerCase() + "\"" + ":" + "\"\"");
+                    } else {
+                        args.add("\"" + key.toLowerCase() + "\"" + ":" + val);
+                    }
+                } else {
+                    args.add("\"" + key.toLowerCase() + "\"" + ":" + "\"" + val + "\"");
+                }
+            }
+
+            b.append("{");
+            b.append(StringUtils.join(args, ","));
+            b.append("}");
+            b.append(",");
+        }
+        b.deleteCharAt(b.length() - 1);
+        b.append("]}");
+        return b.toString();
+    }
+    
+    private String formatSuccessXMLResponse(final JongoSuccess response){
+    	StringBuilder b = new StringBuilder("<response><success>");
+        b.append(response.isSuccess());b.append("</success><resource>");
+        b.append(response.getResource());b.append("</resource><rows>");
+        for(Row r : response.getRows()){
+            b.append("<row roi=\"");
+            b.append(r.getRoi());
+            b.append("\"><cells>");
+            for (String key : r.getCells().keySet()) {
+                String val = StringEscapeUtils.escapeXml(r.getCells().get(key));
+                b.append("<");
+                b.append(key.toLowerCase());
+                b.append(">");
+                b.append(val);
+                b.append("</");
+                b.append(key.toLowerCase());
+                b.append(">");
+            }
+            b.append("</cells></row>");
+        }
+        b.append("</rows></response>");
+        return b.toString();
     }
 
     /**
@@ -229,35 +238,43 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
         String res;
         l.debug("Formatting Error Response");
         if(isXMLCompatible(mime)){
-            StringBuilder b = new StringBuilder("<response><success>")
-                .append(response.isSuccess())
-                .append("</success><message>")
-                .append(response.getMessage())
-                .append("</message>");
-            if( response.getSqlCode() != null && response.getSqlState() != null){
-                b.append("<sqlState>").append(response.getSqlState()).append("</sqlState>");
-                b.append("<sqlCode>").append(response.getSqlCode()).append("</sqlCode>");
-            }
-            b.append("</response>");
-            res = b.toString();
+            res = formatErrorXMLResponse(response);
         }else{
-            StringBuilder b = new StringBuilder("{")
-                .append("\"success\":")
-                .append(response.isSuccess())
-                .append(",\"message\":\"")
-                .append(response.getMessage());
-            if( response.getSqlCode() != null && response.getSqlState() != null){
-                b.append("\",\"SQLState\":\"").append(response.getSqlState());
-                b.append("\",\"SQLCode\":\"").append(response.getSqlCode());
-            }
-            b.append("\"}");
-            res = b.toString();
+            res = formatErrorJSONResponse(response);
         }
         return Response.status(status)
                 .entity(res)
                 .type(mime)
                 .header("Content-Location", response.getResource())
                 .build();
+    }
+    
+    private String formatErrorJSONResponse(final JongoError response){
+    	StringBuilder b = new StringBuilder("{")
+	        .append("\"success\":")
+	        .append(response.isSuccess())
+	        .append(",\"message\":\"")
+	        .append(StringEscapeUtils.escapeJson(response.getMessage()));
+	    if( response.getSqlCode() != null && response.getSqlState() != null){
+	        b.append("\",\"SQLState\":\"").append(response.getSqlState());
+	        b.append("\",\"SQLCode\":\"").append(response.getSqlCode());
+	    }
+	    b.append("\"}");
+	    return b.toString();
+    }
+    
+    private String formatErrorXMLResponse(final JongoError response){
+    	final StringBuilder b = new StringBuilder("<response><success>")
+	        .append(response.isSuccess())
+	        .append("</success><message>")
+	        .append(StringEscapeUtils.escapeXml(response.getMessage()))
+	        .append("</message>");
+	    if( response.getSqlCode() != null && response.getSqlState() != null){
+	        b.append("<sqlState>").append(response.getSqlState()).append("</sqlState>");
+	        b.append("<sqlCode>").append(response.getSqlCode()).append("</sqlCode>");
+	    }
+	    b.append("</response>");
+	    return b.toString();
     }
 
     /**
