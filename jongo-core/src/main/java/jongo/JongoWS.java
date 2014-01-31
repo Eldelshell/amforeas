@@ -19,9 +19,9 @@
 package jongo;
 
 import java.util.List;
+
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 /**
  * Public RESTful webservice which allows CRUD operations on a given resource.
@@ -51,20 +51,18 @@ public interface JongoWS {
      * @param resource name of the resource we want to access
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param id the primary key value of the record we want to access
-     * @param ui the context of the request. Used to obtain the ordering and pagination parameters.
      * @return the record if it's found, or a 404 if it's not.
      */
-    public Response get(String database, String resource, String pk, String id, UriInfo ui);
+    public Response get(String database, String resource, String pk, String id);
     
     /**
      * Obtain all the records from a given resource.
      * @param database name of the database the resource belongs to
      * @param resource name of the resource we want to access
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
-     * @param ui the context of the request. Used to obtain the ordering and pagination parameters.
      * @return all the records if found, or a 404 if it's not.
      */
-    public Response getAll(String database, String resource, String pk, UriInfo ui);
+    public Response getAll(String database, String resource, String pk);
     
     /**
      * Finds a record from the given resource which matches the given argument in the given column.
@@ -72,10 +70,9 @@ public interface JongoWS {
      * @param resource name of the resource we want to access
      * @param col name of the column the record must match
      * @param arg value in the column the record must match.
-     * @param ui the context of the request. Used to obtain the ordering and pagination parameters.
      * @return the record if it's found, or a 404 if it's not.
      */
-    public Response find(String database, String resource, String col, String arg, UriInfo ui);
+    public Response find(String database, String resource, String col, String arg);
     
     /**
      * Finds all records from the given resource which matches the given query with the given list of arguments.
@@ -83,10 +80,9 @@ public interface JongoWS {
      * @param resource name of the resource we want to access
      * @param query a {@link org.jongo.jdbc.DynamicFinder} query
      * @param args a list of arguments to be given to the {@link org.jongo.jdbc.DynamicFinder}
-     * @param ui the context of the request. Used to obtain the ordering and pagination parameters.
      * @return all the records which match the given {@link org.jongo.jdbc.DynamicFinder}
      */
-    public Response findBy(String database, String resource, String query, List<String> args, UriInfo ui);
+    public Response findBy(String database, String resource, String query, List<String> args);
     
     /**
      * Creates a record in the given resource with values from a JSON representation.
