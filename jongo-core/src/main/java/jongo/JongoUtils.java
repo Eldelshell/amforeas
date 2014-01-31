@@ -34,6 +34,7 @@ import jongo.exceptions.JongoBadRequestException;
 import jongo.exceptions.StartupException;
 import jongo.jdbc.StoredProcedureParam;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -355,5 +356,9 @@ public class JongoUtils {
         }
         b.append(")}");
         return b.toString();
+    }
+    
+    public static String getHashedPassword(final String password){
+    	return DigestUtils.sha256Hex(password);
     }
 }
