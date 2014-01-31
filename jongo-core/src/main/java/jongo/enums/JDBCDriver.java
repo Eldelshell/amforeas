@@ -32,7 +32,8 @@ public enum JDBCDriver {
     MSSQL           ("com.microsoft.jdbc.sqlserver.SQLServerDriver",    Integer.valueOf(1433)),
     H2_MEM          ("org.h2.Driver",                                   Integer.valueOf(0)),
     H2_FILE         ("org.h2.Driver",                                   Integer.valueOf(0)),
-    H2_REMOTE       ("org.h2.Driver",                                   Integer.valueOf(0));
+    H2_REMOTE       ("org.h2.Driver",                                   Integer.valueOf(0)),
+    DERBY_MEM		("org.apache.derby.jdbc.EmbeddedDriver",			Integer.valueOf(0));
     
     private final String name;
     private final Integer port;

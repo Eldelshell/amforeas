@@ -45,6 +45,7 @@ public class DialectFactory {
             case MySQL: dialect = new MySQLDialect(); break;
             case ORACLE: dialect = new OracleDialect(); break;
             case PostgreSQL: dialect = new PostgreSQLDialect(); break;
+            case DERBY_MEM: dialect = new DerbyDialect(); break;
             default: dialect = new SQLDialect(); break;
         }
         return dialect;
