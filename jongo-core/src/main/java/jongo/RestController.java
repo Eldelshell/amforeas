@@ -142,17 +142,17 @@ public class RestController {
      * if the table is empty, we return a SuccessResponse with no values.
      */
     public JongoResponse getAllResources(final String table, final LimitParam limit, final OrderParam order){
-        l.debug("Geting all resources from " + alias + "." + table);
+        l.debug("Geting all resources from {}.{}", alias, table);
         
         Table t;
         try{
             t = new Table(database, table);
         }catch (IllegalArgumentException e){
-            l.debug("Failed to generate select " + e.getMessage());
+            l.debug("Failed to generate select: {}", e.getMessage());
             return new JongoError(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
-        Select s = new Select(t).setLimitParam(limit).setOrderParam(order);
+        final Select s = new Select(t).setLimitParam(limit).setOrderParam(order);
         
         JongoResponse response = null;
         List<Row> results = null;
