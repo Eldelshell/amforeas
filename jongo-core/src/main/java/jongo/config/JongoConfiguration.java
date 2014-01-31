@@ -173,7 +173,7 @@ public class JongoConfiguration {
                 DatabaseConfiguration c = generateDatabaseConfiguration(prop, name);
                 databases.add(c);
             }else{
-                l.warn("Database name " + name + " is invalid. Continuing without it.");
+                l.warn("Database name {} is invalid. Continuing without it.", name);
             }
         }
         return databases;
@@ -187,7 +187,7 @@ public class JongoConfiguration {
      * database/schema.
      */
     private static DatabaseConfiguration generateDatabaseConfiguration(final Properties prop, final String name){
-        l.debug("Obtain configuration options for alias " + name);
+        l.debug("Obtain configuration options for alias {}", name);
         
         JDBCDriver driver = JDBCDriver.valueOf(prop.getProperty(name + p_prefix_db_driver));
         String username =   prop.getProperty(name + p_prefix_db_username);
@@ -200,7 +200,7 @@ public class JongoConfiguration {
         String url  =       prop.getProperty(name+p_prefix_db_url);
         DatabaseConfiguration c = DatabaseConfiguration.instanceOf(name, driver, username, password, database, host, port, max, readOnly);
         c.setUrl(url);
-        l.debug("Loaded DB config "+c.toString());
+        l.debug("Loaded DB config {}", c.toString());
         return c;
     }
     
