@@ -14,7 +14,7 @@
     <name>jongo-as</name>
 
     <build>
-      <finalName>${artifactId}-${project.version}</finalName>
+      <finalName>${project.artifactId}-${project.version}</finalName>
       <plugins>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
