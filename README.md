@@ -3,8 +3,6 @@
 
 Jongo is a Java server which provides CRUD operations over any JDBC supported RDBMS using REST.
 
-![arch](http://jongo.googlecode.com/hg/src/main/resources/jongo.png)
-
 By REST we basically mean that the different CRUD operations are performed by different HTTP methods:
 
 * POST to create a resource
@@ -26,7 +24,7 @@ Jongo is based on the premise that you love your database, hence there's no admi
 * Call functions and stored procedures.
 * Deploy in your favorite JEE application server (JBoss, Tomcat, Glassfish).
 
-##Usages
+## Usages
 This are some projects where Jongo is ideal:
 
 * JavaScript applications without any server-side coding (backbone.js, ExtJS, jQuery).
@@ -43,8 +41,6 @@ This are some projects where Jongo is ideal:
 * NoSQL database dialects
 * First Level Cache
 
-You can find more news & articles in my [blog](http://monocaffe.blogspot.com/search/label/jongo)
-
 ## Installation
 
 For installation instructions check the [Wiki](https://github.com/ubersoldat/jongo/wiki/Installation)
@@ -52,7 +48,7 @@ For installation instructions check the [Wiki](https://github.com/ubersoldat/jon
 * * *
 
 ## Examples
-This examples are from data when running Jongo en demo mode.
+This examples are from data when running Jongo on demo mode.
 
 ### Read (GET) a resource
 To read (GET) a user with id 1 from its table, we perform the following:
