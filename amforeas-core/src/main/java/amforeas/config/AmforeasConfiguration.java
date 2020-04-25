@@ -42,7 +42,7 @@ public class AmforeasConfiguration {
     
     private static final Logger l = LoggerFactory.getLogger(AmforeasConfiguration.class);
     
-    private static final String p_name_jongo_database_list = "amforeas.alias.list";
+    private static final String p_name_amforeas_database_list = "amforeas.alias.list";
     private static final String p_prefix_db_driver = ".jdbc.driver";
     private static final String p_prefix_db_username = ".jdbc.username";
     private static final String p_prefix_db_password = ".jdbc.password";
@@ -161,9 +161,9 @@ public class AmforeasConfiguration {
      * @throws StartupException if we're unable to load a {@link amforeas.config.DatabaseConfiguration}.
      */
     private static List<DatabaseConfiguration> getDatabaseConfigurations(final Properties prop) throws StartupException{
-        String databaseList = prop.getProperty(p_name_jongo_database_list);
+        String databaseList = prop.getProperty(p_name_amforeas_database_list);
         if(databaseList == null){
-            throw new StartupException("Failed to read list of aliases " + p_name_jongo_database_list, demo);
+            throw new StartupException("Failed to read list of aliases " + p_name_amforeas_database_list, demo);
         }
         final String [] names = databaseList.split(",");
         List<DatabaseConfiguration> databases = new ArrayList<DatabaseConfiguration>(names.length);

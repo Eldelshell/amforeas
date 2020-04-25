@@ -38,7 +38,7 @@ import org.amforeas.XmlXstreamTest;
  */
 public class AmforeasClient {
     
-    private static final String jongoUrl = "http://localhost:8080/amforeas/demo1/";
+    private static final String aUrl = "http://localhost:8080/amforeas/demo1/";
     
     public AmforeasResponse doGET(final String url){
         return doRequest(url, "GET");
@@ -63,7 +63,7 @@ public class AmforeasClient {
     private AmforeasResponse doRequest(final String url, final String method){
         AmforeasResponse response = null;
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL(jongoUrl + url).openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL(aUrl + url).openConnection();
             con.setRequestMethod(method);
             con.setDoOutput(true);
             con.setRequestProperty("Accept", MediaType.APPLICATION_XML);
@@ -95,7 +95,7 @@ public class AmforeasClient {
         AmforeasResponse response = null;
         
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL(jongoUrl + url).openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL(aUrl + url).openConnection();
             con.setRequestMethod(method);
             con.setRequestProperty("Accept", MediaType.APPLICATION_XML);
             con.setRequestProperty("Content-Type", MediaType.APPLICATION_JSON);
@@ -142,7 +142,7 @@ public class AmforeasClient {
         AmforeasResponse response = null;
         
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL(jongoUrl + url).openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL(aUrl + url).openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Accept", MediaType.APPLICATION_XML);
             con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

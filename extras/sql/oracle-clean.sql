@@ -20,32 +20,32 @@
 * Oracle Script to clean up a database
 */
 
-DROP VIEW jongo_demo.MAKER_STATS_2010;
-DROP PROCEDURE jongo_demo.insert_comment;
-DROP PROCEDURE jongo_demo.get_year_sales;
-DROP FUNCTION jongo_demo.simpleStoredProcedure;
+DROP VIEW amforeas_demo.MAKER_STATS_2010;
+DROP PROCEDURE amforeas_demo.insert_comment;
+DROP PROCEDURE amforeas_demo.get_year_sales;
+DROP FUNCTION amforeas_demo.simpleStoredProcedure;
 
-DROP TRIGGER jongo_demo.users_trigger;
-DROP TRIGGER jongo_demo.maker_trigger;
-DROP TRIGGER jongo_demo.car_trigger;
-DROP TRIGGER jongo_demo.comments_trigger;
-DROP TRIGGER jongo_demo.pictures_trigger;
-DROP TRIGGER jongo_demo.sales_stats_trigger;
-DROP TRIGGER jongo_demo.maker_stats_trigger;
+DROP TRIGGER amforeas_demo.users_trigger;
+DROP TRIGGER amforeas_demo.maker_trigger;
+DROP TRIGGER amforeas_demo.car_trigger;
+DROP TRIGGER amforeas_demo.comments_trigger;
+DROP TRIGGER amforeas_demo.pictures_trigger;
+DROP TRIGGER amforeas_demo.sales_stats_trigger;
+DROP TRIGGER amforeas_demo.maker_stats_trigger;
 
-DROP TABLE jongo_demo.users;
-DROP TABLE jongo_demo.maker;
-DROP TABLE jongo_demo.car;
-DROP TABLE jongo_demo.comments;
-DROP TABLE jongo_demo.pictures;
-DROP TABLE jongo_demo.sales_stats;
-DROP TABLE jongo_demo.maker_stats;
-DROP TABLE jongo_demo.empty;
+DROP TABLE amforeas_demo.users;
+DROP TABLE amforeas_demo.maker;
+DROP TABLE amforeas_demo.car;
+DROP TABLE amforeas_demo.comments;
+DROP TABLE amforeas_demo.pictures;
+DROP TABLE amforeas_demo.sales_stats;
+DROP TABLE amforeas_demo.maker_stats;
+DROP TABLE amforeas_demo.empty;
 
-DROP SEQUENCE jongo_demo.users_id_sequence;
-DROP SEQUENCE jongo_demo.maker_id_sequence;
-DROP SEQUENCE jongo_demo.car_id_sequence;
-DROP SEQUENCE jongo_demo.comments_id_sequence;
-DROP SEQUENCE jongo_demo.pictures_id_sequence;
-DROP SEQUENCE jongo_demo.sales_stats_id_sequence;
-DROP SEQUENCE jongo_demo.maker_stats_id_sequence;
+DROP SEQUENCE amforeas_demo.users_id_sequence;
+DROP SEQUENCE amforeas_demo.maker_id_sequence;
+DROP SEQUENCE amforeas_demo.car_id_sequence;
+DROP SEQUENCE amforeas_demo.comments_id_sequence;
+DROP SEQUENCE amforeas_demo.pictures_id_sequence;
+DROP SEQUENCE amforeas_demo.sales_stats_id_sequence;
+DROP SEQUENCE amforeas_demo.maker_stats_id_sequence;
