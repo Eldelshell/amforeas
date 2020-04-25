@@ -135,8 +135,6 @@
   <modules>
     <module>amforeas-core</module>
     <module>amforeas-jetty</module>
-    <module>amforeas-as</module>
-    <!-- <module>amforeas-gae</module> -->
   </modules>
 
 </project>
