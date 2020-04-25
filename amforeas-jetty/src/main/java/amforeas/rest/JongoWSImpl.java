@@ -39,13 +39,13 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import amforeas.JongoUtils;
-import amforeas.JongoWS;
+import amforeas.AmforeasUtils;
+import amforeas.AmforeasWS;
 import amforeas.PerformanceLogger;
 import amforeas.RestController;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
-import amforeas.rest.xstream.JongoError;
+import amforeas.rest.xstream.AmforeasError;
 import amforeas.rest.xstream.Usage;
 
 /**
@@ -54,9 +54,9 @@ import amforeas.rest.xstream.Usage;
  */
 @Path("/")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class JongoWSImpl implements JongoWS {
+public class AmforeasWSImpl implements AmforeasWS {
     
-//    private static final Logger l = LoggerFactory.getLogger(JongoWSImpl.class);
+//    private static final Logger l = LoggerFactory.getLogger(AmforeasWSImpl.class);
     private static final Usage u = Usage.getInstance();
     
     @Context UriInfo ui;
@@ -69,7 +69,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             return new RestController(alias).getDatabaseMetadata().getResponse();
         }catch(IllegalArgumentException e){
-            return new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            return new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             p.end();
         }
@@ -83,7 +83,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             return new RestController(alias).getResourceMetadata(table).getResponse();
         }catch(IllegalArgumentException e){
-            return new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            return new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             p.end();
         }
@@ -102,9 +102,9 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).getAllResources(table, limit, order).getResponse();
         }catch(IllegalArgumentException e){
-            response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }catch(Exception e){
-        	response = new JongoError(alias, Response.Status.INTERNAL_SERVER_ERROR, e.getMessage()).getResponse();
+        	response = new AmforeasError(alias, Response.Status.INTERNAL_SERVER_ERROR, e.getMessage()).getResponse();
         }finally{
             u.addRead(p.end(), response.getStatus());
         }
@@ -124,7 +124,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).getResource(table, pk, id, limit, order).getResponse();
         }catch(IllegalArgumentException e){
-            response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             u.addRead(p.end(), response.getStatus());
         }
@@ -142,7 +142,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).insertResource(table, pk, jsonRequest).getResponse();
         }catch(IllegalArgumentException e){
-            response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             u.addCreate(p.end(), response.getStatus());
         }
@@ -155,13 +155,13 @@ public class JongoWSImpl implements JongoWS {
     @Override
     public Response insert(@PathParam("alias") String alias, @PathParam("table") final String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, final MultivaluedMap<String, String> formParams) {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.CREATE);
-        Map<String, String> map = JongoUtils.hashMapOf(formParams);
+        Map<String, String> map = AmforeasUtils.hashMapOf(formParams);
         
         Response response = null;
         try{
             response = new RestController(alias).insertResource(table, pk, map).getResponse();
         }catch(IllegalArgumentException e){
-            response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             u.addCreate(p.end(), response.getStatus());
         }
@@ -178,7 +178,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).updateResource(table, pk, id, jsonRequest).getResponse();
         }catch(IllegalArgumentException e){
-            response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             u.addUpdate(p.end(), response.getStatus());
         }
@@ -195,7 +195,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).deleteResource(table, pk, id).getResponse();
         }catch(IllegalArgumentException e){
-            response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             u.addDelete(p.end(), response.getStatus());
         }
@@ -215,7 +215,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).findResources(table, col, arg, limit, order).getResponse();
         }catch(IllegalArgumentException e){
-            response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             u.addRead(p.end(), response.getStatus());
         }
@@ -235,7 +235,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).findByDynamicFinder(table, query, values, limit, order).getResponse();
         }catch(IllegalArgumentException e){
-            response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             u.addDynamic(p.end(), response.getStatus());
         }
@@ -253,7 +253,7 @@ public class JongoWSImpl implements JongoWS {
         try{
             response = new RestController(alias).executeStoredProcedure(query, jsonRequest).getResponse();
         }catch(IllegalArgumentException e){
-            response = new JongoError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         }finally{
             u.addQuery(p.end(), response.getStatus());
         }

@@ -32,7 +32,7 @@ import javax.ws.rs.core.MultivaluedMap;
  *
  * @author Alejandro Ayuso 
  */
-public class JongoMapConverter implements Converter {
+public class AmforeasMapConverter implements Converter {
     
     @Override
     public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext mc) {

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import amforeas.JongoShutdown;
+import amforeas.AmforeasShutdown;
 import amforeas.demo.Demo;
 import amforeas.enums.JDBCDriver;
 import amforeas.exceptions.StartupException;
@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
  * this configuration properties.
  * @author Alejandro Ayuso 
  */
-public class JongoConfiguration {
+public class AmforeasConfiguration {
     
-    private static final Logger l = LoggerFactory.getLogger(JongoConfiguration.class);
+    private static final Logger l = LoggerFactory.getLogger(AmforeasConfiguration.class);
     
     private static final String p_name_jongo_database_list = "amforeas.alias.list";
     private static final String p_prefix_db_driver = ".jdbc.driver";
@@ -53,7 +53,7 @@ public class JongoConfiguration {
     private static final String p_prefix_db_max_connections = ".jdbc.max.connections";
     private static final String p_prefix_db_url = ".jdbc.url";
     
-    private static JongoConfiguration instance;
+    private static AmforeasConfiguration instance;
     
     private Integer limit;
     private Integer maxLimit;
@@ -63,20 +63,20 @@ public class JongoConfiguration {
     
     private static final boolean demo = (System.getProperty("environment") != null && System.getProperty("environment").equalsIgnoreCase("demo")); 
     
-    private JongoConfiguration(){}
+    private AmforeasConfiguration(){}
     
     /**
      * Loads the configuration file, registers the shutdown hook, calls the generation of 
-     * the database configurations and returns and instance of JongoConfiguration.
-     * @return an instance of the JongoConfiguration.
+     * the database configurations and returns and instance of AmforeasConfiguration.
+     * @return an instance of the AmforeasConfiguration.
      */
-    public synchronized static JongoConfiguration instanceOf(){
+    public synchronized static AmforeasConfiguration instanceOf(){
         if(instance == null){
-            instance = new JongoConfiguration();
+            instance = new AmforeasConfiguration();
             Properties prop = getProperties(instance);
             
             l.debug("Registering the shutdown hook!");
-            Runtime.getRuntime().addShutdownHook(new JongoShutdown());
+            Runtime.getRuntime().addShutdownHook(new AmforeasShutdown());
             
             if(demo){
                 l.debug("Loading demo configuration with memory databases");
@@ -101,7 +101,7 @@ public class JongoConfiguration {
         instance = null;
     }
     
-    private static Properties getProperties(JongoConfiguration conf){
+    private static Properties getProperties(AmforeasConfiguration conf){
         Properties prop;
         if(demo){
             prop = loadDemoProperties();
@@ -117,16 +117,16 @@ public class JongoConfiguration {
     
     /**
      * Loads the amforeas.properties from different locations using different methods.
-     * @param conf a JongoConfiguration instance used to obtain a ClassLoader.
+     * @param conf a AmforeasConfiguration instance used to obtain a ClassLoader.
      * @return an instance of {@link java.util.Properties} with the properties from the file.
      */
-    private static Properties loadProperties(JongoConfiguration conf){
+    private static Properties loadProperties(AmforeasConfiguration conf){
         Properties prop = new Properties();
-        InputStream in = JongoConfiguration.class.getClass().getResourceAsStream("/org/amforeas/amforeas.properties");
+        InputStream in = AmforeasConfiguration.class.getClass().getResourceAsStream("/org/amforeas/amforeas.properties");
 
         if(in == null){
             l.warn("Couldn't load configuration file /org/amforeas/amforeas.properties");
-            in = JongoConfiguration.class.getClass().getResourceAsStream("/amforeas.properties");
+            in = AmforeasConfiguration.class.getClass().getResourceAsStream("/amforeas.properties");
         }
         
         if(in == null){

@@ -36,7 +36,7 @@ import org.junit.runners.Suite;
     org.amforeas.jdbc.OrderParamTest.class,
     org.amforeas.sql.dialect.DialectsTestSuite.class
 })
-public class JongoOfflineTestSuite {
+public class AmforeasOfflineTestSuite {
 
     @BeforeClass
     public static void setUpClass() throws Exception {

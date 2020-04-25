@@ -22,13 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.Response;
 
-import amforeas.rest.xstream.JongoError;
-import amforeas.rest.xstream.JongoResponse;
-import amforeas.rest.xstream.JongoSuccess;
+import amforeas.rest.xstream.AmforeasError;
+import amforeas.rest.xstream.AmforeasResponse;
+import amforeas.rest.xstream.AmforeasSuccess;
 import amforeas.rest.xstream.Row;
 
 import org.apache.http.NameValuePair;
-import org.amforeas.mocks.JongoClient;
+import org.amforeas.mocks.AmforeasClient;
 import org.amforeas.mocks.UserMock;
 import static org.junit.Assert.*;
 
@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  */
 public class AppOnlineTests {
     
-    private static final JongoClient client = new JongoClient();
+    private static final AmforeasClient client = new AmforeasClient();
     
     public static void main(String[] args){
         AppOnlineTests app = new AppOnlineTests();
@@ -137,33 +137,33 @@ public class AppOnlineTests {
         
     }
     
-    private List<UserMock> doTestResponse(JongoResponse r, Response.Status expectedStatus, int expectedCount){
+    private List<UserMock> doTestResponse(AmforeasResponse r, Response.Status expectedStatus, int expectedCount){
         List<UserMock> users = new ArrayList<UserMock>();
         assertNotNull(r);
-        if(r instanceof JongoSuccess){
-            JongoSuccess s = (JongoSuccess)r;
+        if(r instanceof AmforeasSuccess){
+            AmforeasSuccess s = (AmforeasSuccess)r;
             List<Row> rows = s.getRows();
             assertEquals(rows.size(), expectedCount);
             for(Row row : rows){
                 users.add(UserMock.instanceOf(row.getCells()));
             }
         }else{
-            JongoError e = (JongoError)r;
+            AmforeasError e = (AmforeasError)r;
         }
         return users;
     }
     
-    private void doTestPagingResponse(JongoResponse r, Response.Status expectedStatus, int expectedCount, String col, String first, String last){
+    private void doTestPagingResponse(AmforeasResponse r, Response.Status expectedStatus, int expectedCount, String col, String first, String last){
         assertNotNull(r);
-        if(r instanceof JongoSuccess){
-            JongoSuccess s = (JongoSuccess)r;
+        if(r instanceof AmforeasSuccess){
+            AmforeasSuccess s = (AmforeasSuccess)r;
             List<Row> rows = s.getRows();
             int lastIndex = s.getRows().size() - 1;
             assertEquals(rows.size(), expectedCount);
             assertEquals(first, rows.get(0).getCells().get(col));
             assertEquals(last, rows.get(lastIndex).getCells().get(col));
         }else{
-            JongoError e = (JongoError)r;
+            AmforeasError e = (AmforeasError)r;
             assertFalse(e.isSuccess());
         }
     }

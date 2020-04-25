@@ -24,16 +24,16 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-import amforeas.config.JongoConfiguration;
-import amforeas.exceptions.JongoBadRequestException;
+import amforeas.config.AmforeasConfiguration;
+import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.jdbc.JDBCExecutor;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
 import amforeas.jdbc.StoredProcedureParam;
-import amforeas.rest.xstream.JongoError;
-import amforeas.rest.xstream.JongoHead;
-import amforeas.rest.xstream.JongoResponse;
-import amforeas.rest.xstream.JongoSuccess;
+import amforeas.rest.xstream.AmforeasError;
+import amforeas.rest.xstream.AmforeasHead;
+import amforeas.rest.xstream.AmforeasResponse;
+import amforeas.rest.xstream.AmforeasSuccess;
 import amforeas.rest.xstream.Row;
 import amforeas.sql.Delete;
 import amforeas.sql.DynamicFinder;
@@ -48,13 +48,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Controller for the RESTful operations. Serves as a backend for the {@link amforeas.JongoWS} implementations.
+ * Controller for the RESTful operations. Serves as a backend for the {@link amforeas.AmforeasWS} implementations.
  * @author Alejandro Ayuso 
  */
 public class RestController {
     
     private static final Logger l = LoggerFactory.getLogger(RestController.class);
-    private static final JongoConfiguration conf = JongoConfiguration.instanceOf();
+    private static final AmforeasConfiguration conf = AmforeasConfiguration.instanceOf();
     
     private final String alias;
     private final String database;
@@ -73,13 +73,13 @@ public class RestController {
     }
     
     /**
-     * Obtains a list of tables for the given database/schema and returns a {@link amforeas.rest.xstream.JongoSuccess}
+     * Obtains a list of tables for the given database/schema and returns a {@link amforeas.rest.xstream.AmforeasSuccess}
      * response.
-     * @return  a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
+     * @return  a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
      */
-    public JongoResponse getDatabaseMetadata(){
+    public AmforeasResponse getDatabaseMetadata(){
         l.debug("Obtaining metadata for " + database);
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         
         List<Row> results = null;
         try {
@@ -89,19 +89,19 @@ public class RestController {
         }
         
         if(response == null){
-            response = new JongoSuccess(database, results);
+            response = new AmforeasSuccess(database, results);
         }
         
         return response;
     }
     
     /**
-     * Obtains a list of columns for the given resource and returns a {@link amforeas.rest.xstream.JongoSuccess}
+     * Obtains a list of columns for the given resource and returns a {@link amforeas.rest.xstream.AmforeasSuccess}
      * response.
      * @param table name of the resource to obtain the metadata from
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
      */
-    public JongoResponse getResourceMetadata(final String table){
+    public AmforeasResponse getResourceMetadata(final String table){
         l.debug("Obtaining metadata for " + table);
         
         Table t;
@@ -109,12 +109,12 @@ public class RestController {
             t = new Table(database, table);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate select " + e.getMessage());
-            return new JongoError(table, Response.Status.BAD_REQUEST, e.getMessage());
+            return new AmforeasError(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Select select = new Select(t).setLimitParam(new LimitParam(1));
         
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         List<Row> results = null;
         try {
             results = JDBCExecutor.getTableMetaData(select);
@@ -123,11 +123,11 @@ public class RestController {
         }
         
         if(results == null && response == null){
-            response = new JongoError(table, Response.Status.NO_CONTENT);
+            response = new AmforeasError(table, Response.Status.NO_CONTENT);
         }
         
         if(response == null){
-            response = new JongoHead(table, results);
+            response = new AmforeasHead(table, results);
         }
         
         return response;
@@ -138,10 +138,10 @@ public class RestController {
      * @param table the table or view to query
      * @param limit a LimitParam object with the limit values
      * @param order order an OrderParam object with the ordering values.
-     * @return Returns a JongoResponse with the values of the resource. If the resource is not available an error
+     * @return Returns a AmforeasResponse with the values of the resource. If the resource is not available an error
      * if the table is empty, we return a SuccessResponse with no values.
      */
-    public JongoResponse getAllResources(final String table, final LimitParam limit, final OrderParam order){
+    public AmforeasResponse getAllResources(final String table, final LimitParam limit, final OrderParam order){
         l.debug("Geting all resources from {}.{}", alias, table);
         
         Table t;
@@ -149,12 +149,12 @@ public class RestController {
             t = new Table(database, table);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate select: {}", e.getMessage());
-            return new JongoError(table, Response.Status.BAD_REQUEST, e.getMessage());
+            return new AmforeasError(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         final Select s = new Select(t).setLimitParam(limit).setOrderParam(order);
         
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         List<Row> results = null;
         try{
             results = JDBCExecutor.get(s, true);
@@ -163,11 +163,11 @@ public class RestController {
         }
         
         if(results == null && response == null){
-            response = new JongoError(table, Response.Status.NOT_FOUND);
+            response = new AmforeasError(table, Response.Status.NOT_FOUND);
         }
         
         if(response == null){
-            response = new JongoSuccess(table, results);
+            response = new AmforeasSuccess(table, results);
         }
         
         return response;
@@ -180,9 +180,9 @@ public class RestController {
      * @param arg the value of the col.
      * @param limit a LimitParam object with the limit values
      * @param order an OrderParam object with the ordering values.
-     * @return Returns a JongoResponse with the values of the resource. If the resource is not available an error is returned.
+     * @return Returns a AmforeasResponse with the values of the resource. If the resource is not available an error is returned.
      */
-    public JongoResponse getResource(final String table, final String col, final String arg, final LimitParam limit, final OrderParam order){
+    public AmforeasResponse getResource(final String table, final String col, final String arg, final LimitParam limit, final OrderParam order){
         l.debug("Geting resource from " + alias + "." + table + " with id " + arg);
         
         Table t;
@@ -190,12 +190,12 @@ public class RestController {
             t = new Table(database, table);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate select " + e.getMessage());
-            return new JongoError(table, Response.Status.BAD_REQUEST, e.getMessage());
+            return new AmforeasError(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Select select = new Select(t).setParameter(new SelectParam(col, arg)).setLimitParam(limit).setOrderParam(order);
         
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         List<Row> results = null;
         try{
             results = JDBCExecutor.get(select, false);
@@ -204,11 +204,11 @@ public class RestController {
         }
         
         if((results == null || results.isEmpty()) && response == null){
-            response = new JongoError(table, Response.Status.NOT_FOUND);
+            response = new AmforeasError(table, Response.Status.NOT_FOUND);
         }
         
         if(response == null){
-            response = new JongoSuccess(table, results);
+            response = new AmforeasSuccess(table, results);
         }
         
         return response;
@@ -221,25 +221,25 @@ public class RestController {
      * @param arg the value of the col.
      * @param limit a LimitParam object with the limit values
      * @param order an OrderParam object with the ordering values.
-     * @return Returns a JongoResponse with the values of the resources. If the resources are not available an error is returned.
+     * @return Returns a AmforeasResponse with the values of the resources. If the resources are not available an error is returned.
      */
-    public JongoResponse findResources(final String table, final String col, final String arg, final LimitParam limit, final OrderParam order){
+    public AmforeasResponse findResources(final String table, final String col, final String arg, final LimitParam limit, final OrderParam order){
         l.debug("Geting resource from " + alias + "." + table + " with id " + arg);
         
         if(StringUtils.isEmpty(arg) || StringUtils.isEmpty(col))
-            return new JongoError(table, Response.Status.BAD_REQUEST, "Invalid argument");
+            return new AmforeasError(table, Response.Status.BAD_REQUEST, "Invalid argument");
         
         Table t;
         try{
             t = new Table(database, table);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate select " + e.getMessage());
-            return new JongoError(table, Response.Status.BAD_REQUEST, e.getMessage());
+            return new AmforeasError(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Select select = new Select(t).setParameter(new SelectParam(col, arg)).setLimitParam(limit).setOrderParam(order);
         
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         List<Row> results = null;
         try{
             results = JDBCExecutor.get(select, true);
@@ -248,11 +248,11 @@ public class RestController {
         }
         
         if((results == null || results.isEmpty()) && response == null){
-            response = new JongoError(table, Response.Status.NOT_FOUND);
+            response = new AmforeasError(table, Response.Status.NOT_FOUND);
         }
         
         if(response == null){
-            response = new JongoSuccess(table, results);
+            response = new AmforeasSuccess(table, results);
         }
         
         return response;
@@ -265,19 +265,19 @@ public class RestController {
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param jsonRequest JSON representation of the values we want to insert. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
      */
-    public JongoResponse insertResource(final String resource, final String pk, final String jsonRequest){
+    public AmforeasResponse insertResource(final String resource, final String pk, final String jsonRequest){
         l.debug("Insert new " + alias + "." + resource + " with JSON values: " + jsonRequest);
         
-        JongoResponse response;
+        AmforeasResponse response;
         
         try {
-            Map<String, String> params = JongoUtils.getParamsFromJSON(jsonRequest);
+            Map<String, String> params = AmforeasUtils.getParamsFromJSON(jsonRequest);
             response = insertResource(resource, pk, params);
-        } catch (JongoBadRequestException ex){
+        } catch (AmforeasBadRequestException ex){
             l.info("Failed to parse JSON arguments " + ex.getMessage());
-            response = new JongoError(resource, Response.Status.BAD_REQUEST, ex.getMessage());
+            response = new AmforeasError(resource, Response.Status.BAD_REQUEST, ex.getMessage());
         }
         
         return response;
@@ -289,18 +289,18 @@ public class RestController {
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param formParams a x-www-form-urlencoded representation of the values we want to insert.
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
      */
-    public JongoResponse insertResource(final String resource, final String pk, final Map<String, String> formParams){
+    public AmforeasResponse insertResource(final String resource, final String pk, final Map<String, String> formParams){
         l.debug("Insert new " + alias + "." + resource + " with values: " + formParams);
         
-        JongoResponse response;
+        AmforeasResponse response;
         Table t;
         try{
             t = new Table(database, resource);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate Insert " + e.getMessage());
-            return new JongoError(resource, Response.Status.BAD_REQUEST, e.getMessage());
+            return new AmforeasError(resource, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Insert insert = new Insert(t).setColumns(formParams);
@@ -313,10 +313,10 @@ public class RestController {
      * Calls the {@link amforeas.jdbc.JDBCExecutor} insert method with the 
      * given {@link amforeas.sql.Insert} instance and handles errors.
      * @param insert a {@link amforeas.sql.Insert} instance
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
      */
-    private JongoResponse insertResource(Insert insert){
-        JongoResponse response = null;
+    private AmforeasResponse insertResource(Insert insert){
+        AmforeasResponse response = null;
         int result = 0;
         try {
             result = JDBCExecutor.insert(insert);
@@ -325,13 +325,13 @@ public class RestController {
         }
         
         if(result == 0 && response == null){
-            response = new JongoError(null, Response.Status.NO_CONTENT);
+            response = new AmforeasError(null, Response.Status.NO_CONTENT);
         }
 
         if(response == null){
             List<Row> results = new ArrayList<Row>();
             results.add(new Row(0));
-            response = new JongoSuccess(null, results, Response.Status.CREATED);
+            response = new AmforeasSuccess(null, results, Response.Status.CREATED);
         }
         return response;
     }
@@ -343,11 +343,11 @@ public class RestController {
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param jsonRequest JSON representation of the values we want to update. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
      */
-    public JongoResponse updateResource(final String resource, final String pk, final String id, final String jsonRequest){
+    public AmforeasResponse updateResource(final String resource, final String pk, final String id, final String jsonRequest){
         l.debug("Update record " + id + " in table " + alias + "." + resource + " with values: " + jsonRequest);
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         
         List<Row> results = null;
         
@@ -356,23 +356,23 @@ public class RestController {
             t = new Table(database, resource, pk);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate update " + e.getMessage());
-            return new JongoError(resource, Response.Status.BAD_REQUEST, e.getMessage());
+            return new AmforeasError(resource, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Update update = new Update(t).setId(id);
         try {
-            update.setColumns(JongoUtils.getParamsFromJSON(jsonRequest));
+            update.setColumns(AmforeasUtils.getParamsFromJSON(jsonRequest));
             results = JDBCExecutor.update(update);
         } catch (Throwable ex){
             response = handleException(ex, resource);
         }
         
         if((results == null || results.isEmpty()) && response == null){
-            response =  new JongoError(resource, Response.Status.NO_CONTENT);
+            response =  new AmforeasError(resource, Response.Status.NO_CONTENT);
         }
 
         if(response == null){
-            response = new JongoSuccess(resource, results, Response.Status.OK);
+            response = new AmforeasSuccess(resource, results, Response.Status.OK);
         }
         
         return response;
@@ -384,9 +384,9 @@ public class RestController {
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param id unique pk identifier of the record to delete.
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
      */
-    public JongoResponse deleteResource(final String resource, final String pk, final String id){
+    public AmforeasResponse deleteResource(final String resource, final String pk, final String id){
         l.debug("Delete record " + id + " from table " + alias + "." + resource);
         
         Table t;
@@ -394,11 +394,11 @@ public class RestController {
             t = new Table(database, resource, pk);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate delete " + e.getMessage());
-            return new JongoError(resource, Response.Status.BAD_REQUEST, e.getMessage());
+            return new AmforeasError(resource, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Delete delete = new Delete(t).setId(id);
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         int result = 0;
         try {
             result = JDBCExecutor.delete(delete);
@@ -407,13 +407,13 @@ public class RestController {
         }
         
         if(result == 0 && response == null){
-            response = new JongoError(resource, Response.Status.NO_CONTENT);
+            response = new AmforeasError(resource, Response.Status.NO_CONTENT);
         }
 
         if(response == null){
             List<Row> results = new ArrayList<Row>();
             results.add(new Row(0));
-            response = new JongoSuccess(resource, results, Response.Status.OK);
+            response = new AmforeasSuccess(resource, results, Response.Status.OK);
         }
         return response;
     }
@@ -426,18 +426,18 @@ public class RestController {
      * @param values a list of arguments to be given to the {@link org.amforeas.jdbc.DynamicFinder}
      * @param limit a {@link amforeas.jdbc.LimitParam} instance.
      * @param order a {@link amforeas.jdbc.OrderParam} instance.
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
      */
-    public JongoResponse findByDynamicFinder(final String resource, final String query, final List<String> values, final LimitParam limit, final OrderParam order){
+    public AmforeasResponse findByDynamicFinder(final String resource, final String query, final List<String> values, final LimitParam limit, final OrderParam order){
         l.debug("Find resource from " + alias + "." + resource + " with " + query);
         
         if(values == null)
             throw new IllegalArgumentException("Invalid null argument");
         
         if(query == null)
-            return new JongoError(resource, Response.Status.BAD_REQUEST, "Invalid query");
+            return new AmforeasError(resource, Response.Status.BAD_REQUEST, "Invalid query");
         
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         List<Row> results = null;
         
         if(values.isEmpty()){
@@ -450,18 +450,18 @@ public class RestController {
         }else{
             try{
                 DynamicFinder df = DynamicFinder.valueOf(resource, query, values.toArray(new String []{}));
-                results = JDBCExecutor.find(database, df, limit, order, JongoUtils.parseValues(values));
+                results = JDBCExecutor.find(database, df, limit, order, AmforeasUtils.parseValues(values));
             } catch (Throwable ex){
                 response = handleException(ex, resource);
             }
         }
         
         if((results == null || results.isEmpty()) && response == null){
-            response = new JongoError(resource, Response.Status.NOT_FOUND, "No results for " + query);
+            response = new AmforeasError(resource, Response.Status.NOT_FOUND, "No results for " + query);
         }
         
         if(response == null){
-            response =  new JongoSuccess(resource, results);
+            response =  new AmforeasSuccess(resource, results);
         }
         
         return response;
@@ -476,19 +476,19 @@ public class RestController {
      *  {"value":2010, "name":"year", "outParameter":false, "type":"INTEGER", "index":1},
      *  {"name":"out_total", "outParameter":true, "type":"INTEGER", "index":2}
      * ]
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
      */
-    public JongoResponse executeStoredProcedure(final String query, final String json){
+    public AmforeasResponse executeStoredProcedure(final String query, final String json){
         l.debug("Executing Stored Procedure " + query);
         
         List<StoredProcedureParam> params;
         try {
-            params = JongoUtils.getStoredProcedureParamsFromJSON(json);
-        } catch (JongoBadRequestException ex) {
+            params = AmforeasUtils.getStoredProcedureParamsFromJSON(json);
+        } catch (AmforeasBadRequestException ex) {
             return handleException(ex, query);
         }
         
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         List<Row> results = null;
         try {
             results = JDBCExecutor.executeQuery(database, query, params);
@@ -497,23 +497,23 @@ public class RestController {
         }
         
         if(response == null){
-            response = new JongoSuccess(query, results);
+            response = new AmforeasSuccess(query, results);
         }
         return response;
     }
     
     /**
      * Method in charge of handling the possible exceptions thrown by the JDBCExecutor or any other
-     * operation. The current implementation handles SQLException, JongoBadRequestException &
+     * operation. The current implementation handles SQLException, AmforeasBadRequestException &
      * IllegalArgumentException to return different errors. For any other exception 
-     * a {@link amforeas.rest.xstream.JongoError} with a 500 status code is returned.
+     * a {@link amforeas.rest.xstream.AmforeasError} with a 500 status code is returned.
      * @param t the exception to handle.
      * @param resource the name of the resource which is throwing the exception.
-     * @return a {@link amforeas.rest.xstream.JongoError} with different error codes depending
+     * @return a {@link amforeas.rest.xstream.AmforeasError} with different error codes depending
      * on the exception being handled. If we can't handle the exception, a 500 error code is used.
      */
-    private JongoResponse handleException(final Throwable t, final String resource){
-        JongoResponse response;
+    private AmforeasResponse handleException(final Throwable t, final String resource){
+        AmforeasResponse response;
         StringBuilder b;
         if(t instanceof SQLException){
             SQLException ex = (SQLException)t;
@@ -525,22 +525,22 @@ public class RestController {
             b.append(ex.getErrorCode());
             b.append("]");
             l.debug(b.toString());
-            response = new JongoError(resource, ex);
-        }else if(t instanceof JongoBadRequestException){
-            b = new StringBuilder("Received a JongoBadRequestException ");
+            response = new AmforeasError(resource, ex);
+        }else if(t instanceof AmforeasBadRequestException){
+            b = new StringBuilder("Received a AmforeasBadRequestException ");
             b.append(t.getMessage());
             l.debug(b.toString());
-            response = new JongoError(resource, Response.Status.BAD_REQUEST, t.getMessage());
+            response = new AmforeasError(resource, Response.Status.BAD_REQUEST, t.getMessage());
         }else if(t instanceof IllegalArgumentException){
             b = new StringBuilder("Received an IllegalArgumentException ");
             b.append(t.getMessage());
             l.debug(b.toString());
-            response = new JongoError(resource, Response.Status.BAD_REQUEST, t.getMessage());
+            response = new AmforeasError(resource, Response.Status.BAD_REQUEST, t.getMessage());
         }else{
             b = new StringBuilder("Received an Unhandled Exception ");
             b.append(t.getMessage());
             l.error(b.toString());
-            response = new JongoError(resource, Response.Status.INTERNAL_SERVER_ERROR);
+            response = new AmforeasError(resource, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return response;
     }

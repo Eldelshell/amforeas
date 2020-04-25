@@ -26,8 +26,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import amforeas.jdbc.StoredProcedureParam;
-import amforeas.rest.xstream.JongoError;
-import amforeas.rest.xstream.JongoSuccess;
+import amforeas.rest.xstream.AmforeasError;
+import amforeas.rest.xstream.AmforeasSuccess;
 import amforeas.rest.xstream.Row;
 import junit.framework.Assert;
 import org.codehaus.jackson.map.AnnotationIntrospector;
@@ -36,7 +36,7 @@ import org.codehaus.jackson.map.ObjectWriter;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.type.TypeReference;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
-import org.amforeas.mocks.JongoMapConverter;
+import org.amforeas.mocks.AmforeasMapConverter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -71,7 +71,7 @@ public class XmlXstreamTest {
 //        
 //        rows.add(new Row(1, m1));
 //        
-//        JongoSuccess s = new JongoSuccess("test", rows);
+//        AmforeasSuccess s = new AmforeasSuccess("test", rows);
 //        System.out.println(s.toXML());
 //        s = successFromXML(s.toXML());
 //        Assert.assertTrue(s.isSuccess());
@@ -79,33 +79,33 @@ public class XmlXstreamTest {
 //    
 //    @Test
 //    public void testErrorToXML(){
-//        JongoError s = new JongoError("grrr", 500, "grrrr error");
+//        AmforeasError s = new AmforeasError("grrr", 500, "grrrr error");
 //        System.out.println(s.toXML());
 //        s = errorFromXML(s.toXML());
 //        Assert.assertFalse(s.isSuccess());
-//        s = new JongoError("grrr", new SQLException("grrr", "GR101", 54333));
+//        s = new AmforeasError("grrr", new SQLException("grrr", "GR101", 54333));
 //        System.out.println(s.toXML());
 //        s = errorFromXML(s.toXML());
 //        Assert.assertFalse(s.isSuccess());
 //    }
     
-    public static JongoSuccess successFromXML(final String xml){
+    public static AmforeasSuccess successFromXML(final String xml){
         XStream xStreamInstance = new XStream();
         xStreamInstance.setMode(XStream.NO_REFERENCES);
         xStreamInstance.autodetectAnnotations(false);
-        xStreamInstance.alias("response", JongoSuccess.class);
+        xStreamInstance.alias("response", AmforeasSuccess.class);
         xStreamInstance.alias("row", Row.class);
-        xStreamInstance.registerConverter(new JongoMapConverter());
+        xStreamInstance.registerConverter(new AmforeasMapConverter());
         xStreamInstance.aliasAttribute(Row.class, "roi", "roi");
-        return (JongoSuccess)xStreamInstance.fromXML(xml);
+        return (AmforeasSuccess)xStreamInstance.fromXML(xml);
     }
     
-    public static JongoError errorFromXML(final String xml){
+    public static AmforeasError errorFromXML(final String xml){
         XStream xStreamInstance = new XStream();
         xStreamInstance.setMode(XStream.NO_REFERENCES);
         xStreamInstance.autodetectAnnotations(false);
-        xStreamInstance.alias("response", JongoError.class);
-        return (JongoError)xStreamInstance.fromXML(xml);
+        xStreamInstance.alias("response", AmforeasError.class);
+        return (AmforeasError)xStreamInstance.fromXML(xml);
     }
     
     @Test
@@ -120,7 +120,7 @@ public class XmlXstreamTest {
         m1.put("id", "2");m1.put("name", "test2");m1.put("age", "526");
         
         rows.add(new Row(1, m1));
-        JongoSuccess s = new JongoSuccess("test", rows);
+        AmforeasSuccess s = new AmforeasSuccess("test", rows);
         
         List<StoredProcedureParam> ps = new ArrayList<StoredProcedureParam>();
         ps.add(new StoredProcedureParam("car_id", "1", false, 1, "INTEGER"));

@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.sql.DataSource;
 
 import amforeas.config.DatabaseConfiguration;
-import amforeas.config.JongoConfiguration;
+import amforeas.config.AmforeasConfiguration;
 
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class JDBCConnectionFactory {
 
     private static final Logger l = LoggerFactory.getLogger(JDBCConnectionFactory.class);
-    private static final JongoConfiguration configuration = JongoConfiguration.instanceOf();
+    private static final AmforeasConfiguration configuration = AmforeasConfiguration.instanceOf();
     
     private final Map<String, GenericObjectPool> connectionPool = new ConcurrentHashMap<String,GenericObjectPool>();
     

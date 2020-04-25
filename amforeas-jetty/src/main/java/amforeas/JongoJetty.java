@@ -32,9 +32,9 @@ import org.xml.sax.SAXException;
  * Main class of Amforeas. Reads configuration file and starts jetty embedded.
  * @author Alejandro Ayuso
  */
-public class JongoJetty{
+public class AmforeasJetty{
     
-    private static final Logger l = LoggerFactory.getLogger(JongoJetty.class);
+    private static final Logger l = LoggerFactory.getLogger(AmforeasJetty.class);
     
     public static void main(String[] args) throws Exception {
         l.debug("Load Jetty Configuration");

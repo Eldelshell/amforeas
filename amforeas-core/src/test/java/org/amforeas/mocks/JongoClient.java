@@ -26,7 +26,7 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import amforeas.rest.xstream.JongoResponse;
+import amforeas.rest.xstream.AmforeasResponse;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -36,32 +36,32 @@ import org.amforeas.XmlXstreamTest;
  *
  * @author Alejandro Ayuso 
  */
-public class JongoClient {
+public class AmforeasClient {
     
     private static final String jongoUrl = "http://localhost:8080/amforeas/demo1/";
     
-    public JongoResponse doGET(final String url){
+    public AmforeasResponse doGET(final String url){
         return doRequest(url, "GET");
     }
     
-    public JongoResponse doDELETE(final String url){
+    public AmforeasResponse doDELETE(final String url){
         return doRequest(url, "DELETE");
     }
     
-    public JongoResponse doPUT(final String url, final String jsonParameters){
+    public AmforeasResponse doPUT(final String url, final String jsonParameters){
         return doRequest(url, "PUT", jsonParameters);
     }
     
-    public JongoResponse doPOST(final String url, final String jsonParameters){
+    public AmforeasResponse doPOST(final String url, final String jsonParameters){
         return doRequest(url, "POST", jsonParameters);
     }
     
-    public JongoResponse doPOST(final String url, final List<NameValuePair> parameters){
+    public AmforeasResponse doPOST(final String url, final List<NameValuePair> parameters){
         return doRequest(url, parameters);
     }
     
-    private JongoResponse doRequest(final String url, final String method){
-        JongoResponse response = null;
+    private AmforeasResponse doRequest(final String url, final String method){
+        AmforeasResponse response = null;
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(jongoUrl + url).openConnection();
             con.setRequestMethod(method);
@@ -91,8 +91,8 @@ public class JongoClient {
         return response;
     }
     
-    private JongoResponse doRequest(final String url, final String method, final String jsonParameters){
-        JongoResponse response = null;
+    private AmforeasResponse doRequest(final String url, final String method, final String jsonParameters){
+        AmforeasResponse response = null;
         
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(jongoUrl + url).openConnection();
@@ -137,9 +137,9 @@ public class JongoClient {
         return response;
     }
     
-    private JongoResponse doRequest(final String url, final List<NameValuePair> parameters){
+    private AmforeasResponse doRequest(final String url, final List<NameValuePair> parameters){
         final String urlParameters = URLEncodedUtils.format(parameters, "UTF-8");
-        JongoResponse response = null;
+        AmforeasResponse response = null;
         
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(jongoUrl + url).openConnection();

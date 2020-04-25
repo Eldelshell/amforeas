@@ -21,7 +21,7 @@ package org.amforeas;
 import java.util.HashMap;
 import java.util.Map;
 
-import amforeas.exceptions.JongoBadRequestException;
+import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
 import amforeas.sql.DynamicFinder;
@@ -221,7 +221,7 @@ public class DynamicFinderTest {
     }
     
     @Test
-    public void testLimitAndOrder_findAllByDateBetweenAndMarketEquals() throws JongoBadRequestException{
+    public void testLimitAndOrder_findAllByDateBetweenAndMarketEquals() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         LimitParam l = new LimitParam();
         OrderParam o = new OrderParam();
@@ -235,56 +235,56 @@ public class DynamicFinderTest {
         assertEquals(ora_query, ora_result);
     }
     
-    @Test(expected=JongoBadRequestException.class)
-    public void test_findAllByAgeGreaterTahnEquals() throws JongoBadRequestException{
+    @Test(expected=AmforeasBadRequestException.class)
+    public void test_findAllByAgeGreaterTahnEquals() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         doTest(dynamicQuery);
     }
     
-    @Test(expected=JongoBadRequestException.class)
-    public void test_findAllByAgeGreateroThanEqualos() throws JongoBadRequestException{
+    @Test(expected=AmforeasBadRequestException.class)
+    public void test_findAllByAgeGreateroThanEqualos() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         doTest(dynamicQuery);
     }
     
-    @Test(expected=JongoBadRequestException.class)
-    public void test_findAllByAgeGreateroThanEquals() throws JongoBadRequestException{
+    @Test(expected=AmforeasBadRequestException.class)
+    public void test_findAllByAgeGreateroThanEquals() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         doTest(dynamicQuery);
     }
     
-    @Test(expected=JongoBadRequestException.class)
-    public void test_findAllByCreditIsNall() throws JongoBadRequestException{
+    @Test(expected=AmforeasBadRequestException.class)
+    public void test_findAllByCreditIsNall() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         doTest(dynamicQuery);
     }
     
-    @Test(expected=JongoBadRequestException.class)
-    public void test_findAllByCreditIsNatNull() throws JongoBadRequestException{
+    @Test(expected=AmforeasBadRequestException.class)
+    public void test_findAllByCreditIsNatNull() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         doTest(dynamicQuery);
     }
     
-    @Test(expected=JongoBadRequestException.class)
-    public void test_findAllByCreditAndoAgeEquals() throws JongoBadRequestException{
+    @Test(expected=AmforeasBadRequestException.class)
+    public void test_findAllByCreditAndoAgeEquals() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         doTest(dynamicQuery);
     }
     
-    @Test(expected=JongoBadRequestException.class)
-    public void test_findAllByCreditEqualsAndoAgeEquals() throws JongoBadRequestException{
+    @Test(expected=AmforeasBadRequestException.class)
+    public void test_findAllByCreditEqualsAndoAgeEquals() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         doTest(dynamicQuery);
     }
     
-    @Test(expected=JongoBadRequestException.class)
-    public void test_findAllByCreditOxAgeEquals() throws JongoBadRequestException{
+    @Test(expected=AmforeasBadRequestException.class)
+    public void test_findAllByCreditOxAgeEquals() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         doTest(dynamicQuery);
     }
     
-    @Test(expected=JongoBadRequestException.class)
-    public void test_findAllByCreditEqualsOxAgeEquals() throws JongoBadRequestException{
+    @Test(expected=AmforeasBadRequestException.class)
+    public void test_findAllByCreditEqualsOxAgeEquals() throws AmforeasBadRequestException{
         String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
         doTest(dynamicQuery);
     }
@@ -293,13 +293,13 @@ public class DynamicFinderTest {
         try {
             DynamicFinder d = DynamicFinder.valueOf("sometable", dynamicQuery);
             return d.getSql().equalsIgnoreCase(query);
-        } catch (JongoBadRequestException ex) {
+        } catch (AmforeasBadRequestException ex) {
             System.out.print(ex.getMessage());
         }
         return false;
     }
     
-    private void doTest(String dynamicQuery) throws JongoBadRequestException {
+    private void doTest(String dynamicQuery) throws AmforeasBadRequestException {
         DynamicFinder d = DynamicFinder.valueOf("sometable", dynamicQuery);
     }
     

@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
  * Public RESTful webservice which allows CRUD operations on a given resource.
  * @author Alejandro Ayuso 
  */
-public interface JongoWS {
+public interface AmforeasWS {
     
     /**
      * REST gateway for database metadata
@@ -91,7 +91,7 @@ public interface JongoWS {
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param jsonRequest JSON representation of the values we want to insert. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} response with the number of records inserted and a
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} response with the number of records inserted and a
      * CREATED HTTP Code.
      */
     public Response insert(String database, String resource, String pk, String jsonRequest);
@@ -103,7 +103,7 @@ public interface JongoWS {
      * @param resource name of the resource we want to access
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param formParams a x-www-form-urlencoded representation of the values we want to insert.
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} response with the number of records inserted and a
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} response with the number of records inserted and a
      * CREATED HTTP Code. If an error occurs a BAD REQUEST or NO CONTENT errors are returned.
      */
     public Response insert(String database, String resource, String pk, MultivaluedMap<String, String> formParams);
@@ -116,7 +116,7 @@ public interface JongoWS {
      * @param id the primary key value of the record we want to update.
      * @param jsonRequest JSON representation of the values we want to insert. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} response with the updated record.
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} response with the updated record.
      */
     public Response update(String database, String resource, String pk, String id, String jsonRequest);
     
@@ -126,7 +126,7 @@ public interface JongoWS {
      * @param resource name of the resource we want to access
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param id the primary key value of the record we want to delete.
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} response with the number of records deleted and a
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} response with the number of records deleted and a
      * OK HTTP Code. If an error occurs a BAD REQUEST or NO CONTENT errors are returned.
      */
     public Response delete(String database, String resource, String pk, String id);

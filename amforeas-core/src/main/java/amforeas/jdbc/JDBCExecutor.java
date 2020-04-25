@@ -25,10 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import amforeas.JongoUtils;
+import amforeas.AmforeasUtils;
 import amforeas.config.DatabaseConfiguration;
-import amforeas.config.JongoConfiguration;
-import amforeas.handler.JongoResultSetHandler;
+import amforeas.config.AmforeasConfiguration;
+import amforeas.handler.AmforeasResultSetHandler;
 import amforeas.handler.ResultSetMetaDataHandler;
 import amforeas.rest.xstream.Row;
 import amforeas.sql.*;
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class JDBCExecutor {
 
     private static final Logger l = LoggerFactory.getLogger(JDBCExecutor.class);
-    private static final JongoConfiguration conf = JongoConfiguration.instanceOf();
+    private static final AmforeasConfiguration conf = AmforeasConfiguration.instanceOf();
     
     /**
      * Executes the given {@link amforeas.sql.Delete} object
@@ -63,7 +63,7 @@ public class JDBCExecutor {
         Dialect dialect = DialectFactory.getDialect(dbconf);
         
         try {
-            int deleted = run.update(dialect.toStatementString(delete), JongoUtils.parseValue(delete.getId()));
+            int deleted = run.update(dialect.toStatementString(delete), AmforeasUtils.parseValue(delete.getId()));
             l.debug("Deleted " + deleted + " records.");
             return deleted;
         } catch (SQLException ex) {
@@ -91,7 +91,7 @@ public class JDBCExecutor {
             if(insert.getColumns().isEmpty())
                 inserted = run.update(dialect.toStatementString(insert));
             else
-                inserted = run.update(dialect.toStatementString(insert), JongoUtils.parseValues(insert.getValues()));
+                inserted = run.update(dialect.toStatementString(insert), AmforeasUtils.parseValues(insert.getValues()));
             
             l.debug("Inserted " + inserted + " records.");
             return inserted;
@@ -117,7 +117,7 @@ public class JDBCExecutor {
         
         List<Row> results = new ArrayList<Row>();
         try {
-            int ret = run.update(dialect.toStatementString(update), JongoUtils.parseValues(update.getParameters()));
+            int ret = run.update(dialect.toStatementString(update), AmforeasUtils.parseValues(update.getParameters()));
             if(ret != 0){
                 results = get(update.getSelect(), false);
             }
@@ -137,7 +137,7 @@ public class JDBCExecutor {
      * @return a List of {@link amforeas.rest.xstream.Row} with the records found by the statement.
      * @throws SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
-     * @see amforeas.handler.JongoResultSetHandler
+     * @see amforeas.handler.AmforeasResultSetHandler
      */
     public static List<Row> get(final Select select, final boolean allRecords) throws SQLException {
         l.debug(select.toString());
@@ -147,7 +147,7 @@ public class JDBCExecutor {
         QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
         Dialect dialect = DialectFactory.getDialect(dbconf);
         
-        ResultSetHandler<List<Row>> res = new JongoResultSetHandler(allRecords);
+        ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(allRecords);
         
         if(select.isAllRecords()){
             try {
@@ -158,7 +158,7 @@ public class JDBCExecutor {
             }
         }else{
             try {
-                response = run.query(dialect.toStatementString(select), res, JongoUtils.parseValue(select.getParameter().getValue()));
+                response = run.query(dialect.toStatementString(select), res, AmforeasUtils.parseValue(select.getParameter().getValue()));
             } catch (SQLException ex) {
                 l.debug(ex.getMessage());
                 throw ex;
@@ -182,14 +182,14 @@ public class JDBCExecutor {
      */
     public static List<Row> find(final String database, final DynamicFinder df, final LimitParam limit, final OrderParam order, Object... params) throws SQLException{
         l.debug(df.getSql());
-        l.debug(JongoUtils.varargToString(params));
+        l.debug(AmforeasUtils.varargToString(params));
         
         DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(database);
         Dialect dialect = DialectFactory.getDialect(dbconf);
         String query = dialect.toStatementString(df, limit, order);
         
         QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
-        ResultSetHandler<List<Row>> res = new JongoResultSetHandler(true);
+        ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(true);
         try {
             List<Row> results = run.query(query, res, params);
             l.debug("Received " + results.size() + " results.");
@@ -243,7 +243,7 @@ public class JDBCExecutor {
         
         DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(database);
         QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
-        final String call = JongoUtils.getCallableStatementCallString(queryName, params.size());
+        final String call = AmforeasUtils.getCallableStatementCallString(queryName, params.size());
         List<Row> rows = new ArrayList<Row>();
         
         Connection conn = null;
@@ -262,7 +262,7 @@ public class JDBCExecutor {
             if(cs.execute()){
                 l.debug("Got a result set " + queryName);
                 ResultSet rs = cs.getResultSet();
-                JongoResultSetHandler handler = new JongoResultSetHandler(true);
+                AmforeasResultSetHandler handler = new AmforeasResultSetHandler(true);
                 rows = handler.handle(rs);
             }else if(!outParams.isEmpty()){
                 l.debug("No result set, but we are expecting OUT values from " + queryName);
@@ -308,7 +308,7 @@ public class JDBCExecutor {
 //        if(!conf.allowListTables()){
 //            throw JongoJDBCExceptionFactory.getException(database, "Cant read database metadata. Access Denied", JongoJDBCException.ILLEGAL_READ_CODE);
 //        }
-        ResultSetHandler<List<Row>> res = new JongoResultSetHandler(true);
+        ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(true);
         DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(database);
         Dialect dialect = DialectFactory.getDialect(dbconf);
         QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
@@ -349,13 +349,13 @@ public class JDBCExecutor {
 //                    case Types.NUMERIC:
                         cs.setInt(i++, Integer.valueOf(p.getValue())); break;
                     case Types.DATE:
-                        cs.setDate(i++, (Date)JongoUtils.parseValue(p.getValue())); break;
+                        cs.setDate(i++, (Date)AmforeasUtils.parseValue(p.getValue())); break;
                     case Types.TIME:
-                        cs.setTime(i++, (Time)JongoUtils.parseValue(p.getValue())); break;
+                        cs.setTime(i++, (Time)AmforeasUtils.parseValue(p.getValue())); break;
                     case Types.TIMESTAMP:
-                        cs.setTimestamp(i++, (Timestamp)JongoUtils.parseValue(p.getValue())); break;
+                        cs.setTimestamp(i++, (Timestamp)AmforeasUtils.parseValue(p.getValue())); break;
                     case Types.DECIMAL:
-                        cs.setBigDecimal(i++, (BigDecimal)JongoUtils.parseValue(p.getValue())); break;
+                        cs.setBigDecimal(i++, (BigDecimal)AmforeasUtils.parseValue(p.getValue())); break;
                     case Types.DOUBLE:
                         cs.setDouble(i++, Double.valueOf(p.getValue())); break;
                     case Types.FLOAT:

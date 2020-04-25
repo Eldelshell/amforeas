@@ -21,7 +21,7 @@ import java.lang.reflect.Field;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import amforeas.exceptions.JongoBadRequestException;
+import amforeas.exceptions.AmforeasBadRequestException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class StoredProcedureParam {
         this.type = type;
     }
     
-    public StoredProcedureParam(String name, String value, boolean outParameter, Integer index, String type) throws JongoBadRequestException {
+    public StoredProcedureParam(String name, String value, boolean outParameter, Integer index, String type) throws AmforeasBadRequestException {
         this.value = value;
         this.name = name;
         this.outParameter = outParameter;
@@ -92,7 +92,7 @@ public class StoredProcedureParam {
         this.outParameter = outParameter;
     }
 
-    public void setType(String type) throws JongoBadRequestException {
+    public void setType(String type) throws AmforeasBadRequestException {
         this.type = getSqlType(type);
     }
 
@@ -100,7 +100,7 @@ public class StoredProcedureParam {
         this.value = value;
     }
     
-    public static synchronized Integer getSqlType(final String type) throws JongoBadRequestException{
+    public static synchronized Integer getSqlType(final String type) throws AmforeasBadRequestException{
         l.debug("Parsing SQL Type from " + type);
         Integer ret = null;
         for(Field f : fields){
@@ -109,7 +109,7 @@ public class StoredProcedureParam {
                     ret = f.getInt(java.sql.Types.class);
                 } catch (IllegalArgumentException ex) {
                     l.error(ex.getMessage());
-                    throw new JongoBadRequestException("Invalid SQL Type: " + type + ". More info at http://docs.oracle.com/javase/6/docs/api/java/sql/Types.html");
+                    throw new AmforeasBadRequestException("Invalid SQL Type: " + type + ". More info at http://docs.oracle.com/javase/6/docs/api/java/sql/Types.html");
                 } catch (IllegalAccessException ex) {
                     l.error(ex.getMessage()); //this should't happen :)
                 }

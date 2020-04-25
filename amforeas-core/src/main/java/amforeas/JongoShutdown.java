@@ -27,11 +27,11 @@ import org.slf4j.LoggerFactory;
  * Executes a JDBCExecutor.shutdown() in an independent thread.
  * @author Alejandro Ayuso 
  */
-public class JongoShutdown extends Thread{
+public class AmforeasShutdown extends Thread{
     
-    private static final Logger l = LoggerFactory.getLogger(JongoShutdown.class);
+    private static final Logger l = LoggerFactory.getLogger(AmforeasShutdown.class);
     
-    public JongoShutdown(){
+    public AmforeasShutdown(){
         super();
     }
     

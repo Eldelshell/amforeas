@@ -19,26 +19,26 @@ package amforeas.exceptions;
 
 import javax.ws.rs.core.Response;
 
-import amforeas.rest.xstream.JongoError;
-import amforeas.rest.xstream.JongoResponse;
+import amforeas.rest.xstream.AmforeasError;
+import amforeas.rest.xstream.AmforeasResponse;
 
 /**
  * Exception used to indicate that the client request is somehow broken. This exception produces
- * a {@link amforeas.rest.xstream.JongoError} with a 400 HTTP error code.
+ * a {@link amforeas.rest.xstream.AmforeasError} with a 400 HTTP error code.
  * @author Alejandro Ayuso 
  */
-public class JongoBadRequestException extends Exception {
+public class AmforeasBadRequestException extends Exception {
     
     private static final long serialVersionUID = 1L;
     
     private String resource;
     
-    public JongoBadRequestException(String msg){
+    public AmforeasBadRequestException(String msg){
         super(msg);
         this.resource = "unknown";
     }
     
-    public JongoBadRequestException(String msg, String resource){
+    public AmforeasBadRequestException(String msg, String resource){
         super(msg);
         this.resource = resource;
     }
@@ -48,7 +48,7 @@ public class JongoBadRequestException extends Exception {
      * @return a jersey ready response to be sent by the container.
      */
     public Response getResponse(){
-        JongoResponse error = new JongoError(this.resource, Response.Status.BAD_REQUEST.getStatusCode(), this.getMessage());
+        AmforeasResponse error = new AmforeasError(this.resource, Response.Status.BAD_REQUEST.getStatusCode(), this.getMessage());
         return error.getResponse();
     }
 

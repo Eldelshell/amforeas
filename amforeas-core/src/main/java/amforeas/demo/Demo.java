@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import amforeas.JongoUtils;
+import amforeas.AmforeasUtils;
 import amforeas.config.DatabaseConfiguration;
 import amforeas.enums.JDBCDriver;
 import amforeas.jdbc.JDBCConnectionFactory;
@@ -72,8 +72,8 @@ public class Demo {
         l.info("Generating Demo Data in database {}", database);
         
         final String insertAuthQuery = "INSERT INTO jongo_auth (email, password) VALUES (?,?)";
-        update(run, insertAuthQuery, "a@a.com", JongoUtils.getHashedPassword("123456"));
-        update(run, insertAuthQuery, "a@b.com", JongoUtils.getHashedPassword("This is a test"));
+        update(run, insertAuthQuery, "a@a.com", AmforeasUtils.getHashedPassword("123456"));
+        update(run, insertAuthQuery, "a@b.com", AmforeasUtils.getHashedPassword("This is a test"));
 
         final String insertUserQuery = "INSERT INTO users (name, age, birthday, credit) VALUES (?,?,?,?)";
         update(run, insertUserQuery, "foo", 30, "1982-12-13", 32.5);

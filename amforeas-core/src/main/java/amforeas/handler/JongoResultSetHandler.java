@@ -40,11 +40,11 @@ import org.slf4j.LoggerFactory;
  * Handles a ResultSet and converts it to a List of {@link amforeas.rest.xstream.Row}
  * @author Alejandro Ayuso 
  */
-public class JongoResultSetHandler implements ResultSetHandler<List<Row>> {
+public class AmforeasResultSetHandler implements ResultSetHandler<List<Row>> {
     
     private final boolean all;
     
-    private static final Logger l = LoggerFactory.getLogger(JongoResultSetHandler.class);
+    private static final Logger l = LoggerFactory.getLogger(AmforeasResultSetHandler.class);
     private static final DateTimeFormatter dateTimeFTR = ISODateTimeFormat.dateTime();
     private static final DateTimeFormatter dateFTR = ISODateTimeFormat.date();
     private static final DateTimeFormatter timeFTR = ISODateTimeFormat.time();
@@ -54,7 +54,7 @@ public class JongoResultSetHandler implements ResultSetHandler<List<Row>> {
      * @param all if true, the handler will process all results in the {@linkplain java.sql.ResultSet}
      * if false, it will only process the first result.
      */
-    public JongoResultSetHandler(final boolean all){
+    public AmforeasResultSetHandler(final boolean all){
         super();
         this.all = all;
     }

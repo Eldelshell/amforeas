@@ -270,14 +270,14 @@ public class Usage {
     }
     
     /**
-     * Generates a {@link amforeas.rest.xstream.JongoSuccess} with the current values of the singleton.
-     * @return a {@link amforeas.rest.xstream.JongoSuccess} response.
+     * Generates a {@link amforeas.rest.xstream.AmforeasSuccess} with the current values of the singleton.
+     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} response.
      */
-    public JongoResponse getUsageData(){
+    public AmforeasResponse getUsageData(){
         Map<String, String> cells = generateCells();
         List<Row> rows = new ArrayList<Row>();
         rows.add(new Row(1, cells));
-        JongoResponse res = new JongoSuccess("stats", rows);
+        AmforeasResponse res = new AmforeasSuccess("stats", rows);
         return res;
     }
 }

@@ -29,7 +29,7 @@ import javax.ws.rs.core.Response;
  * @see com.sun.jersey.api.container.filter.GZIPContentEncodingFilter
  * @author Alejandro Ayuso 
  */
-public interface JongoFormatFilter {
+public interface AmforeasFormatFilter {
     
     /**
      * Gives a different format to a response.

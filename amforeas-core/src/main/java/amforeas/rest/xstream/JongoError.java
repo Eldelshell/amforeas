@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Alejandro Ayuso 
  */
 @XmlRootElement(name="response")
-public class JongoError implements JongoResponse {
+public class AmforeasError implements AmforeasResponse {
     
     private String resource;
     private boolean success = false;
@@ -37,14 +37,14 @@ public class JongoError implements JongoResponse {
     private String sqlState;
     private Integer sqlCode;
     
-    public JongoError(){}
+    public AmforeasError(){}
 
     /**
-     * Instantiates a new JongoError for a given resource and HTTP code.
+     * Instantiates a new AmforeasError for a given resource and HTTP code.
      * @param resource the name of the resource being accessed
      * @param status a HTTP code to give to the client
      */
-    public JongoError(String resource, Response.Status status) {
+    public AmforeasError(String resource, Response.Status status) {
         this.resource = resource;
         this.status = status.getStatusCode();
         this.message = status.getReasonPhrase();
@@ -53,12 +53,12 @@ public class JongoError implements JongoResponse {
     }
 
     /**
-     * Instantiates a new JongoError for a given resource, error code and message.
+     * Instantiates a new AmforeasError for a given resource, error code and message.
      * @param resource the name of the resource being accessed
      * @param errorCode a HTTP code to give to the client
      * @param message a message explaining the error
      */
-    public JongoError(String resource, Integer errorCode, String message) {
+    public AmforeasError(String resource, Integer errorCode, String message) {
         this.resource = resource;
         this.status = errorCode;
         this.message = message;
@@ -67,12 +67,12 @@ public class JongoError implements JongoResponse {
     }
     
     /**
-     * Instantiates a new JongoError for a given resource, error code and message.
+     * Instantiates a new AmforeasError for a given resource, error code and message.
      * @param resource the name of the resource being accessed
      * @param status a HTTP code to give to the client
      * @param message a message explaining the error
      */
-    public JongoError(String resource, Response.Status status, String message) {
+    public AmforeasError(String resource, Response.Status status, String message) {
         this.resource = resource;
         this.status = status.getStatusCode();
         this.message = message;
@@ -81,12 +81,12 @@ public class JongoError implements JongoResponse {
     }
     
     /**
-     * Special instance of a JongoError for SQLExceptions where we return the
+     * Special instance of a AmforeasError for SQLExceptions where we return the
      * driver SqlState and SqlCode with a 400 HTTP code.
      * @param resource the name of the resource being accessed
      * @param ex the exception thrown by the driver.
      */
-    public JongoError(final String resource, final SQLException ex){
+    public AmforeasError(final String resource, final SQLException ex){
         this.resource = resource;
         this.status = 400;
         this.message = ex.getMessage();

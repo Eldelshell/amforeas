@@ -29,8 +29,8 @@ import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.DatatypeConverter;
 
-import amforeas.config.JongoConfiguration;
-import amforeas.exceptions.JongoBadRequestException;
+import amforeas.config.AmforeasConfiguration;
+import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.exceptions.StartupException;
 import amforeas.jdbc.StoredProcedureParam;
 
@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
  * Collection of commonly used methods and constants.
  * @author Alejandro Ayuso 
  */
-public class JongoUtils {
+public class AmforeasUtils {
     
-    private static final Logger l = LoggerFactory.getLogger(JongoUtils.class);
+    private static final Logger l = LoggerFactory.getLogger(AmforeasUtils.class);
     
     /**
      * Check if a string has the ISO date time format. Uses the ISODateTimeFormat.dateTime() from JodaTime
@@ -166,17 +166,17 @@ public class JongoUtils {
                 l.debug(e.getMessage());
             }
         }else{
-            DateTime date = JongoUtils.isDateTime(val);
+            DateTime date = AmforeasUtils.isDateTime(val);
             if(date != null){
                 l.debug("Got a DateTime " + date.toString(ISODateTimeFormat.dateTime()));
                 ret = new java.sql.Timestamp(date.getMillis());
             }else{
-                date = JongoUtils.isDate(val);
+                date = AmforeasUtils.isDate(val);
                 if(date != null){
                     l.debug("Got a Date " + date.toString(ISODateTimeFormat.date()));
                     ret = new java.sql.Date(date.getMillis());
                 }else{
-                    date = JongoUtils.isTime(val);
+                    date = AmforeasUtils.isTime(val);
                     if(date != null){
                         l.debug("Got a Time " + date.toString(ISODateTimeFormat.time()));
                         ret = new java.sql.Time(date.getMillis());
@@ -212,16 +212,16 @@ public class JongoUtils {
     /**
      * Reads a String in JSON format and returns a MultivaluedMap representation of it.
      * @return a MultivaluedMap with the keys/values as represented by the incoming JSON string.
-     * @throws JongoBadRequestException if the JSON string is not readable.
+     * @throws AmforeasBadRequestException if the JSON string is not readable.
      */
-    public static Map<String, String> getParamsFromJSON(final String json) throws JongoBadRequestException{
+    public static Map<String, String> getParamsFromJSON(final String json) throws AmforeasBadRequestException{
         if(StringUtils.isBlank(json))
-            throw new JongoBadRequestException("Invalid number of arguments for request " + json);
+            throw new AmforeasBadRequestException("Invalid number of arguments for request " + json);
         try {
             Map<String, String> ret = new ObjectMapper().readValue(json, new TypeReference<Map<String, String>>(){});
             return ret;
         } catch (Exception ex) {
-            throw new JongoBadRequestException(ex.getMessage());
+            throw new AmforeasBadRequestException(ex.getMessage());
         }
     }
     
@@ -233,28 +233,28 @@ public class JongoUtils {
      * ]
      * @param json a string with the JSON representation of a {@link amforeas.jdbc.StoredProcedureParam}
      * @return a list of {@link amforeas.jdbc.StoredProcedureParam}.
-     * @throws JongoBadRequestException if we fail to parse the JSON for any reason.
+     * @throws AmforeasBadRequestException if we fail to parse the JSON for any reason.
      */
-    public static List<StoredProcedureParam> getStoredProcedureParamsFromJSON(final String json) throws JongoBadRequestException{
+    public static List<StoredProcedureParam> getStoredProcedureParamsFromJSON(final String json) throws AmforeasBadRequestException{
         if(StringUtils.isBlank(json))
-            throw new JongoBadRequestException("Invalid number of arguments for request " + json);
+            throw new AmforeasBadRequestException("Invalid number of arguments for request " + json);
         try {
             List<StoredProcedureParam> ret = new ObjectMapper().readValue(json, new TypeReference<List<StoredProcedureParam>>(){});
             return ret;
         } catch (Exception ex) {
-            throw new JongoBadRequestException(ex.getMessage());
+            throw new AmforeasBadRequestException(ex.getMessage());
         }
     }
     
     /**
-     * Calls the JongoConfiguration.instanceOf() method and returns the given instance of {@link amforeas.config.JongoConfiguration}
-     * @return an instance of {@link amforeas.config.JongoConfiguration}
-     * @throws StartupException if {@link amforeas.config.JongoConfiguration} fails to instantiate.
+     * Calls the AmforeasConfiguration.instanceOf() method and returns the given instance of {@link amforeas.config.AmforeasConfiguration}
+     * @return an instance of {@link amforeas.config.AmforeasConfiguration}
+     * @throws StartupException if {@link amforeas.config.AmforeasConfiguration} fails to instantiate.
      */
-    public static JongoConfiguration loadConfiguration() throws StartupException{
-        JongoConfiguration configuration = null;
+    public static AmforeasConfiguration loadConfiguration() throws StartupException{
+        AmforeasConfiguration configuration = null;
         try{
-            configuration = JongoConfiguration.instanceOf();
+            configuration = AmforeasConfiguration.instanceOf();
         }catch(IllegalArgumentException e){
             l.error(e.getMessage());
         }

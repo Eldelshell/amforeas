@@ -27,21 +27,21 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Alejandro Ayuso 
  */
 @XmlRootElement(name="response")
-public class JongoHead implements JongoResponse {
+public class AmforeasHead implements AmforeasResponse {
     private boolean success = true;
     private Response.Status status;
     private List<Row> rows;
     private String resource;
 
-    public JongoHead() {}
+    public AmforeasHead() {}
     
-    public JongoHead(String resource, List<Row> results, Response.Status status) {
+    public AmforeasHead(String resource, List<Row> results, Response.Status status) {
         this.resource = resource;
         this.rows = results;
         this.status = status;
     }
     
-    public JongoHead(String resource, List<Row> results) {
+    public AmforeasHead(String resource, List<Row> results) {
         this.resource = resource;
         this.rows = results;
         this.status = Response.Status.OK;

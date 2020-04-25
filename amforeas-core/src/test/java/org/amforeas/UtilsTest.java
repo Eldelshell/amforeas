@@ -23,9 +23,9 @@ import java.text.ParseException;
 import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 
-import amforeas.JongoUtils;
+import amforeas.AmforeasUtils;
 import amforeas.config.DatabaseConfiguration;
-import amforeas.config.JongoConfiguration;
+import amforeas.config.AmforeasConfiguration;
 import amforeas.enums.JDBCDriver;
 import amforeas.exceptions.StartupException;
 import amforeas.jdbc.LimitParam;
@@ -50,8 +50,8 @@ public class UtilsTest {
     }
     
     @Test
-    public void testJongoUtils(){
-        JongoUtils u = new JongoUtils(); 
+    public void testAmforeasUtils(){
+        AmforeasUtils u = new AmforeasUtils(); 
         assertNotNull(u);
     }
     
@@ -59,66 +59,66 @@ public class UtilsTest {
     public void testIsDate() throws ParseException{
         DateTimeFormatter df = ISODateTimeFormat.date();
         DateTime date = df.parseDateTime("2011-01-19");
-        assertEquals(date, JongoUtils.isDate("2011-01-19"));
-        assertEquals(date, JongoUtils.isDate("20110119"));
+        assertEquals(date, AmforeasUtils.isDate("2011-01-19"));
+        assertEquals(date, AmforeasUtils.isDate("20110119"));
         
-        assertNull(JongoUtils.isDate("2011-19-01"));
-        assertNull(JongoUtils.isDate("2011.01.19"));
-        assertNull(JongoUtils.isDate("2011"));
-        assertNull(JongoUtils.isDate(""));
-        assertNull(JongoUtils.isDate(null));
+        assertNull(AmforeasUtils.isDate("2011-19-01"));
+        assertNull(AmforeasUtils.isDate("2011.01.19"));
+        assertNull(AmforeasUtils.isDate("2011"));
+        assertNull(AmforeasUtils.isDate(""));
+        assertNull(AmforeasUtils.isDate(null));
     }
     
     @Test
     public void testIsDateTime(){
         DateTimeFormatter df = ISODateTimeFormat.dateTime();
         DateTime date = df.parseDateTime("2011-12-11T12:35:45.200+01:00");
-        assertEquals(date, JongoUtils.isDateTime("2011-12-11T12:35:45.200+01:00"));
-        assertNull(JongoUtils.isDateTime("2011-12-11 22:00:00"));
-        assertNull(JongoUtils.isDateTime(""));
-        assertNull(JongoUtils.isDateTime(null));
-        assertNull(JongoUtils.isDateTime("2011-01-19"));
-        assertNull(JongoUtils.isDateTime("20110119"));
-        assertNull(JongoUtils.isDateTime("22:00:00"));
-        assertNull(JongoUtils.isDateTime("12:35:45.200+01:00"));
+        assertEquals(date, AmforeasUtils.isDateTime("2011-12-11T12:35:45.200+01:00"));
+        assertNull(AmforeasUtils.isDateTime("2011-12-11 22:00:00"));
+        assertNull(AmforeasUtils.isDateTime(""));
+        assertNull(AmforeasUtils.isDateTime(null));
+        assertNull(AmforeasUtils.isDateTime("2011-01-19"));
+        assertNull(AmforeasUtils.isDateTime("20110119"));
+        assertNull(AmforeasUtils.isDateTime("22:00:00"));
+        assertNull(AmforeasUtils.isDateTime("12:35:45.200+01:00"));
     }
     
     @Test
     public void testIsTime(){
         DateTimeFormatter df = ISODateTimeFormat.time();
         DateTime date = df.parseDateTime("12:35:45.000Z");
-        assertEquals(date, JongoUtils.isTime("12:35:45.000Z"));
-        assertEquals(date, JongoUtils.isTime("123545.000Z"));
-        assertNull(JongoUtils.isTime(""));
-        assertNull(JongoUtils.isTime(null));
-        assertNull(JongoUtils.isTime("2011-01-19"));
-        assertNull(JongoUtils.isTime("20110119"));
-        assertNull(JongoUtils.isTime("22:00:00"));
-        assertNull(JongoUtils.isTime("2011-12-11T12:35:45.200Z"));
+        assertEquals(date, AmforeasUtils.isTime("12:35:45.000Z"));
+        assertEquals(date, AmforeasUtils.isTime("123545.000Z"));
+        assertNull(AmforeasUtils.isTime(""));
+        assertNull(AmforeasUtils.isTime(null));
+        assertNull(AmforeasUtils.isTime("2011-01-19"));
+        assertNull(AmforeasUtils.isTime("20110119"));
+        assertNull(AmforeasUtils.isTime("22:00:00"));
+        assertNull(AmforeasUtils.isTime("2011-12-11T12:35:45.200Z"));
     }
     
     @Test
     public void testSplitCamelCase(){
-        assertEquals(JongoUtils.splitCamelCase("nameIsNull"), "name Is Null");
-        assertEquals(JongoUtils.splitCamelCase("name_idIsNull"), "name_id Is Null");
-        assertEquals(JongoUtils.splitCamelCase("name_09IsNull"), "name_09 Is Null");
-        assertEquals(JongoUtils.splitCamelCase("01_09IsNull"), "01_09 Is Null");
-        assertEquals(JongoUtils.splitCamelCase("01IsNull"), "01 Is Null");
+        assertEquals(AmforeasUtils.splitCamelCase("nameIsNull"), "name Is Null");
+        assertEquals(AmforeasUtils.splitCamelCase("name_idIsNull"), "name_id Is Null");
+        assertEquals(AmforeasUtils.splitCamelCase("name_09IsNull"), "name_09 Is Null");
+        assertEquals(AmforeasUtils.splitCamelCase("01_09IsNull"), "01_09 Is Null");
+        assertEquals(AmforeasUtils.splitCamelCase("01IsNull"), "01 Is Null");
 //        This is an invalid usage but the sql will break with this sort of query
-//        assertEquals(JongoUtils.splitCamelCase("01*.Null"), "01 Is Null");
-        assertEquals(JongoUtils.splitCamelCase(""), "");
+//        assertEquals(AmforeasUtils.splitCamelCase("01*.Null"), "01 Is Null");
+        assertEquals(AmforeasUtils.splitCamelCase(""), "");
     }
     
     @Test
     public void parseValue(){
-        assertTrue(JongoUtils.parseValue("1") instanceof Integer);
-        assertTrue(JongoUtils.parseValue("1.0") instanceof BigDecimal);
-        assertTrue(JongoUtils.parseValue(" ") instanceof String);
-        assertTrue(JongoUtils.parseValue("false") instanceof String);
-        assertTrue(JongoUtils.parseValue("true") instanceof String);
-        assertTrue(JongoUtils.parseValue("2011-12-11T12:35:45.200+01:00") instanceof java.sql.Timestamp);
-        assertTrue(JongoUtils.parseValue("2011-01-19") instanceof java.sql.Date);
-        assertTrue(JongoUtils.parseValue("12:35:45.200+01:00") instanceof java.sql.Time);
+        assertTrue(AmforeasUtils.parseValue("1") instanceof Integer);
+        assertTrue(AmforeasUtils.parseValue("1.0") instanceof BigDecimal);
+        assertTrue(AmforeasUtils.parseValue(" ") instanceof String);
+        assertTrue(AmforeasUtils.parseValue("false") instanceof String);
+        assertTrue(AmforeasUtils.parseValue("true") instanceof String);
+        assertTrue(AmforeasUtils.parseValue("2011-12-11T12:35:45.200+01:00") instanceof java.sql.Timestamp);
+        assertTrue(AmforeasUtils.parseValue("2011-01-19") instanceof java.sql.Date);
+        assertTrue(AmforeasUtils.parseValue("12:35:45.200+01:00") instanceof java.sql.Time);
     }
     
     @Test(expected=IllegalArgumentException.class)
@@ -162,48 +162,48 @@ public class UtilsTest {
     @Test
     public void testGetMD5Base64(){
         try{
-            JongoUtils.getMD5Base64(null);
+            AmforeasUtils.getMD5Base64(null);
         }catch(IllegalArgumentException e){
             assertTrue(e instanceof IllegalArgumentException);
         }
-        String t = JongoUtils.getMD5Base64("");
+        String t = AmforeasUtils.getMD5Base64("");
         assertTrue(t.equals("1B2M2Y8AsgTpgAmY7PhCfg=="));
-        t = JongoUtils.getMD5Base64("xxxxxxxxxxxxxxxxx");
+        t = AmforeasUtils.getMD5Base64("xxxxxxxxxxxxxxxxx");
         assertTrue(t.equals("PvgoOWefBe8mDjrJgt6TzQ=="));
     }
     
     @Test
     public void getOctetLength(){
         try{
-            JongoUtils.getOctetLength(null);
+            AmforeasUtils.getOctetLength(null);
         }catch(Exception e){
             assertTrue(e instanceof IllegalArgumentException);
         }
-        Integer t = JongoUtils.getOctetLength("");
+        Integer t = AmforeasUtils.getOctetLength("");
         assertTrue(t.equals(0));
-        t = JongoUtils.getOctetLength("xxxxxxxxxxxxxxxxx");
+        t = AmforeasUtils.getOctetLength("xxxxxxxxxxxxxxxxx");
         assertTrue(t.equals(17));
     }
     
     @Test
     public void testHashMapOf(){
         try{
-            JongoUtils.hashMapOf(null);
+            AmforeasUtils.hashMapOf(null);
         }catch(Exception e){
             assertTrue(e instanceof IllegalArgumentException);
         }
         
         MultivaluedMap<String, String> m = new MultivaluedMapImpl();
-        Map<String, String> map = JongoUtils.hashMapOf(m);
+        Map<String, String> map = AmforeasUtils.hashMapOf(m);
         assertTrue(map.isEmpty());
         
         m.add("t1", "kkk");
-        map = JongoUtils.hashMapOf(m);
+        map = AmforeasUtils.hashMapOf(m);
         assertFalse(map.isEmpty());
         assertEquals(1, map.size());
         
         m.add("t2", "");
-        map = JongoUtils.hashMapOf(m);
+        map = AmforeasUtils.hashMapOf(m);
         assertFalse(map.isEmpty());
         assertEquals(1, map.size());
     }
@@ -211,28 +211,28 @@ public class UtilsTest {
     @Test
     public void testLoadConfiguration() throws StartupException{
         System.setProperty("environment", "demo");
-        JongoConfiguration conf = JongoUtils.loadConfiguration();
+        AmforeasConfiguration conf = AmforeasUtils.loadConfiguration();
         assertTrue(conf.isDemoModeActive());
         
         System.setProperty("environment", "");
-        conf = JongoUtils.loadConfiguration();
+        conf = AmforeasUtils.loadConfiguration();
         assertTrue(conf.isDemoModeActive());
     }
 
     @Test
     public void testGetCallableStatementCallString(){
-        String k = JongoUtils.getCallableStatementCallString("test", 7);
+        String k = AmforeasUtils.getCallableStatementCallString("test", 7);
         assertEquals("{CALL test(?,?,?,?,?,?,?)}", k);
-        k = JongoUtils.getCallableStatementCallString("test", 0);
+        k = AmforeasUtils.getCallableStatementCallString("test", 0);
         assertEquals("{CALL test()}", k);
         try{
-            JongoUtils.getCallableStatementCallString("", 0);
+            AmforeasUtils.getCallableStatementCallString("", 0);
         }catch(IllegalArgumentException e){
             assertNotNull(e.getMessage());
         }
         
         try{
-            JongoUtils.getCallableStatementCallString(null, 0);
+            AmforeasUtils.getCallableStatementCallString(null, 0);
         }catch(IllegalArgumentException e){
             assertNotNull(e.getMessage());
         }

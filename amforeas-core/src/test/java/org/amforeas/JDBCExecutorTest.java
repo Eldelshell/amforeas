@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import amforeas.JongoUtils;
-import amforeas.config.JongoConfiguration;
+import amforeas.AmforeasUtils;
+import amforeas.config.AmforeasConfiguration;
 import amforeas.demo.Demo;
 import amforeas.enums.Operator;
-import amforeas.exceptions.JongoBadRequestException;
+import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.exceptions.StartupException;
 import amforeas.jdbc.JDBCExecutor;
 import amforeas.jdbc.StoredProcedureParam;
@@ -49,15 +49,15 @@ public class JDBCExecutorTest {
     @BeforeClass
     public static void setUp() throws StartupException{
         System.setProperty("environment", "demo");
-        JongoUtils.loadConfiguration();
+        AmforeasUtils.loadConfiguration();
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
         System.setProperty("environment", "demo");
-        JongoConfiguration configuration = JongoUtils.loadConfiguration();
+        AmforeasConfiguration configuration = AmforeasUtils.loadConfiguration();
         Demo.destroyDemoDatabases(configuration.getDatabases());
-        JongoConfiguration.reset();
+        AmforeasConfiguration.reset();
     }
     
     @Test
@@ -201,14 +201,14 @@ public class JDBCExecutorTest {
     }
             
     @Test
-    public void testSimpleFunction() throws SQLException, JongoBadRequestException {
+    public void testSimpleFunction() throws SQLException, AmforeasBadRequestException {
         List<StoredProcedureParam> params = new ArrayList<StoredProcedureParam>();
         List<Row> rows = JDBCExecutor.executeQuery("my_demo_db", "simpleStoredProcedure", params);
         assertEquals(1, rows.size());
     }
     
     @Test
-    public void testSimpleStoredProcedure() throws JongoBadRequestException, SQLException{
+    public void testSimpleStoredProcedure() throws AmforeasBadRequestException, SQLException{
         List<StoredProcedureParam> params = new ArrayList<StoredProcedureParam>();
         Select s = new Select(new Table("my_demo_db", "comments"));
         List<Row> rs = JDBCExecutor.get(s, true);
@@ -224,7 +224,7 @@ public class JDBCExecutorTest {
     }
     
     @Test
-    public void testComplexStoredProcedure() throws JongoBadRequestException, SQLException{
+    public void testComplexStoredProcedure() throws AmforeasBadRequestException, SQLException{
         List<StoredProcedureParam> params;
         params = new ArrayList<StoredProcedureParam>();
         params.add(new StoredProcedureParam("in_year", "2010", false, 1, "INTEGER"));
@@ -235,7 +235,7 @@ public class JDBCExecutorTest {
     }
     
     @Test
-    public void testGetMetaData() throws JongoBadRequestException, SQLException{
+    public void testGetMetaData() throws AmforeasBadRequestException, SQLException{
         Table t = new Table("my_demo_db", "users");
         Select s = new Select(t);
         List<Row> rs = JDBCExecutor.getTableMetaData(s);

@@ -21,9 +21,9 @@ package amforeas.sql;
 import java.util.ArrayList;
 import java.util.List;
 
-import amforeas.JongoUtils;
+import amforeas.AmforeasUtils;
 import amforeas.enums.Operator;
-import amforeas.exceptions.JongoBadRequestException;
+import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
 
@@ -64,9 +64,9 @@ public class DynamicFinder {
      * @param query the query to parse
      * @param values the values for the query
      * @return a DynamicFinder
-     * @throws JongoBadRequestException if we're unable to parse the query or values.
+     * @throws AmforeasBadRequestException if we're unable to parse the query or values.
      */
-    public static DynamicFinder valueOf(String resource, final String query, final String... values) throws JongoBadRequestException {
+    public static DynamicFinder valueOf(String resource, final String query, final String... values) throws AmforeasBadRequestException {
         l.debug("Generating dynamic finder for " + query + " with values: [ " + StringUtils.join(values, ",") + "]");
         String str = query;
         String cmd = null;
@@ -77,10 +77,10 @@ public class DynamicFinder {
             str = str.substring(FINDALLBY.length());
             cmd = FINDALLBY;
         } else {
-            throw new JongoBadRequestException("Invalid Command " + str, resource);
+            throw new AmforeasBadRequestException("Invalid Command " + str, resource);
         }
 
-        String[] strs = JongoUtils.splitCamelCase(str).split("\\ ");
+        String[] strs = AmforeasUtils.splitCamelCase(str).split("\\ ");
         List<String> columns = new ArrayList<String>();
         List<String> ops = new ArrayList<String>();
         for (String word : strs) {
@@ -112,7 +112,7 @@ public class DynamicFinder {
         if (operators.isEmpty() && ops.isEmpty()) {
             finder = new DynamicFinder(resource, cmd, columns.get(0));
         } else if (operators.isEmpty() && !ops.isEmpty()) {
-            throw new JongoBadRequestException("Invalid Operator", resource);
+            throw new AmforeasBadRequestException("Invalid Operator", resource);
         } else {
             if (columns.size() == 1) {
                 finder = new DynamicFinder(resource, cmd, columns.get(0), operators.get(0));
@@ -124,11 +124,11 @@ public class DynamicFinder {
                 } else if (operators.size() == 3) {
                     finder = new DynamicFinder(resource, cmd, columns.get(0), operators.get(0), operators.get(1), columns.get(1), operators.get(2));
                 } else {
-                    throw new JongoBadRequestException("Too many operators: " + operators.size(), resource);
+                    throw new AmforeasBadRequestException("Too many operators: " + operators.size(), resource);
                 }
 
             } else {
-                throw new JongoBadRequestException("Too many columns: " + columns.size(), resource);
+                throw new AmforeasBadRequestException("Too many columns: " + columns.size(), resource);
             }
         }
         l.debug(finder.getSql());
@@ -178,9 +178,9 @@ public class DynamicFinder {
      * @param booleanOperator an operator AND or OR
      * @param secondColumn  the name of an existing column
      */
-    public DynamicFinder(String resource, String command, String firstColumn, Operator booleanOperator, String secondColumn) throws JongoBadRequestException {
+    public DynamicFinder(String resource, String command, String firstColumn, Operator booleanOperator, String secondColumn) throws AmforeasBadRequestException {
         if (!booleanOperator.isBoolean()) {
-            throw new JongoBadRequestException("Invalid Operator " + booleanOperator);
+            throw new AmforeasBadRequestException("Invalid Operator " + booleanOperator);
         }
         this.table = resource;
         this.command = command;
@@ -201,9 +201,9 @@ public class DynamicFinder {
      * @param secondColumn the name of an existing column
      * @param secondOperator a binary operator for the second column
      */
-    public DynamicFinder(String resource, String command, String firstColumn, Operator booleanOperator, String secondColumn, Operator secondOperator) throws JongoBadRequestException {
+    public DynamicFinder(String resource, String command, String firstColumn, Operator booleanOperator, String secondColumn, Operator secondOperator) throws AmforeasBadRequestException {
         if (!booleanOperator.isBoolean()) {
-            throw new JongoBadRequestException("Invalid Operator");
+            throw new AmforeasBadRequestException("Invalid Operator");
         }
         this.table = resource;
         this.command = command;
@@ -229,9 +229,9 @@ public class DynamicFinder {
      * @param secondColumn the name of an existing column
      * @param secondOperator a binary operator for the second column
      */
-    public DynamicFinder(String resource, String command, String firstColumn, Operator firstOperator, Operator booleanOperator, String secondColumn, Operator secondOperator) throws JongoBadRequestException {
+    public DynamicFinder(String resource, String command, String firstColumn, Operator firstOperator, Operator booleanOperator, String secondColumn, Operator secondOperator) throws AmforeasBadRequestException {
         if (!booleanOperator.isBoolean()) {
-            throw new JongoBadRequestException("Invalid Operator");
+            throw new AmforeasBadRequestException("Invalid Operator");
         }
         this.table = resource;
         this.command = command;

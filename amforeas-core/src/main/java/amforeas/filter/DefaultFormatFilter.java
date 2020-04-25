@@ -25,10 +25,10 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import amforeas.JongoUtils;
-import amforeas.rest.xstream.JongoError;
-import amforeas.rest.xstream.JongoHead;
-import amforeas.rest.xstream.JongoSuccess;
+import amforeas.AmforeasUtils;
+import amforeas.rest.xstream.AmforeasError;
+import amforeas.rest.xstream.AmforeasHead;
+import amforeas.rest.xstream.AmforeasSuccess;
 import amforeas.rest.xstream.Row;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -42,18 +42,18 @@ import com.sun.jersey.spi.container.ContainerResponseFilter;
 
 /**
  * Default filter which is used by Amforeas to modify the requests and responses. Here's were we generate the
- * JSON and XML output for all the {@link amforeas.rest.xstream.JongoResponse} objects and add some
+ * JSON and XML output for all the {@link amforeas.rest.xstream.AmforeasResponse} objects and add some
  * headers which might prove useful.
  * In this case, we're doing the serialization to XML and JSON manually because it's not that hard
  * and I can save on dependencies.
  * @author Alejandro Ayuso 
  */
-public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormatFilter {
+public class DefaultFormatFilter implements ContainerResponseFilter, AmforeasFormatFilter {
 
     private static final Logger l = LoggerFactory.getLogger(DefaultFormatFilter.class);
 
     /**
-     * Filters all requests & responses from a JongoWS
+     * Filters all requests & responses from a AmforeasWS
      * @param cr
      * @param cr1
      * @return 
@@ -71,7 +71,7 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
     /**
      * Gives format to a given {@linkplain javax.ws.rs.core.Response}. Basically we add headers and generate
      * the appropriate JSON or XML representation of them.
-     * @param response a {@linkplain javax.ws.rs.core.Response} from a JongoWS
+     * @param response a {@linkplain javax.ws.rs.core.Response} from a AmforeasWS
      * @param mime a {@linkplain javax.ws.rs.core.MediaType}
      * @return a modified {@linkplain javax.ws.rs.core.Response}
      */
@@ -79,12 +79,12 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
     public Response format(Response response, final MediaType mime) {
         final Object entity = response.getEntity();
         final Integer status = response.getStatus();
-        if(entity instanceof JongoSuccess){
-            return formatSuccessResponse((JongoSuccess)entity, mime, status);
-        }else if(entity instanceof JongoError){
-            return formatErrorResponse((JongoError)entity, mime, status);
-        }else if(entity instanceof JongoHead){
-            return formatHeadResponse((JongoHead)entity, mime, status);
+        if(entity instanceof AmforeasSuccess){
+            return formatSuccessResponse((AmforeasSuccess)entity, mime, status);
+        }else if(entity instanceof AmforeasError){
+            return formatErrorResponse((AmforeasError)entity, mime, status);
+        }else if(entity instanceof AmforeasHead){
+            return formatHeadResponse((AmforeasHead)entity, mime, status);
         }else{
             return response;
         }
@@ -99,9 +99,9 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
      */
     private void setHeadersToResponse(ContainerResponse cr1, final Object entity, final MediaType mime){
         if(entity != null){
-            cr1.getHttpHeaders().add(HttpHeaders.DATE, JongoUtils.getDateHeader());
-            cr1.getHttpHeaders().add("Content-MD5", JongoUtils.getMD5Base64(entity.toString()));
-            cr1.getHttpHeaders().add(HttpHeaders.CONTENT_LENGTH, JongoUtils.getOctetLength(entity.toString()));
+            cr1.getHttpHeaders().add(HttpHeaders.DATE, AmforeasUtils.getDateHeader());
+            cr1.getHttpHeaders().add("Content-MD5", AmforeasUtils.getMD5Base64(entity.toString()));
+            cr1.getHttpHeaders().add(HttpHeaders.CONTENT_LENGTH, AmforeasUtils.getOctetLength(entity.toString()));
             if(isXMLCompatible(mime))
                 cr1.getHttpHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML);
             else
@@ -147,15 +147,15 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
     
     /**
      * Generates a new {@linkplain javax.ws.rs.core.Response} for a given 
-     * {@link amforeas.rest.xstream.JongoSuccess} generating the appropriate XML or JSON representation 
+     * {@link amforeas.rest.xstream.AmforeasSuccess} generating the appropriate XML or JSON representation 
      * and setting the Content-Count and Content-Location headers.
-     * @param response a {@link amforeas.rest.xstream.JongoSuccess} to be converted to JSON or XML.
+     * @param response a {@link amforeas.rest.xstream.AmforeasSuccess} to be converted to JSON or XML.
      * @param mime the {@linkplain javax.ws.rs.core.MediaType} used to determine the transport format.
      * @param status the current HTTP code of the response.
      * @return a new {@linkplain javax.ws.rs.core.Response} with the new headers and the content body
      * in either XML or JSON.
      */
-    private Response formatSuccessResponse(final JongoSuccess response, final MediaType mime, final Integer status) {
+    private Response formatSuccessResponse(final AmforeasSuccess response, final MediaType mime, final Integer status) {
         String res;
         l.debug("Formatting Success Response");
         if(isXMLCompatible(mime)){
@@ -171,7 +171,7 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
                 .build();
     }
     
-    private String formatSuccessJSONResponse(final JongoSuccess response){
+    private String formatSuccessJSONResponse(final AmforeasSuccess response){
     	final StringBuilder b = new StringBuilder("{");
         b.append("\"success\":");b.append(response.isSuccess());
         b.append(",\"cells\":[ "); //this last space is important!
@@ -200,7 +200,7 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
         return b.toString();
     }
     
-    private String formatSuccessXMLResponse(final JongoSuccess response){
+    private String formatSuccessXMLResponse(final AmforeasSuccess response){
     	StringBuilder b = new StringBuilder("<response><success>");
         b.append(response.isSuccess());b.append("</success><resource>");
         b.append(response.getResource());b.append("</resource><rows>");
@@ -226,15 +226,15 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
 
     /**
      * Generates a new {@linkplain javax.ws.rs.core.Response} for a given 
-     * {@link amforeas.rest.xstream.JongoError} generating the appropriate XML or JSON representation 
+     * {@link amforeas.rest.xstream.AmforeasError} generating the appropriate XML or JSON representation 
      * and setting the Content-Location header.
-     * @param response a {@link amforeas.rest.xstream.JongoSuccess} to be converted to JSON or XML.
+     * @param response a {@link amforeas.rest.xstream.AmforeasSuccess} to be converted to JSON or XML.
      * @param mime the {@linkplain javax.ws.rs.core.MediaType} used to determine the transport format.
      * @param status the current HTTP code of the response.
      * @return a new {@linkplain javax.ws.rs.core.Response} with the new headers and the content body
      * in either XML or JSON.
      */
-    private Response formatErrorResponse(final JongoError response, final MediaType mime, final Integer status) {
+    private Response formatErrorResponse(final AmforeasError response, final MediaType mime, final Integer status) {
         String res;
         l.debug("Formatting Error Response");
         if(isXMLCompatible(mime)){
@@ -249,7 +249,7 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
                 .build();
     }
     
-    private String formatErrorJSONResponse(final JongoError response){
+    private String formatErrorJSONResponse(final AmforeasError response){
     	StringBuilder b = new StringBuilder("{")
 	        .append("\"success\":")
 	        .append(response.isSuccess())
@@ -263,7 +263,7 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
 	    return b.toString();
     }
     
-    private String formatErrorXMLResponse(final JongoError response){
+    private String formatErrorXMLResponse(final AmforeasError response){
     	final StringBuilder b = new StringBuilder("<response><success>")
 	        .append(response.isSuccess())
 	        .append("</success><message>")
@@ -279,14 +279,14 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
 
     /**
      * Generates a new {@linkplain javax.ws.rs.core.Response} for a given 
-     * {@link amforeas.rest.xstream.JongoHead} generating the appropriate XML or JSON representation 
+     * {@link amforeas.rest.xstream.AmforeasHead} generating the appropriate XML or JSON representation 
      * and setting the Content-Location header.
-     * @param response a {@link amforeas.rest.xstream.JongoSuccess} to be converted to JSON or XML.
+     * @param response a {@link amforeas.rest.xstream.AmforeasSuccess} to be converted to JSON or XML.
      * @param mime the {@linkplain javax.ws.rs.core.MediaType} used to determine the transport format.
      * @param status the current HTTP code of the response.
      * @return a new {@linkplain javax.ws.rs.core.Response} with the new headers.
      */
-    private Response formatHeadResponse(final JongoHead response, final MediaType mime, final Integer status) {
+    private Response formatHeadResponse(final AmforeasHead response, final MediaType mime, final Integer status) {
         final List<String> args = new ArrayList<String>();
         for(Row row : response.getRows()){
             final String columnname = row.getCells().get("columnName");

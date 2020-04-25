@@ -28,14 +28,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Alejandro Ayuso 
  */
 @XmlRootElement(name="response")
-public class JongoSuccess implements JongoResponse{
+public class AmforeasSuccess implements AmforeasResponse{
     
     private boolean success = true;
     private Response.Status status;
     private List<Row> rows;
     private String resource;
     
-    public JongoSuccess(){}
+    public AmforeasSuccess(){}
     
     /**
      * Instantiates a new success response for the given resource and results with the
@@ -44,7 +44,7 @@ public class JongoSuccess implements JongoResponse{
      * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
      * @param status a HTTP code to give to the client
      */
-    public JongoSuccess(String resource, List<Row> results, Response.Status status) {
+    public AmforeasSuccess(String resource, List<Row> results, Response.Status status) {
         this.resource = resource;
         this.rows = results;
         this.status = status;
@@ -55,7 +55,7 @@ public class JongoSuccess implements JongoResponse{
      * @param resource the name of the resource being accessed
      * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
      */
-    public JongoSuccess(String resource, List<Row> results) {
+    public AmforeasSuccess(String resource, List<Row> results) {
         this.resource = resource;
         this.rows = results;
         this.status = Response.Status.OK;
