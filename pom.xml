@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>amforeas</groupId>
@@ -8,16 +9,16 @@
   <name>amforeas-parent</name>
 
   <developers>
-      <developer>
-          <name>Alejandro Ayuso</name>
-          <roles>
-              <role>Owner</role>
-          </roles>
-      </developer>
+    <developer>
+      <name>Alejandro Ayuso</name>
+      <roles>
+        <role>Owner</role>
+      </roles>
+    </developer>
   </developers>
-  
+
   <contributors>
-  	<contributor>
+    <contributor>
       <name>samarjit samanta</name>
       <roles>
         <role>h2 implementation</role>
@@ -27,18 +28,18 @@
       </properties>
     </contributor>
   </contributors>
-  
+
   <licenses>
-      <license>
-          <name>GNU GPL v3</name>
-          <url>http://www.gnu.org/licenses/gpl.html</url>
-      </license>
+    <license>
+      <name>GNU GPL v3</name>
+      <url>http://www.gnu.org/licenses/gpl.html</url>
+    </license>
   </licenses>
-  
+
   <description>RESTful interface for JDBC</description>
-  
+
   <url>https://github.com/ubersoldat/amforeas</url>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jersey-version>1.19.4</jersey-version>
@@ -52,33 +53,33 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-            <source>11</source>
-            <target>11</target>
+          <source>11</source>
+          <target>11</target>
         </configuration>
       </plugin>
       <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.9.0</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.9.0</version>
       </plugin>
     </plugins>
   </build>
   <reporting>
     <plugins>
       <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>findbugs-maven-plugin</artifactId>
-          <version>3.0.5</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.5</version>
       </plugin>
       <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.7</version>
-          <configuration>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
           <formats>
-              <format>html</format>
+            <format>html</format>
           </formats>
-          </configuration>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -127,9 +128,9 @@
       <version>3.3.1</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.commons</groupId>
-    	<artifactId>commons-lang3</artifactId>
-    	<version>3.10</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.10</version>
     </dependency>
   </dependencies>
 
