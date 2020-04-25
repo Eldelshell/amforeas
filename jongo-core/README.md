@@ -1,3 +1,3 @@
-# jongo-core
+# amforeas-core
 
 Where the magic happens.

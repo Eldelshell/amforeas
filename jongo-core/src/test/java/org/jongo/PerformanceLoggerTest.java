@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jongo;
+package org.amforeas;
 
-import jongo.PerformanceLogger;
+import amforeas.PerformanceLogger;
 
 import org.junit.AfterClass;
 import static org.junit.Assert.assertTrue;

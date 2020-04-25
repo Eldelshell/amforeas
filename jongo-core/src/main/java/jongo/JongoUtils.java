@@ -1,22 +1,22 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jongo;
+package amforeas;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -29,10 +29,10 @@ import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.DatatypeConverter;
 
-import jongo.config.JongoConfiguration;
-import jongo.exceptions.JongoBadRequestException;
-import jongo.exceptions.StartupException;
-import jongo.jdbc.StoredProcedureParam;
+import amforeas.config.JongoConfiguration;
+import amforeas.exceptions.JongoBadRequestException;
+import amforeas.exceptions.StartupException;
+import amforeas.jdbc.StoredProcedureParam;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -226,13 +226,13 @@ public class JongoUtils {
     }
     
     /**
-     * From a JSON string generated a list of {@link jongo.jdbc.StoredProcedureParam}. The format of this JSON is:
+     * From a JSON string generated a list of {@link amforeas.jdbc.StoredProcedureParam}. The format of this JSON is:
      * [
      *  {"value":2010, "name":"year", "outParameter":false, "type":"INTEGER", "index":1},
      *  {"name":"out_total", "outParameter":true, "type":"INTEGER", "index":2}
      * ]
-     * @param json a string with the JSON representation of a {@link jongo.jdbc.StoredProcedureParam}
-     * @return a list of {@link jongo.jdbc.StoredProcedureParam}.
+     * @param json a string with the JSON representation of a {@link amforeas.jdbc.StoredProcedureParam}
+     * @return a list of {@link amforeas.jdbc.StoredProcedureParam}.
      * @throws JongoBadRequestException if we fail to parse the JSON for any reason.
      */
     public static List<StoredProcedureParam> getStoredProcedureParamsFromJSON(final String json) throws JongoBadRequestException{
@@ -247,9 +247,9 @@ public class JongoUtils {
     }
     
     /**
-     * Calls the JongoConfiguration.instanceOf() method and returns the given instance of {@link jongo.config.JongoConfiguration}
-     * @return an instance of {@link jongo.config.JongoConfiguration}
-     * @throws StartupException if {@link jongo.config.JongoConfiguration} fails to instantiate.
+     * Calls the JongoConfiguration.instanceOf() method and returns the given instance of {@link amforeas.config.JongoConfiguration}
+     * @return an instance of {@link amforeas.config.JongoConfiguration}
+     * @throws StartupException if {@link amforeas.config.JongoConfiguration} fails to instantiate.
      */
     public static JongoConfiguration loadConfiguration() throws StartupException{
         JongoConfiguration configuration = null;

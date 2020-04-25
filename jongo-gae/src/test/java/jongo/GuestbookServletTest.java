@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jongo;
+package amforeas;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class GuestbookServletTest {
 /**
-  private GuestbookServlet jongo-gaeServlet;
+  private GuestbookServlet amforeas-gaeServlet;
 
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalUserServiceTestConfig())
@@ -49,7 +49,7 @@ public class GuestbookServletTest {
   @Before
   public void setupGuestBookServlet() {
     helper.setUp();
-    jongo-gaeServlet = new GuestbookServlet();
+    amforeas-gaeServlet = new GuestbookServlet();
   }
 
   @After
@@ -66,7 +66,7 @@ public class GuestbookServletTest {
 
     when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
-    jongo-gaeServlet.doGet(request, response);
+    amforeas-gaeServlet.doGet(request, response);
 
     User currentUser = UserServiceFactory.getUserService().getCurrentUser();
 

@@ -2,14 +2,14 @@
 #
 # Copyright (C) 2011 Alejandro Ayuso
 #
-# This file is part of Jongo
+# This file is part of Amforeas
 #
-# Jongo is free software: you can redistribute
+# Amforeas is free software: you can redistribute
 # it and/or modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# Jongo is distributed in the hope that it will
+# Amforeas is distributed in the hope that it will
 # be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 # of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -19,7 +19,7 @@
 # <http://www.gnu.org/licenses/>.
 #
 
-# An API to abstract the use of jongo from a Python application. It uses
+# An API to abstract the use of amforeas from a Python application. It uses
 # pretty standard libraries in Python 2.7 so it should work with any
 # version of Python from 2.6 to 2.7
 # With Python 2.4 you'll need to get the simplejson library 
@@ -149,7 +149,7 @@ class Proxy(object):
         self.url = url
         self.database = database
         self.table = table
-        self.path = "/jongo/%s/%s" % (database, table)
+        self.path = "/amforeas/%s/%s" % (database, table)
         self.model = model
         self.page = Page(pageSize)
         self.sort = None

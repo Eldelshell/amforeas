@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Jongo Startup Script for Linux
+# Amforeas Startup Script for Linux
 # Depends on pkill and bash 4+
 #
 
@@ -25,7 +25,7 @@ do_start () {
 
     local exit_code=10
     while [ $exit_code -eq 10 ]; do
-        "${JAVA_HOME}/bin/java" ${opts} -cp "${path}" jongo.JongoJetty
+        "${JAVA_HOME}/bin/java" ${opts} -cp "${path}" amforeas.JongoJetty
         exit_code=$?
     done
 }
@@ -33,17 +33,17 @@ do_start () {
 do_demo () {
     local opts="-Denvironment=demo"
     local path="lib/*:etc"
-    "${JAVA_HOME}/bin/java" ${opts} -cp "${path}" jongo.JongoJetty
+    "${JAVA_HOME}/bin/java" ${opts} -cp "${path}" amforeas.JongoJetty
 }
 
 do_stop () {
-    pkill -f "org.jongo.JongoJetty"
+    pkill -f "org.amforeas.JongoJetty"
     exit $?
 }
 
 do_status () {
-    pkill -0 -f "org.jongo.JongoJetty" > /dev/null 2>&1 && echo "Process is running" && exit 0
-    echo "Jongo is not running" && exit 0
+    pkill -0 -f "org.amforeas.JongoJetty" > /dev/null 2>&1 && echo "Process is running" && exit 0
+    echo "Amforeas is not running" && exit 0
 }
 
 case ${1} in

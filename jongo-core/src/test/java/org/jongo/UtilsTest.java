@@ -1,21 +1,21 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jongo;
+package org.amforeas;
 
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.math.BigDecimal;
@@ -23,13 +23,13 @@ import java.text.ParseException;
 import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 
-import jongo.JongoUtils;
-import jongo.config.DatabaseConfiguration;
-import jongo.config.JongoConfiguration;
-import jongo.enums.JDBCDriver;
-import jongo.exceptions.StartupException;
-import jongo.jdbc.LimitParam;
-import jongo.jdbc.OrderParam;
+import amforeas.JongoUtils;
+import amforeas.config.DatabaseConfiguration;
+import amforeas.config.JongoConfiguration;
+import amforeas.enums.JDBCDriver;
+import amforeas.exceptions.StartupException;
+import amforeas.jdbc.LimitParam;
+import amforeas.jdbc.OrderParam;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;

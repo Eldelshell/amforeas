@@ -18,7 +18,7 @@
       <directory>src/main/resources/</directory>
       <outputDirectory>/etc</outputDirectory>
       <excludes>
-         <!-- the jongo.properties is generated in runtime -->
+         <!-- the amforeas.properties is generated in runtime -->
         <exclude>*.properties</exclude>
       </excludes>
       <includes>
@@ -36,7 +36,7 @@
       <directory>src/main/resources/</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
-        <include>jongo.sh</include>
+        <include>amforeas.sh</include>
       </includes>
     </fileSet>
     

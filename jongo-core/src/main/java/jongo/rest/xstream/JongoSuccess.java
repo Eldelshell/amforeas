@@ -1,22 +1,22 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jongo.rest.xstream;
+package amforeas.rest.xstream;
 
 import java.util.List;
 import javax.ws.rs.core.Response;
@@ -41,7 +41,7 @@ public class JongoSuccess implements JongoResponse{
      * Instantiates a new success response for the given resource and results with the
      * given HTTP code.
      * @param resource the name of the resource being accessed
-     * @param results a list of {@link jongo.rest.xstream.Row} with the results of the operation
+     * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
      * @param status a HTTP code to give to the client
      */
     public JongoSuccess(String resource, List<Row> results, Response.Status status) {
@@ -53,7 +53,7 @@ public class JongoSuccess implements JongoResponse{
     /**
      * Instantiates a new success response for the given resource and results with a 200 HTTP code.
      * @param resource the name of the resource being accessed
-     * @param results a list of {@link jongo.rest.xstream.Row} with the results of the operation
+     * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
      */
     public JongoSuccess(String resource, List<Row> results) {
         this.resource = resource;

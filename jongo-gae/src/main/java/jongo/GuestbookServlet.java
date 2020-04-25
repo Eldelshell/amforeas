@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jongo;
+package amforeas;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;

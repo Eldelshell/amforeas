@@ -3,11 +3,11 @@
      see implementation details http://jersey.java.net/nonav/documentation/latest/jax-rs.html#d4e194 -->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <servlet>
-        <servlet-name>Jongo Web Application</servlet-name>
+        <servlet-name>Amforeas Web Application</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>jongo.rest</param-value>
+            <param-value>amforeas.rest</param-value>
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
@@ -21,12 +21,12 @@
         <!-- comment to use JAX marshalling -->
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>jongo.filter.DefaultFormatFilter</param-value>
+            <param-value>amforeas.filter.DefaultFormatFilter</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Jongo Web Application</servlet-name>
+        <servlet-name>Amforeas Web Application</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>

@@ -1,21 +1,21 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jongo;
+package org.amforeas;
 
 import com.thoughtworks.xstream.XStream;
 import java.util.ArrayList;
@@ -25,10 +25,10 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import jongo.jdbc.StoredProcedureParam;
-import jongo.rest.xstream.JongoError;
-import jongo.rest.xstream.JongoSuccess;
-import jongo.rest.xstream.Row;
+import amforeas.jdbc.StoredProcedureParam;
+import amforeas.rest.xstream.JongoError;
+import amforeas.rest.xstream.JongoSuccess;
+import amforeas.rest.xstream.Row;
 import junit.framework.Assert;
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -36,7 +36,7 @@ import org.codehaus.jackson.map.ObjectWriter;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.type.TypeReference;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
-import org.jongo.mocks.JongoMapConverter;
+import org.amforeas.mocks.JongoMapConverter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

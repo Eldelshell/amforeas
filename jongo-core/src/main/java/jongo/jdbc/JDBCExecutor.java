@@ -1,22 +1,22 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jongo.jdbc;
+package amforeas.jdbc;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -25,15 +25,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jongo.JongoUtils;
-import jongo.config.DatabaseConfiguration;
-import jongo.config.JongoConfiguration;
-import jongo.handler.JongoResultSetHandler;
-import jongo.handler.ResultSetMetaDataHandler;
-import jongo.rest.xstream.Row;
-import jongo.sql.*;
-import jongo.sql.dialect.Dialect;
-import jongo.sql.dialect.DialectFactory;
+import amforeas.JongoUtils;
+import amforeas.config.DatabaseConfiguration;
+import amforeas.config.JongoConfiguration;
+import amforeas.handler.JongoResultSetHandler;
+import amforeas.handler.ResultSetMetaDataHandler;
+import amforeas.rest.xstream.Row;
+import amforeas.sql.*;
+import amforeas.sql.dialect.Dialect;
+import amforeas.sql.dialect.DialectFactory;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -50,8 +50,8 @@ public class JDBCExecutor {
     private static final JongoConfiguration conf = JongoConfiguration.instanceOf();
     
     /**
-     * Executes the given {@link jongo.sql.Delete} object
-     * @param delete a {@link jongo.sql.Delete} instance
+     * Executes the given {@link amforeas.sql.Delete} object
+     * @param delete a {@link amforeas.sql.Delete} instance
      * @return number of records deleted
      * @throws SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
@@ -73,8 +73,8 @@ public class JDBCExecutor {
     }
     
     /**
-     * Executes the given {@link jongo.sql.Insert} object
-     * @param insert a {@link jongo.sql.Insert} instance
+     * Executes the given {@link amforeas.sql.Insert} object
+     * @param insert a {@link amforeas.sql.Insert} instance
      * @return number of records inserted
      * @throws SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
@@ -102,9 +102,9 @@ public class JDBCExecutor {
     }
     
     /**
-     * Executes the given {@link jongo.sql.Update} object
-     * @param update a {@link jongo.sql.Update} instance
-     * @return a List of {@link jongo.rest.xstream.Row} with the modified records
+     * Executes the given {@link amforeas.sql.Update} object
+     * @param update a {@link amforeas.sql.Update} instance
+     * @return a List of {@link amforeas.rest.xstream.Row} with the modified records
      * @throws SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
      */
@@ -130,14 +130,14 @@ public class JDBCExecutor {
     }
     
     /**
-     * Executes the given {@link jongo.sql.Select} object and returns all or one record depending on the value
+     * Executes the given {@link amforeas.sql.Select} object and returns all or one record depending on the value
      * of the allRecords variable
-     * @param select a {@link jongo.sql.Select} instance
+     * @param select a {@link amforeas.sql.Select} instance
      * @param allRecords return all (true) records or one (false) record.
-     * @return a List of {@link jongo.rest.xstream.Row} with the records found by the statement.
+     * @return a List of {@link amforeas.rest.xstream.Row} with the records found by the statement.
      * @throws SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
-     * @see jongo.handler.JongoResultSetHandler
+     * @see amforeas.handler.JongoResultSetHandler
      */
     public static List<Row> get(final Select select, final boolean allRecords) throws SQLException {
         l.debug(select.toString());
@@ -169,16 +169,16 @@ public class JDBCExecutor {
     }
     
     /**
-     * Executes the given {@link org.jongo.jdbc.DynamicFinder} object.
-     * @param database database name or schema where to execute the {@link org.jongo.jdbc.DynamicFinder}
-     * @param df an instance of {@link org.jongo.jdbc.DynamicFinder}
-     * @param limit an instance of {@link jongo.jdbc.LimitParam}
-     * @param order an instance of {@link jongo.jdbc.OrderParam}
+     * Executes the given {@link org.amforeas.jdbc.DynamicFinder} object.
+     * @param database database name or schema where to execute the {@link org.amforeas.jdbc.DynamicFinder}
+     * @param df an instance of {@link org.amforeas.jdbc.DynamicFinder}
+     * @param limit an instance of {@link amforeas.jdbc.LimitParam}
+     * @param order an instance of {@link amforeas.jdbc.OrderParam}
      * @param params a vararg of Object instances used as parameters for the QueryRunner.
-     * @return a List of {@link jongo.rest.xstream.Row} with the records found by the DynamicFinder.
+     * @return a List of {@link amforeas.rest.xstream.Row} with the records found by the DynamicFinder.
      * @throws SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
-     * @see jongo.sql.dialect.Dialect
+     * @see amforeas.sql.dialect.Dialect
      */
     public static List<Row> find(final String database, final DynamicFinder df, final LimitParam limit, final OrderParam order, Object... params) throws SQLException{
         l.debug(df.getSql());
@@ -201,13 +201,13 @@ public class JDBCExecutor {
     }
     
     /**
-     * Executes a given {@link jongo.sql.Select} object and returns the metadata associated to the results.
-     * @param select a {@link jongo.sql.Select} instance which should only retrieve one result.
-     * @return a List of {@link jongo.rest.xstream.Row} with the metadata obtained 
-     * with the {@link jongo.sql.Select} statement
+     * Executes a given {@link amforeas.sql.Select} object and returns the metadata associated to the results.
+     * @param select a {@link amforeas.sql.Select} instance which should only retrieve one result.
+     * @return a List of {@link amforeas.rest.xstream.Row} with the metadata obtained 
+     * with the {@link amforeas.sql.Select} statement
      * @throws SQLException SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
-     * @see jongo.handler.ResultSetMetaDataHandler
+     * @see amforeas.handler.ResultSetMetaDataHandler
      */
     public static List<Row> getTableMetaData(final Select select) throws SQLException {
         l.debug("Obtaining metadata from table " + select.toString());
@@ -230,11 +230,11 @@ public class JDBCExecutor {
     
     /**
      * Executes the given stored procedure or function in the RDBMS using the given List 
-     * of {@link jongo.jdbc.StoredProcedureParam}.
+     * of {@link amforeas.jdbc.StoredProcedureParam}.
      * @param database database name or schema where to execute the stored procedure or function
      * @param queryName the name of the stored procedure or function. This gets converted to a {call foo()} statement.
-     * @param params a List of {@link jongo.jdbc.StoredProcedureParam} used by the stored procedure or function.
-     * @return a List of {@link jongo.rest.xstream.Row} with the results of the stored procedure (if out parameters are given)
+     * @param params a List of {@link amforeas.jdbc.StoredProcedureParam} used by the stored procedure or function.
+     * @return a List of {@link amforeas.rest.xstream.Row} with the results of the stored procedure (if out parameters are given)
      * or the results of the function.
      * @throws SQLException
      */
@@ -297,10 +297,10 @@ public class JDBCExecutor {
     }
     
     /**
-     * For a given database or schema, execute the statement returned by the {@link jongo.sql.dialect.Dialect} listOfTablesStatement()
-     * method and return a List of {@link jongo.rest.xstream.Row} with all the tables available.
+     * For a given database or schema, execute the statement returned by the {@link amforeas.sql.dialect.Dialect} listOfTablesStatement()
+     * method and return a List of {@link amforeas.rest.xstream.Row} with all the tables available.
      * @param database the name of the database to query.
-     * @return a List of {@link jongo.rest.xstream.Row} with all the tables available.
+     * @return a List of {@link amforeas.rest.xstream.Row} with all the tables available.
      * @throws SQLException 
      */
     public static List<Row> getListOfTables(final String database) throws SQLException{
@@ -323,12 +323,12 @@ public class JDBCExecutor {
     }
     
     /**
-     * Utility method which registers in a CallableStatement object the different {@link jongo.jdbc.StoredProcedureParam}
-     * instances in the given list. Returns a List of {@link jongo.jdbc.StoredProcedureParam} with all the OUT parameters
+     * Utility method which registers in a CallableStatement object the different {@link amforeas.jdbc.StoredProcedureParam}
+     * instances in the given list. Returns a List of {@link amforeas.jdbc.StoredProcedureParam} with all the OUT parameters
      * registered in the CallableStatement
      * @param cs the CallableStatement object where the parameters are registered.
-     * @param params a list of {@link jongo.jdbc.StoredProcedureParam}
-     * @return a list of OUT {@link jongo.jdbc.StoredProcedureParam} 
+     * @param params a list of {@link amforeas.jdbc.StoredProcedureParam}
+     * @return a list of OUT {@link amforeas.jdbc.StoredProcedureParam} 
      * @throws SQLException if we fail to register any of the parameters in the CallableStatement
      */
     private static List<StoredProcedureParam> addParameters(final CallableStatement cs, final List<StoredProcedureParam> params) throws SQLException{

@@ -1,39 +1,39 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jongo;
+package org.amforeas;
 
 import java.util.*;
 import javax.ws.rs.core.Response;
 
-import jongo.JongoUtils;
-import jongo.RestController;
-import jongo.config.JongoConfiguration;
-import jongo.demo.Demo;
-import jongo.exceptions.JongoBadRequestException;
-import jongo.exceptions.StartupException;
-import jongo.jdbc.LimitParam;
-import jongo.jdbc.OrderParam;
-import jongo.rest.xstream.JongoError;
-import jongo.rest.xstream.JongoHead;
-import jongo.rest.xstream.JongoSuccess;
-import jongo.rest.xstream.Row;
+import amforeas.JongoUtils;
+import amforeas.RestController;
+import amforeas.config.JongoConfiguration;
+import amforeas.demo.Demo;
+import amforeas.exceptions.JongoBadRequestException;
+import amforeas.exceptions.StartupException;
+import amforeas.jdbc.LimitParam;
+import amforeas.jdbc.OrderParam;
+import amforeas.rest.xstream.JongoError;
+import amforeas.rest.xstream.JongoHead;
+import amforeas.rest.xstream.JongoSuccess;
+import amforeas.rest.xstream.Row;
 import junit.framework.Assert;
-import org.jongo.mocks.UserMock;
+import org.amforeas.mocks.UserMock;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

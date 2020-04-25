@@ -1,6 +1,6 @@
-# jongo-as
+# amforeas-as
 
-Jongo implementation for Application Servers. Generates a WAR that should work in any application server.
+Amforeas implementation for Application Servers. Generates a WAR that should work in any application server.
 
 Tested in:
 

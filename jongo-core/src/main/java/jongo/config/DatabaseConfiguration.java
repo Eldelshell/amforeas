@@ -1,23 +1,23 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-package jongo.config;
+package amforeas.config;
 
-import jongo.enums.JDBCDriver;
+import amforeas.enums.JDBCDriver;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,13 +33,13 @@ public class DatabaseConfiguration {
     private static final Logger l = LoggerFactory.getLogger(DatabaseConfiguration.class);
     
     /**
-     * Alias of the configuration. It should be unique for the whole jongo instance. This is the alias
+     * Alias of the configuration. It should be unique for the whole amforeas instance. This is the alias
      * that will be used to access this configuration.
      */
     protected final String alias;
     
     /**
-     * the {@link jongo.enums.JDBCDriver} driver.
+     * the {@link amforeas.enums.JDBCDriver} driver.
      */
     protected final JDBCDriver driver;
     
@@ -99,8 +99,8 @@ public class DatabaseConfiguration {
     
     /**
      * Instantiates a new DatabaseConfiguration object, loads the given JDBCDriver and returns the instance.
-     * @param alias alias of the database/schema. It should be unique for the whole jongo instance.
-     * @param driver the {@link jongo.enums.JDBCDriver} driver
+     * @param alias alias of the database/schema. It should be unique for the whole amforeas instance.
+     * @param driver the {@link amforeas.enums.JDBCDriver} driver
      * @param user the user used used to authenticate against the RDMBS
      * @param password the password for the given user used to authenticate against the RDMBS
      * @param url the JDBC url of the RDMBS
@@ -173,7 +173,7 @@ public class DatabaseConfiguration {
 	}
 
 	/**
-     * Generates the appropriate JDBC URL for the current {@link jongo.enums.JDBCDriver}
+     * Generates the appropriate JDBC URL for the current {@link amforeas.enums.JDBCDriver}
      * @return a JDBC URL String
      */
     public String toJdbcURL(){

@@ -2,16 +2,16 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-      <groupId>jongo</groupId>
-      <artifactId>jongo-parent</artifactId>
+      <groupId>amforeas</groupId>
+      <artifactId>amforeas-parent</artifactId>
       <version>1</version>
     </parent>
 
-    <artifactId>jongo-core</artifactId>
+    <artifactId>amforeas-core</artifactId>
     <version>0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>jongo-core</name>
+    <name>amforeas-core</name>
 
     <dependencies>
         <dependency>
@@ -61,7 +61,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>jongo-${project.version}</finalName>
+        <finalName>amforeas-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

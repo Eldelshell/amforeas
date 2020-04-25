@@ -9,12 +9,12 @@
   
   <appender name="MAIN" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <Append>true</Append>
-    <File>logs/jongo.log</File>
+    <File>logs/amforeas.log</File>
     <encoder>
       <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] [%c{1}:%L] [%p] %m%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>logs/old/jongo.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <fileNamePattern>logs/old/amforeas.log.%d{yyyy-MM-dd}</fileNamePattern>
       <maxHistory>30</maxHistory>
     </rollingPolicy>
   </appender>
@@ -35,11 +35,11 @@
   <logger name="com.sun.jersey" level="OFF"/>
   <logger name="org.slf4j" level="OFF"/>
   
-  <logger name="jongo" level="DEBUG">
+  <logger name="amforeas" level="DEBUG">
     <appender-ref ref="MAIN"/>
   </logger>
   
-  <logger name="jongo.PerformanceLogger" level="DEBUG">
+  <logger name="amforeas.PerformanceLogger" level="DEBUG">
     <appender-ref ref="PERFORMANCE"/>
   </logger>
   

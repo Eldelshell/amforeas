@@ -2,14 +2,14 @@
 #
 # Copyright (C) 2011 Alejandro Ayuso
 #
-# This file is part of Jongo
+# This file is part of Amforeas
 #
-# Jongo is free software: you can redistribute
+# Amforeas is free software: you can redistribute
 # it and/or modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# Jongo is distributed in the hope that it will
+# Amforeas is distributed in the hope that it will
 # be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 # of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -20,25 +20,25 @@
 #
 
 # An example Python script which uses json, httplib and urllib to do some
-# operations on Jongo running in demo mode
+# operations on Amforeas running in demo mode
 
-import jongo
+import amforeas
 
-class User(jongo.JongoModel):
+class User(amforeas.JongoModel):
     def __init__(self, id=None, name=None, age=None):
-        jongo.JongoModel.__init__(self)
+        amforeas.JongoModel.__init__(self)
         self.id = id
         self.name = name
         self.age = age
 
-class UserStore(jongo.JongoStore):
+class UserStore(amforeas.JongoStore):
     def __init__(self):
-        jongo.JongoStore.__init__(self)
+        amforeas.JongoStore.__init__(self)
         self.model = User
 
-class Car(jongo.JongoModel):
+class Car(amforeas.JongoModel):
     def __init__(self, id=None, model=None, maker=None, fuel=None, transmission=None, year=None):
-        jongo.JongoModel.__init__(self)
+        amforeas.JongoModel.__init__(self)
         self.id = id
         self.idCol = "cid"
         self.model = model
@@ -47,30 +47,30 @@ class Car(jongo.JongoModel):
         self.transmission = transmission
         self.year = year
 
-class CarStore(jongo.JongoStore):
+class CarStore(amforeas.JongoStore):
     def __init__(self):
-        jongo.JongoStore.__init__(self)
+        amforeas.JongoStore.__init__(self)
         self.model = Car
-        self.proxy = jongo.Proxy("localhost:8080","/jongo/car", Car)
+        self.proxy = amforeas.Proxy("localhost:8080","/amforeas/car", Car)
 
-class MakerData(jongo.JongoModel):
+class MakerData(amforeas.JongoModel):
     def __init__(self, id=None, maker=None, year=None, month=None, sales=None):
-        jongo.JongoModel.__init__(self)
+        amforeas.JongoModel.__init__(self)
         self.id = id
         self.maker = maker
         self.year = year
         self.month = month
         self.sales = sales
 
-class MakerDataStore(jongo.JongoStore):
+class MakerDataStore(amforeas.JongoStore):
     def __init__(self):
-        jongo.JongoStore.__init__(self)
+        amforeas.JongoStore.__init__(self)
         self.model = MakerData
-        self.proxy = jongo.Proxy("localhost:8080","/jongo/maker_stats", MakerData, 50)
+        self.proxy = amforeas.Proxy("localhost:8080","/amforeas/maker_stats", MakerData, 50)
 
 if __name__ == '__main__':
     store = UserStore()
-    store.proxy = jongo.Proxy("localhost:8080","/jongo/user", User)
+    store.proxy = amforeas.Proxy("localhost:8080","/amforeas/user", User)
     store.load()
     assert store.count() == 2
 

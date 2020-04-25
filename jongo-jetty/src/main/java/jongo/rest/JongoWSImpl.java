@@ -1,22 +1,22 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jongo.rest;
+package amforeas.rest;
 
 import java.util.List;
 import java.util.Map;
@@ -39,14 +39,14 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import jongo.JongoUtils;
-import jongo.JongoWS;
-import jongo.PerformanceLogger;
-import jongo.RestController;
-import jongo.jdbc.LimitParam;
-import jongo.jdbc.OrderParam;
-import jongo.rest.xstream.JongoError;
-import jongo.rest.xstream.Usage;
+import amforeas.JongoUtils;
+import amforeas.JongoWS;
+import amforeas.PerformanceLogger;
+import amforeas.RestController;
+import amforeas.jdbc.LimitParam;
+import amforeas.jdbc.OrderParam;
+import amforeas.rest.xstream.JongoError;
+import amforeas.rest.xstream.Usage;
 
 /**
  *

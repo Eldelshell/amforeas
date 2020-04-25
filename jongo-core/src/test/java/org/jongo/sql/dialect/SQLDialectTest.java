@@ -1,11 +1,11 @@
-package org.jongo.sql.dialect;
+package org.amforeas.sql.dialect;
 
-import jongo.enums.Operator;
-import jongo.jdbc.LimitParam;
-import jongo.jdbc.OrderParam;
-import jongo.sql.*;
-import jongo.sql.dialect.Dialect;
-import jongo.sql.dialect.SQLDialect;
+import amforeas.enums.Operator;
+import amforeas.jdbc.LimitParam;
+import amforeas.jdbc.OrderParam;
+import amforeas.sql.*;
+import amforeas.sql.dialect.Dialect;
+import amforeas.sql.dialect.SQLDialect;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;

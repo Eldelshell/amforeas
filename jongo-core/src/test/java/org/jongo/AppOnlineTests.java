@@ -1,35 +1,35 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jongo;
+package org.amforeas;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.Response;
 
-import jongo.rest.xstream.JongoError;
-import jongo.rest.xstream.JongoResponse;
-import jongo.rest.xstream.JongoSuccess;
-import jongo.rest.xstream.Row;
+import amforeas.rest.xstream.JongoError;
+import amforeas.rest.xstream.JongoResponse;
+import amforeas.rest.xstream.JongoSuccess;
+import amforeas.rest.xstream.Row;
 
 import org.apache.http.NameValuePair;
-import org.jongo.mocks.JongoClient;
-import org.jongo.mocks.UserMock;
+import org.amforeas.mocks.JongoClient;
+import org.amforeas.mocks.UserMock;
 import static org.junit.Assert.*;
 
 /**
@@ -82,7 +82,7 @@ public class AppOnlineTests {
         // in the demo, by default, maker is not writtable
         doTestResponse(client.doPOST("maker", "{\"maker\":\"this should fail!\",\"id\":1}"), Response.Status.BAD_REQUEST, 0);
         doTestResponse(client.doPUT("maker/0", "{\"maker\":\"this should fail!\"}"), Response.Status.BAD_REQUEST, 0);
-        // table is not in Jongo
+        // table is not in Amforeas
         doTestResponse(client.doPOST("notInJongo", "{\"comment\":\"this should fail!\",\"cid\":1}"), Response.Status.BAD_REQUEST, 0);
         doTestResponse(client.doPUT("notInJongo/0", "{\"comment\":\"this should fail!\"}"), Response.Status.BAD_REQUEST, 0);
     }

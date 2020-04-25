@@ -6,7 +6,7 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <servlet>
         <servlet-name>sign</servlet-name>
-        <servlet-class>jongo.SignGuestbookServlet</servlet-class>
+        <servlet-class>amforeas.SignGuestbookServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>sign</servlet-name>

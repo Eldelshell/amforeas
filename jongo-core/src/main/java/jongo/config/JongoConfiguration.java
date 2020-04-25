@@ -1,22 +1,22 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jongo.config;
+package amforeas.config;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,17 +24,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import jongo.JongoShutdown;
-import jongo.demo.Demo;
-import jongo.enums.JDBCDriver;
-import jongo.exceptions.StartupException;
+import amforeas.JongoShutdown;
+import amforeas.demo.Demo;
+import amforeas.enums.JDBCDriver;
+import amforeas.exceptions.StartupException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Singleton class which loads the jongo.properties files, reads its content and provides methods to access
+ * Singleton class which loads the amforeas.properties files, reads its content and provides methods to access
  * this configuration properties.
  * @author Alejandro Ayuso 
  */
@@ -42,7 +42,7 @@ public class JongoConfiguration {
     
     private static final Logger l = LoggerFactory.getLogger(JongoConfiguration.class);
     
-    private static final String p_name_jongo_database_list = "jongo.alias.list";
+    private static final String p_name_jongo_database_list = "amforeas.alias.list";
     private static final String p_prefix_db_driver = ".jdbc.driver";
     private static final String p_prefix_db_username = ".jdbc.username";
     private static final String p_prefix_db_password = ".jdbc.password";
@@ -116,26 +116,26 @@ public class JongoConfiguration {
     }
     
     /**
-     * Loads the jongo.properties from different locations using different methods.
+     * Loads the amforeas.properties from different locations using different methods.
      * @param conf a JongoConfiguration instance used to obtain a ClassLoader.
      * @return an instance of {@link java.util.Properties} with the properties from the file.
      */
     private static Properties loadProperties(JongoConfiguration conf){
         Properties prop = new Properties();
-        InputStream in = JongoConfiguration.class.getClass().getResourceAsStream("/org/jongo/jongo.properties");
+        InputStream in = JongoConfiguration.class.getClass().getResourceAsStream("/org/amforeas/amforeas.properties");
 
         if(in == null){
-            l.warn("Couldn't load configuration file /org/jongo/jongo.properties");
-            in = JongoConfiguration.class.getClass().getResourceAsStream("/jongo.properties");
+            l.warn("Couldn't load configuration file /org/amforeas/amforeas.properties");
+            in = JongoConfiguration.class.getClass().getResourceAsStream("/amforeas.properties");
         }
         
         if(in == null){
-            l.error("Couldn't load configuration file /jongo.properties");
-            in = conf.getClass().getClassLoader().getResourceAsStream("jongo.properties");
+            l.error("Couldn't load configuration file /amforeas.properties");
+            in = conf.getClass().getClassLoader().getResourceAsStream("amforeas.properties");
         }
         
         if(in == null){
-            l.error("Couldn't load configuration file jongo.properties quitting");
+            l.error("Couldn't load configuration file amforeas.properties quitting");
         }
 
         try {
@@ -155,10 +155,10 @@ public class JongoConfiguration {
     }
     
     /**
-     * From the given properties object, load the the different {@link jongo.config.DatabaseConfiguration}.
+     * From the given properties object, load the the different {@link amforeas.config.DatabaseConfiguration}.
      * @param prop an instance of {@link java.util.Properties} with the properties from the file.
-     * @return a list of {@link jongo.config.DatabaseConfiguration}
-     * @throws StartupException if we're unable to load a {@link jongo.config.DatabaseConfiguration}.
+     * @return a list of {@link amforeas.config.DatabaseConfiguration}
+     * @throws StartupException if we're unable to load a {@link amforeas.config.DatabaseConfiguration}.
      */
     private static List<DatabaseConfiguration> getDatabaseConfigurations(final Properties prop) throws StartupException{
         String databaseList = prop.getProperty(p_name_jongo_database_list);
@@ -180,10 +180,10 @@ public class JongoConfiguration {
     }
     
     /**
-     * From the given properties object, load a {@link jongo.config.DatabaseConfiguration}.
+     * From the given properties object, load a {@link amforeas.config.DatabaseConfiguration}.
      * @param prop an instance of {@link java.util.Properties} with the properties from the file.
      * @param name the name of the database to load.
-     * @return a {@link jongo.config.DatabaseConfiguration}for the name given to the
+     * @return a {@link amforeas.config.DatabaseConfiguration}for the name given to the
      * database/schema.
      */
     private static DatabaseConfiguration generateDatabaseConfiguration(final Properties prop, final String name){
@@ -258,7 +258,7 @@ public class JongoConfiguration {
             if(c.getAlias().equalsIgnoreCase(alias))
                 return c;
         }
-        throw new IllegalArgumentException("Alias doesn't exists or is not registered in jongo");
+        throw new IllegalArgumentException("Alias doesn't exists or is not registered in amforeas");
     }
     
     public List<DatabaseConfiguration> getDatabases(){

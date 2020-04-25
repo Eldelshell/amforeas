@@ -1,6 +1,6 @@
-# jongo-gae
+# amforeas-gae
 
-Jongo implementation for Google Apps Engine with support for:
+Amforeas implementation for Google Apps Engine with support for:
 
 - [ ] App Engine Datastore
 - [ ] Google Cloud SQL

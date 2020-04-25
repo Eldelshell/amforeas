@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jongo;
+package amforeas;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;

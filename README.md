@@ -1,7 +1,7 @@
 # Amforeas
 ## A RESTful Interface for JDBC
 
-Jongo is a Java server which provides CRUD operations over any JDBC supported RDBMS using REST.
+Amforeas is a Java server which provides CRUD operations over any JDBC supported RDBMS using REST.
 
 By REST we basically mean that the different CRUD operations are performed by different HTTP methods:
 

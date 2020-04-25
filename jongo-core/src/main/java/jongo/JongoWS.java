@@ -1,22 +1,22 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jongo;
+package amforeas;
 
 import java.util.List;
 
@@ -78,9 +78,9 @@ public interface JongoWS {
      * Finds all records from the given resource which matches the given query with the given list of arguments.
      * @param database name of the database the resource belongs to
      * @param resource name of the resource we want to access
-     * @param query a {@link org.jongo.jdbc.DynamicFinder} query
-     * @param args a list of arguments to be given to the {@link org.jongo.jdbc.DynamicFinder}
-     * @return all the records which match the given {@link org.jongo.jdbc.DynamicFinder}
+     * @param query a {@link org.amforeas.jdbc.DynamicFinder} query
+     * @param args a list of arguments to be given to the {@link org.amforeas.jdbc.DynamicFinder}
+     * @return all the records which match the given {@link org.amforeas.jdbc.DynamicFinder}
      */
     public Response findBy(String database, String resource, String query, List<String> args);
     
@@ -91,7 +91,7 @@ public interface JongoWS {
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param jsonRequest JSON representation of the values we want to insert. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link jongo.rest.xstream.JongoSuccess} response with the number of records inserted and a
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} response with the number of records inserted and a
      * CREATED HTTP Code.
      */
     public Response insert(String database, String resource, String pk, String jsonRequest);
@@ -103,7 +103,7 @@ public interface JongoWS {
      * @param resource name of the resource we want to access
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param formParams a x-www-form-urlencoded representation of the values we want to insert.
-     * @return a {@link jongo.rest.xstream.JongoSuccess} response with the number of records inserted and a
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} response with the number of records inserted and a
      * CREATED HTTP Code. If an error occurs a BAD REQUEST or NO CONTENT errors are returned.
      */
     public Response insert(String database, String resource, String pk, MultivaluedMap<String, String> formParams);
@@ -116,7 +116,7 @@ public interface JongoWS {
      * @param id the primary key value of the record we want to update.
      * @param jsonRequest JSON representation of the values we want to insert. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link jongo.rest.xstream.JongoSuccess} response with the updated record.
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} response with the updated record.
      */
     public Response update(String database, String resource, String pk, String id, String jsonRequest);
     
@@ -126,7 +126,7 @@ public interface JongoWS {
      * @param resource name of the resource we want to access
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param id the primary key value of the record we want to delete.
-     * @return a {@link jongo.rest.xstream.JongoSuccess} response with the number of records deleted and a
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} response with the number of records deleted and a
      * OK HTTP Code. If an error occurs a BAD REQUEST or NO CONTENT errors are returned.
      */
     public Response delete(String database, String resource, String pk, String id);
@@ -145,8 +145,8 @@ public interface JongoWS {
     public Response storedProcedure(String database, String query, String jsonRequest);
     
     /**
-     * Returns statistics about jongo usage. {@link jongo.rest.xstream.Usage}
-     * @return statistics of jongo usage.
+     * Returns statistics about amforeas usage. {@link amforeas.rest.xstream.Usage}
+     * @return statistics of amforeas usage.
      */
     public Response getJongoStatistics();
     

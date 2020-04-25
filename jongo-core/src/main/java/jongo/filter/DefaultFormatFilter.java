@@ -1,22 +1,22 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jongo.filter;
+package amforeas.filter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +25,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import jongo.JongoUtils;
-import jongo.rest.xstream.JongoError;
-import jongo.rest.xstream.JongoHead;
-import jongo.rest.xstream.JongoSuccess;
-import jongo.rest.xstream.Row;
+import amforeas.JongoUtils;
+import amforeas.rest.xstream.JongoError;
+import amforeas.rest.xstream.JongoHead;
+import amforeas.rest.xstream.JongoSuccess;
+import amforeas.rest.xstream.Row;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,8 +41,8 @@ import com.sun.jersey.spi.container.ContainerResponse;
 import com.sun.jersey.spi.container.ContainerResponseFilter;
 
 /**
- * Default filter which is used by Jongo to modify the requests and responses. Here's were we generate the
- * JSON and XML output for all the {@link jongo.rest.xstream.JongoResponse} objects and add some
+ * Default filter which is used by Amforeas to modify the requests and responses. Here's were we generate the
+ * JSON and XML output for all the {@link amforeas.rest.xstream.JongoResponse} objects and add some
  * headers which might prove useful.
  * In this case, we're doing the serialization to XML and JSON manually because it's not that hard
  * and I can save on dependencies.
@@ -111,13 +111,13 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
     
     /**
      * For a given {@linkplain com.sun.jersey.spi.container.ContainerRequest} obtain the ACCEPT header
-     * and return a {@linkplain javax.ws.rs.core.MediaType} which is compatible with Jongo (JSON or XML). This
+     * and return a {@linkplain javax.ws.rs.core.MediaType} which is compatible with Amforeas (JSON or XML). This
      * is because some received mime types were behaving like it was expected or simply because the 
      * {@linkplain javax.ws.rs.core.MediaType.valueOf()} method wasn't able to parse them. This is particularly
      * true for browsers which use something like {@code text/html,application/xhtml+xml,application/xml;q=0.9,*\/*;q=0.8}
      * @param cr {@linkplain com.sun.jersey.spi.container.ContainerRequest} to get the ACCEPT header.
      * @return if the {@linkplain javax.ws.rs.core.MediaType.valueOf()} is able to parse the MIME we return it. Else
-     * an exception is catched and we return jongo default transport (application/json)
+     * an exception is catched and we return amforeas default transport (application/json)
      */
     private MediaType getMediaTypeFromRequest(final ContainerRequest cr){
         MediaType mime;
@@ -147,9 +147,9 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
     
     /**
      * Generates a new {@linkplain javax.ws.rs.core.Response} for a given 
-     * {@link jongo.rest.xstream.JongoSuccess} generating the appropriate XML or JSON representation 
+     * {@link amforeas.rest.xstream.JongoSuccess} generating the appropriate XML or JSON representation 
      * and setting the Content-Count and Content-Location headers.
-     * @param response a {@link jongo.rest.xstream.JongoSuccess} to be converted to JSON or XML.
+     * @param response a {@link amforeas.rest.xstream.JongoSuccess} to be converted to JSON or XML.
      * @param mime the {@linkplain javax.ws.rs.core.MediaType} used to determine the transport format.
      * @param status the current HTTP code of the response.
      * @return a new {@linkplain javax.ws.rs.core.Response} with the new headers and the content body
@@ -226,9 +226,9 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
 
     /**
      * Generates a new {@linkplain javax.ws.rs.core.Response} for a given 
-     * {@link jongo.rest.xstream.JongoError} generating the appropriate XML or JSON representation 
+     * {@link amforeas.rest.xstream.JongoError} generating the appropriate XML or JSON representation 
      * and setting the Content-Location header.
-     * @param response a {@link jongo.rest.xstream.JongoSuccess} to be converted to JSON or XML.
+     * @param response a {@link amforeas.rest.xstream.JongoSuccess} to be converted to JSON or XML.
      * @param mime the {@linkplain javax.ws.rs.core.MediaType} used to determine the transport format.
      * @param status the current HTTP code of the response.
      * @return a new {@linkplain javax.ws.rs.core.Response} with the new headers and the content body
@@ -279,9 +279,9 @@ public class DefaultFormatFilter implements ContainerResponseFilter, JongoFormat
 
     /**
      * Generates a new {@linkplain javax.ws.rs.core.Response} for a given 
-     * {@link jongo.rest.xstream.JongoHead} generating the appropriate XML or JSON representation 
+     * {@link amforeas.rest.xstream.JongoHead} generating the appropriate XML or JSON representation 
      * and setting the Content-Location header.
-     * @param response a {@link jongo.rest.xstream.JongoSuccess} to be converted to JSON or XML.
+     * @param response a {@link amforeas.rest.xstream.JongoSuccess} to be converted to JSON or XML.
      * @param mime the {@linkplain javax.ws.rs.core.MediaType} used to determine the transport format.
      * @param status the current HTTP code of the response.
      * @return a new {@linkplain javax.ws.rs.core.Response} with the new headers.

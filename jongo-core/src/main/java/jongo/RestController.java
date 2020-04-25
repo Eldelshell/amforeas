@@ -1,21 +1,21 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-package jongo;
+package amforeas;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,31 +24,31 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-import jongo.config.JongoConfiguration;
-import jongo.exceptions.JongoBadRequestException;
-import jongo.jdbc.JDBCExecutor;
-import jongo.jdbc.LimitParam;
-import jongo.jdbc.OrderParam;
-import jongo.jdbc.StoredProcedureParam;
-import jongo.rest.xstream.JongoError;
-import jongo.rest.xstream.JongoHead;
-import jongo.rest.xstream.JongoResponse;
-import jongo.rest.xstream.JongoSuccess;
-import jongo.rest.xstream.Row;
-import jongo.sql.Delete;
-import jongo.sql.DynamicFinder;
-import jongo.sql.Insert;
-import jongo.sql.Select;
-import jongo.sql.SelectParam;
-import jongo.sql.Table;
-import jongo.sql.Update;
+import amforeas.config.JongoConfiguration;
+import amforeas.exceptions.JongoBadRequestException;
+import amforeas.jdbc.JDBCExecutor;
+import amforeas.jdbc.LimitParam;
+import amforeas.jdbc.OrderParam;
+import amforeas.jdbc.StoredProcedureParam;
+import amforeas.rest.xstream.JongoError;
+import amforeas.rest.xstream.JongoHead;
+import amforeas.rest.xstream.JongoResponse;
+import amforeas.rest.xstream.JongoSuccess;
+import amforeas.rest.xstream.Row;
+import amforeas.sql.Delete;
+import amforeas.sql.DynamicFinder;
+import amforeas.sql.Insert;
+import amforeas.sql.Select;
+import amforeas.sql.SelectParam;
+import amforeas.sql.Table;
+import amforeas.sql.Update;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Controller for the RESTful operations. Serves as a backend for the {@link jongo.JongoWS} implementations.
+ * Controller for the RESTful operations. Serves as a backend for the {@link amforeas.JongoWS} implementations.
  * @author Alejandro Ayuso 
  */
 public class RestController {
@@ -73,9 +73,9 @@ public class RestController {
     }
     
     /**
-     * Obtains a list of tables for the given database/schema and returns a {@link jongo.rest.xstream.JongoSuccess}
+     * Obtains a list of tables for the given database/schema and returns a {@link amforeas.rest.xstream.JongoSuccess}
      * response.
-     * @return  a {@link jongo.rest.xstream.JongoSuccess} or a {@link jongo.rest.xstream.JongoError}
+     * @return  a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
      */
     public JongoResponse getDatabaseMetadata(){
         l.debug("Obtaining metadata for " + database);
@@ -96,10 +96,10 @@ public class RestController {
     }
     
     /**
-     * Obtains a list of columns for the given resource and returns a {@link jongo.rest.xstream.JongoSuccess}
+     * Obtains a list of columns for the given resource and returns a {@link amforeas.rest.xstream.JongoSuccess}
      * response.
      * @param table name of the resource to obtain the metadata from
-     * @return a {@link jongo.rest.xstream.JongoSuccess} or a {@link jongo.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
      */
     public JongoResponse getResourceMetadata(final String table){
         l.debug("Obtaining metadata for " + table);
@@ -259,13 +259,13 @@ public class RestController {
     }
     
     /**
-     * Generates an instance of {@link jongo.sql.Insert} for the given JSON arguments and calls the 
+     * Generates an instance of {@link amforeas.sql.Insert} for the given JSON arguments and calls the 
      * insertResource(Insert) method.
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param jsonRequest JSON representation of the values we want to insert. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link jongo.rest.xstream.JongoSuccess} or a {@link jongo.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
      */
     public JongoResponse insertResource(final String resource, final String pk, final String jsonRequest){
         l.debug("Insert new " + alias + "." + resource + " with JSON values: " + jsonRequest);
@@ -284,12 +284,12 @@ public class RestController {
     }
     
     /**
-     * Generates an instance of {@link jongo.sql.Insert} for the given x-www-form-urlencoded arguments and calls the 
+     * Generates an instance of {@link amforeas.sql.Insert} for the given x-www-form-urlencoded arguments and calls the 
      * insertResource(Insert) method.
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param formParams a x-www-form-urlencoded representation of the values we want to insert.
-     * @return a {@link jongo.rest.xstream.JongoSuccess} or a {@link jongo.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
      */
     public JongoResponse insertResource(final String resource, final String pk, final Map<String, String> formParams){
         l.debug("Insert new " + alias + "." + resource + " with values: " + formParams);
@@ -310,10 +310,10 @@ public class RestController {
     }
     
     /**
-     * Calls the {@link jongo.jdbc.JDBCExecutor} insert method with the 
-     * given {@link jongo.sql.Insert} instance and handles errors.
-     * @param insert a {@link jongo.sql.Insert} instance
-     * @return a {@link jongo.rest.xstream.JongoSuccess} or a {@link jongo.rest.xstream.JongoError}
+     * Calls the {@link amforeas.jdbc.JDBCExecutor} insert method with the 
+     * given {@link amforeas.sql.Insert} instance and handles errors.
+     * @param insert a {@link amforeas.sql.Insert} instance
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
      */
     private JongoResponse insertResource(Insert insert){
         JongoResponse response = null;
@@ -337,13 +337,13 @@ public class RestController {
     }
     
     /**
-     * Creates an instance of {@link jongo.sql.Update}, calls 
-     * the {@link jongo.jdbc.JDBCExecutor} update method and handles errors
+     * Creates an instance of {@link amforeas.sql.Update}, calls 
+     * the {@link amforeas.jdbc.JDBCExecutor} update method and handles errors
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param jsonRequest JSON representation of the values we want to update. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link jongo.rest.xstream.JongoSuccess} or a {@link jongo.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
      */
     public JongoResponse updateResource(final String resource, final String pk, final String id, final String jsonRequest){
         l.debug("Update record " + id + " in table " + alias + "." + resource + " with values: " + jsonRequest);
@@ -379,12 +379,12 @@ public class RestController {
     }
     
     /**
-     * Creates an instance of {@link jongo.sql.Delete}, calls 
-     * the {@link jongo.jdbc.JDBCExecutor} delete method and handles errors
+     * Creates an instance of {@link amforeas.sql.Delete}, calls 
+     * the {@link amforeas.jdbc.JDBCExecutor} delete method and handles errors
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param id unique pk identifier of the record to delete.
-     * @return a {@link jongo.rest.xstream.JongoSuccess} or a {@link jongo.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
      */
     public JongoResponse deleteResource(final String resource, final String pk, final String id){
         l.debug("Delete record " + id + " from table " + alias + "." + resource);
@@ -419,14 +419,14 @@ public class RestController {
     }
     
     /**
-     * Generates a {@link org.jongo.jdbc.DynamicFinder} from the given parameters and calls
-     * the {@link jongo.jdbc.JDBCExecutor} find method and handles errors
+     * Generates a {@link org.amforeas.jdbc.DynamicFinder} from the given parameters and calls
+     * the {@link amforeas.jdbc.JDBCExecutor} find method and handles errors
      * @param resource the resource or view where to insert the record.
-     * @param query a {@link org.jongo.jdbc.DynamicFinder} query
-     * @param values a list of arguments to be given to the {@link org.jongo.jdbc.DynamicFinder}
-     * @param limit a {@link jongo.jdbc.LimitParam} instance.
-     * @param order a {@link jongo.jdbc.OrderParam} instance.
-     * @return a {@link jongo.rest.xstream.JongoSuccess} or a {@link jongo.rest.xstream.JongoError}
+     * @param query a {@link org.amforeas.jdbc.DynamicFinder} query
+     * @param values a list of arguments to be given to the {@link org.amforeas.jdbc.DynamicFinder}
+     * @param limit a {@link amforeas.jdbc.LimitParam} instance.
+     * @param order a {@link amforeas.jdbc.OrderParam} instance.
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
      */
     public JongoResponse findByDynamicFinder(final String resource, final String query, final List<String> values, final LimitParam limit, final OrderParam order){
         l.debug("Find resource from " + alias + "." + resource + " with " + query);
@@ -468,15 +468,15 @@ public class RestController {
     }
     
     /**
-     * Generates a List of {@link jongo.jdbc.StoredProcedureParam} and executes
-     * the {@link jongo.jdbc.JDBCExecutor} executeQuery method with the given JSON parameters.
+     * Generates a List of {@link amforeas.jdbc.StoredProcedureParam} and executes
+     * the {@link amforeas.jdbc.JDBCExecutor} executeQuery method with the given JSON parameters.
      * @param query name of the function or stored procedure
      * @param json IN and OUT parameters in JSON format. For example:
      * [
      *  {"value":2010, "name":"year", "outParameter":false, "type":"INTEGER", "index":1},
      *  {"name":"out_total", "outParameter":true, "type":"INTEGER", "index":2}
      * ]
-     * @return a {@link jongo.rest.xstream.JongoSuccess} or a {@link jongo.rest.xstream.JongoError}
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} or a {@link amforeas.rest.xstream.JongoError}
      */
     public JongoResponse executeStoredProcedure(final String query, final String json){
         l.debug("Executing Stored Procedure " + query);
@@ -506,10 +506,10 @@ public class RestController {
      * Method in charge of handling the possible exceptions thrown by the JDBCExecutor or any other
      * operation. The current implementation handles SQLException, JongoBadRequestException &
      * IllegalArgumentException to return different errors. For any other exception 
-     * a {@link jongo.rest.xstream.JongoError} with a 500 status code is returned.
+     * a {@link amforeas.rest.xstream.JongoError} with a 500 status code is returned.
      * @param t the exception to handle.
      * @param resource the name of the resource which is throwing the exception.
-     * @return a {@link jongo.rest.xstream.JongoError} with different error codes depending
+     * @return a {@link amforeas.rest.xstream.JongoError} with different error codes depending
      * on the exception being handled. If we can't handle the exception, a 500 error code is used.
      */
     private JongoResponse handleException(final Throwable t, final String resource){

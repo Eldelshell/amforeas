@@ -1,21 +1,21 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jongo.mocks;
+package org.amforeas.mocks;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -26,11 +26,11 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import jongo.rest.xstream.JongoResponse;
+import amforeas.rest.xstream.JongoResponse;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.jongo.XmlXstreamTest;
+import org.amforeas.XmlXstreamTest;
 
 /**
  *
@@ -38,7 +38,7 @@ import org.jongo.XmlXstreamTest;
  */
 public class JongoClient {
     
-    private static final String jongoUrl = "http://localhost:8080/jongo/demo1/";
+    private static final String jongoUrl = "http://localhost:8080/amforeas/demo1/";
     
     public JongoResponse doGET(final String url){
         return doRequest(url, "GET");

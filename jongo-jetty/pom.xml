@@ -3,21 +3,21 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>jongo</groupId>
-    <artifactId>jongo-parent</artifactId>
+    <groupId>amforeas</groupId>
+    <artifactId>amforeas-parent</artifactId>
     <version>1</version>
   </parent>
 
-  <artifactId>jongo-jetty</artifactId>
+  <artifactId>amforeas-jetty</artifactId>
   <version>0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>jongo-jetty</name>
+  <name>amforeas-jetty</name>
 
   <dependencies>
     <dependency>
-      <groupId>jongo</groupId>
-      <artifactId>jongo-core</artifactId>
+      <groupId>amforeas</groupId>
+      <artifactId>amforeas-core</artifactId>
       <version>0.3-SNAPSHOT</version>
     </dependency>
     <dependency>

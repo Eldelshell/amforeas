@@ -13,24 +13,24 @@
   
   <appender name="MAIN" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <Append>true</Append>
-    <File>${catalina.home}/logs/jongo/jongo.log</File>
+    <File>${catalina.home}/logs/amforeas/amforeas.log</File>
     <encoder>
       <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] [%c{1}:%L] [%p] %m%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${catalina.home}/logs/jongo/old/jongo.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <fileNamePattern>${catalina.home}/logs/amforeas/old/amforeas.log.%d{yyyy-MM-dd}</fileNamePattern>
       <maxHistory>30</maxHistory>
     </rollingPolicy>
   </appender>
   
   <appender name="PERFORMANCE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <Append>true</Append>
-    <File>${catalina.home}/logs/jongo/performance.log</File>
+    <File>${catalina.home}/logs/amforeas/performance.log</File>
     <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss} %m%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${catalina.home}/logs/jongo/old/performance.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <fileNamePattern>${catalina.home}/logs/amforeas/old/performance.log.%d{yyyy-MM-dd}</fileNamePattern>
       <maxHistory>5</maxHistory>
     </rollingPolicy>
   </appender>
@@ -39,11 +39,11 @@
   <logger name="com.sun.jersey" level="OFF"/>
   <logger name="org.slf4j" level="OFF"/>
   
-  <logger name="jongo" level="DEBUG">
+  <logger name="amforeas" level="DEBUG">
     <appender-ref ref="MAIN"/>
   </logger>
   
-  <logger name="org.jongo.PerformanceLogger" level="DEBUG">
+  <logger name="org.amforeas.PerformanceLogger" level="DEBUG">
     <appender-ref ref="PERFORMANCE"/>
   </logger>
   

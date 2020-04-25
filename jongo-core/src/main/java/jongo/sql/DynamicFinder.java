@@ -1,31 +1,31 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jongo.sql;
+package amforeas.sql;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jongo.JongoUtils;
-import jongo.enums.Operator;
-import jongo.exceptions.JongoBadRequestException;
-import jongo.jdbc.LimitParam;
-import jongo.jdbc.OrderParam;
+import amforeas.JongoUtils;
+import amforeas.enums.Operator;
+import amforeas.exceptions.JongoBadRequestException;
+import amforeas.jdbc.LimitParam;
+import amforeas.jdbc.OrderParam;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -1,21 +1,21 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Jongo.
- * Jongo is free software: you can redistribute it and/or modify
+ * This file is part of Amforeas.
+ * Amforeas is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  * 
- * Jongo is distributed in the hope that it will be useful,
+ * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Jongo.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
-package jongo.rest.xstream;
+package amforeas.rest.xstream;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class Usage {
     private DateTime start;
     
     /**
-     * Total number of requests processed by Jongo.
+     * Total number of requests processed by Amforeas.
      */
     private BigInteger total = BigInteger.ZERO;
     
@@ -125,7 +125,7 @@ public class Usage {
     }
     
     /**
-     * Calculates the time Jongo has been running and returns a string representing it, i.e. 2 days 10 hours...
+     * Calculates the time Amforeas has been running and returns a string representing it, i.e. 2 days 10 hours...
      * @return a string with the uptime.
      */
     public String getUptime(){
@@ -244,7 +244,7 @@ public class Usage {
     
     /**
      * Generates a map with the current values of the singleton to be used in
-     * as {@link jongo.rest.xstream.Row} cells.
+     * as {@link amforeas.rest.xstream.Row} cells.
      * @return 
      */
     private Map<String, String> generateCells(){
@@ -270,8 +270,8 @@ public class Usage {
     }
     
     /**
-     * Generates a {@link jongo.rest.xstream.JongoSuccess} with the current values of the singleton.
-     * @return a {@link jongo.rest.xstream.JongoSuccess} response.
+     * Generates a {@link amforeas.rest.xstream.JongoSuccess} with the current values of the singleton.
+     * @return a {@link amforeas.rest.xstream.JongoSuccess} response.
      */
     public JongoResponse getUsageData(){
         Map<String, String> cells = generateCells();

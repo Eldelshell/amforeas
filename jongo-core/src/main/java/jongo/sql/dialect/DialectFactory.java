@@ -1,7 +1,7 @@
-package jongo.sql.dialect;
+package amforeas.sql.dialect;
 
-import jongo.config.DatabaseConfiguration;
-import jongo.enums.JDBCDriver;
+import amforeas.config.DatabaseConfiguration;
+import amforeas.enums.JDBCDriver;
 
 /**
  * Factory method to generate SQL Dialects
@@ -10,9 +10,9 @@ import jongo.enums.JDBCDriver;
 public class DialectFactory {
     
     /**
-     * Obtain a dialect for the given {@link jongo.config.DatabaseConfiguration}.
-     * @param dbconf a {@link jongo.config.DatabaseConfiguration}.
-     * @return a {@link jongo.sql.dialect.Dialect} for the driver.
+     * Obtain a dialect for the given {@link amforeas.config.DatabaseConfiguration}.
+     * @param dbconf a {@link amforeas.config.DatabaseConfiguration}.
+     * @return a {@link amforeas.sql.dialect.Dialect} for the driver.
      */
     public static Dialect getDialect(final DatabaseConfiguration dbconf){
         return getDialect(dbconf.getDriver());
@@ -20,8 +20,8 @@ public class DialectFactory {
     
     /**
      * For a given driver, return the appropriate dialect.
-     * @param driver a {@link jongo.enums.JDBCDriver}
-     * @return a {@link jongo.sql.dialect.Dialect} for the driver.
+     * @param driver a {@link amforeas.enums.JDBCDriver}
+     * @return a {@link amforeas.sql.dialect.Dialect} for the driver.
      */
     public static Dialect getDialect(final JDBCDriver driver){
         Dialect dialect; 
