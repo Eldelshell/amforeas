@@ -45,6 +45,7 @@
     <jersey-version>1.19.4</jersey-version>
     <jetty-version>9.4.28.v20200408</jetty-version>
     <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+    <surefire-plugin.version>2.22.2</surefire-plugin.version>
   </properties>
 
   <build>
@@ -106,15 +107,15 @@
       <version>1.2.3</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.6.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.9.0</version>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>3.3.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -9,45 +9,46 @@
  * 
  * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.amforeas.sql.dialect;
 
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import amforeas.sql.dialect.MSSQLDialect;
 
-import org.junit.Test;
-
+@Tag("dialect-tests")
 public class MSSQLDialectTest extends SQLDialectTest {
-    
+
     public MSSQLDialectTest() {
         d = new MSSQLDialect();
     }
 
     @Test
     @Override
-    public void testDelete() {
+    public void testDelete () {
         // TODO Implement
     }
 
     @Test
     @Override
-    public void testInsert() {
+    public void testInsert () {
         // TODO Implement
     }
 
     @Test
     @Override
-    public void testSelect() {
+    public void testSelect () {
         // TODO Implement
     }
 
     @Test
     @Override
-    public void testUpdate() {
+    public void testUpdate () {
         // TODO Implement
     }
 }

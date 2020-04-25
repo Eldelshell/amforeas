@@ -4,36 +4,34 @@
  */
 package org.amforeas;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import amforeas.PerformanceLogger;
-
-import org.junit.AfterClass;
-import static org.junit.Assert.assertTrue;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  *
- * @author Alejandro Ayuso 
+ * @author Alejandro Ayuso
  */
+@Tag("offline-tests")
 public class PerformanceLoggerTest {
-    
-    public PerformanceLoggerTest() {
-    }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+    public PerformanceLoggerTest() {}
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-    
+    @BeforeAll
+    public static void setUpClass () throws Exception {}
+
+    @AfterAll
+    public static void tearDownClass () throws Exception {}
+
     @Test
-    public void testLogger(){
+    public void testLogger () {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.UNK);
         Long t = p.end();
         assertTrue(t.equals(0L));
-        
+
         p = PerformanceLogger.start(PerformanceLogger.Code.UNK, "Test");
         t = p.end();
         assertTrue(t.equals(0L));

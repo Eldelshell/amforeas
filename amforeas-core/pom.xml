@@ -79,6 +79,18 @@
           </excludes>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire-plugin.version}</version>
+        <configuration>
+          <systemProperties>
+            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+          </systemProperties>
+          <properties>
+            <groups>offline-tests, dialect-tests</groups>
+          </properties>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

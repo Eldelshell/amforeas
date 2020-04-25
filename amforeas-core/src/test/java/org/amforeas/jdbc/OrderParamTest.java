@@ -9,73 +9,72 @@
  * 
  * Amforeas is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.amforeas.jdbc;
 
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import javax.ws.rs.core.MultivaluedMap;
-
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import amforeas.jdbc.OrderParam;
-
-import org.junit.AfterClass;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  *
- * @author Alejandro Ayuso 
+ * @author Alejandro Ayuso
  */
+@Tag("offline-tests")
 public class OrderParamTest {
-    
-    public OrderParamTest() {
-    }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+    public OrderParamTest() {}
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+    @BeforeAll
+    public static void setUpClass () throws Exception {}
+
+    @AfterAll
+    public static void tearDownClass () throws Exception {}
 
     @Test
-    public void testSomeMethod() {
+    public void testSomeMethod () {
         MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
         OrderParam op = OrderParam.valueOf(formParams);
         assertNotNull(op);
         assertTrue(op.getColumn().equals("id"));
         assertTrue(op.getDirection().equals("ASC"));
-        
+
         formParams.add("dir", "DESC");
         op = OrderParam.valueOf(formParams);
         assertNotNull(op);
         assertTrue(op.getColumn().equals("id"));
         assertEquals("DESC", op.getDirection());
-        
+
         op = OrderParam.valueOf(formParams, "tableId");
         assertNotNull(op);
         assertTrue(op.getColumn().equals("tableId"));
         assertEquals("DESC", op.getDirection());
-        
+
         formParams.add("sort", "anotherColumn");
         op = OrderParam.valueOf(formParams, "tableId");
         assertNotNull(op);
         assertEquals("anotherColumn", op.getColumn());
         assertEquals("DESC", op.getDirection());
-        
+
         formParams = new MultivaluedMapImpl();
         formParams.add("sort", "anotherColumn");
         op = OrderParam.valueOf(formParams);
         assertNotNull(op);
         assertEquals("anotherColumn", op.getColumn());
         assertEquals("ASC", op.getDirection());
-        
+
         formParams = new MultivaluedMapImpl();
         formParams.add("customId", "anotherColumn");
         op = OrderParam.valueOf(formParams, "anotherColumn");

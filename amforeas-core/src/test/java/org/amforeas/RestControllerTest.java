@@ -17,9 +17,23 @@
  */
 package org.amforeas;
 
-import java.util.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.ws.rs.core.Response;
-
+import org.amforeas.mocks.UserMock;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import amforeas.AmforeasUtils;
 import amforeas.RestController;
 import amforeas.config.AmforeasConfiguration;
@@ -32,18 +46,12 @@ import amforeas.rest.xstream.AmforeasError;
 import amforeas.rest.xstream.AmforeasHead;
 import amforeas.rest.xstream.AmforeasSuccess;
 import amforeas.rest.xstream.Row;
-import junit.framework.Assert;
-import org.amforeas.mocks.UserMock;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Alejandro Ayuso
  */
+@Tag("offline-tests")
 public class RestControllerTest {
 
     private static final Logger l = LoggerFactory.getLogger(RestControllerTest.class);
@@ -52,13 +60,13 @@ public class RestControllerTest {
     LimitParam limit = new LimitParam();
     OrderParam order = new OrderParam();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp () throws StartupException {
         System.setProperty("environment", "demo");
         AmforeasUtils.loadConfiguration();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass () throws Exception {
         System.setProperty("environment", "demo");
         AmforeasConfiguration configuration = AmforeasUtils.loadConfiguration();
@@ -71,23 +79,23 @@ public class RestControllerTest {
         try {
             new RestController(null);
         } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
+            assertTrue(e instanceof IllegalArgumentException);
         }
         try {
             new RestController("");
         } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
+            assertTrue(e instanceof IllegalArgumentException);
         }
         try {
             new RestController(" ");
         } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
+            assertTrue(e instanceof IllegalArgumentException);
         }
 
         try {
             new RestController("noway");
         } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
+            assertTrue(e instanceof IllegalArgumentException);
         }
     }
 
@@ -100,14 +108,14 @@ public class RestControllerTest {
     @Test
     public void testGetResourceMetadata () {
         AmforeasHead r = (AmforeasHead) controller.getResourceMetadata("users");
-        Assert.assertEquals(Response.Status.OK, r.getStatus());
-        Assert.assertTrue(r.isSuccess());
-        Assert.assertEquals(6, r.getRows().size());
+        assertEquals(Response.Status.OK, r.getStatus());
+        assertTrue(r.isSuccess());
+        assertEquals(6, r.getRows().size());
 
         r = (AmforeasHead) controller.getResourceMetadata("MAKER_STATS_2010");
-        Assert.assertEquals(Response.Status.OK, r.getStatus());
-        Assert.assertTrue(r.isSuccess());
-        Assert.assertEquals(3, r.getRows().size());
+        assertEquals(Response.Status.OK, r.getStatus());
+        assertTrue(r.isSuccess());
+        assertEquals(3, r.getRows().size());
 
         AmforeasError err = (AmforeasError) controller.getResourceMetadata(null);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
@@ -116,7 +124,7 @@ public class RestControllerTest {
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
         err = (AmforeasError) controller.getResourceMetadata("this table doesnt exists");
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "42501", new Integer(-5501));
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "42501", Integer.valueOf(-5501));
     }
 
     @Test
@@ -187,7 +195,7 @@ public class RestControllerTest {
 
         order.setColumn("id");
         AmforeasError err = (AmforeasError) controller.getAllResources("no_exists", limit, order);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "42501", new Integer(-5501));
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "42501", Integer.valueOf(-5501));
 
         err = (AmforeasError) controller.getAllResources("", limit, order);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
@@ -260,7 +268,7 @@ public class RestControllerTest {
         try {
             controller.findByDynamicFinder("users", "findAllByCreditLessThan", null, limit, order);
         } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
+            assertTrue(e instanceof IllegalArgumentException);
         }
 
         limit = new LimitParam(1000);
@@ -306,7 +314,7 @@ public class RestControllerTest {
         Map<String, String> wrongUserParams = newMock.toMap();
         wrongUserParams.put("birthday", "0000"); // in wrong format
         err = (AmforeasError) controller.insertResource("users", "id", wrongUserParams);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "42561", new Integer(-5561));
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "42561", Integer.valueOf(-5561));
 
         wrongUserParams = newMock.toMap();
         wrongUserParams.put("age", null); // age can be null
@@ -316,12 +324,12 @@ public class RestControllerTest {
         wrongUserParams = newMock.toMap();
         wrongUserParams.put("age", ""); // age can't be empty
         err = (AmforeasError) controller.insertResource("users", "id", wrongUserParams);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", new Integer(-3438));
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", Integer.valueOf(-3438));
 
         wrongUserParams = newMock.toMap();
         wrongUserParams.put("name", null); // name can't be null
         err = (AmforeasError) controller.insertResource("users", "id", wrongUserParams);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "23502", new Integer(-10));
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "23502", Integer.valueOf(-10));
 
         wrongUserParams = newMock.toMap();
         wrongUserParams.put("name", ""); // name can be empty
@@ -337,7 +345,7 @@ public class RestControllerTest {
         testSuccessResponse(r, Response.Status.OK, 1);
 
         AmforeasError err = (AmforeasError) controller.updateResource("users", "id", "0", "{\"age\":\"\"}"); // age can't be empty
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", new Integer(-3438));
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", Integer.valueOf(-3438));
 
         err = (AmforeasError) controller.updateResource("users", "id", "0", "{\"age\":}"); // invalid json
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
@@ -346,7 +354,7 @@ public class RestControllerTest {
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
         err = (AmforeasError) controller.updateResource("users", "id", "0", "{\"age\":\"90\", \"birthday\":\"00X0\"}"); // invalid date
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "22007", new Integer(-3407));
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "22007", Integer.valueOf(-3407));
 
         err = (AmforeasError) controller.updateResource(null, "id", "0", "{\"age\":\"90\"}");
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
@@ -371,13 +379,13 @@ public class RestControllerTest {
         testSuccessResponse(r, Response.Status.OK, 1);
 
         String id = getId(r, "id");
-        Assert.assertNotNull(id);
+        assertNotNull(id);
 
         r = (AmforeasSuccess) controller.deleteResource("users", "id", id);
         testSuccessResponse(r, Response.Status.OK, 1);
 
         AmforeasError err = (AmforeasError) controller.deleteResource("users", "id", "");
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", new Integer(-3438));
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", Integer.valueOf(-3438));
 
         err = (AmforeasError) controller.deleteResource("users", "id", null);
         testErrorResponse(err, Response.Status.NO_CONTENT, null, null);
@@ -405,7 +413,7 @@ public class RestControllerTest {
         testErrorResponse(err, Response.Status.NOT_FOUND, null, null);
 
         err = (AmforeasError) controller.findResources("comments", "car_id_grrr", "2", limit, order);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "42501", new Integer(-5501));
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "42501", Integer.valueOf(-5501));
 
         err = (AmforeasError) controller.findResources("comments", "car_id", "", limit, order);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
@@ -440,24 +448,24 @@ public class RestControllerTest {
         AmforeasUtils.getStoredProcedureParamsFromJSON(json);
         AmforeasSuccess r = (AmforeasSuccess) controller.executeStoredProcedure("get_year_sales", json);
         testSuccessResponse(r, Response.Status.OK, 1);
-        Assert.assertEquals("12", r.getRows().get(0).getCells().get("out_total"));
+        assertEquals("12", r.getRows().get(0).getCells().get("out_total"));
     }
 
     private void testErrorResponse (AmforeasError err, Response.Status expectedStatus, String expectedSqlState,
             Integer expectedSqlCode) {
-        Assert.assertEquals(expectedStatus, err.getStatus());
-        Assert.assertNotNull(err.getMessage());
-        Assert.assertFalse(err.isSuccess());
-        Assert.assertEquals(expectedSqlState, err.getSqlState());
-        Assert.assertEquals(expectedSqlCode, err.getSqlCode());
+        assertEquals(expectedStatus, err.getStatus());
+        assertNotNull(err.getMessage());
+        assertFalse(err.isSuccess());
+        assertEquals(expectedSqlState, err.getSqlState());
+        assertEquals(expectedSqlCode, err.getSqlCode());
         l.debug(err.getMessage());
     }
 
     private void testSuccessResponse (AmforeasSuccess r, Response.Status expectedStatus, int expectedResults) {
         List<Row> rows = r.getRows();
-        Assert.assertEquals(expectedStatus, r.getStatus());
-        Assert.assertTrue(r.isSuccess());
-        Assert.assertEquals(expectedResults, rows.size());
+        assertEquals(expectedStatus, r.getStatus());
+        assertTrue(r.isSuccess());
+        assertEquals(expectedResults, rows.size());
     }
 
     private void testDynamicFinder (String resource, String finder, int expectedResults, String... arr) {

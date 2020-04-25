@@ -18,11 +18,19 @@
 
 package org.amforeas;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import org.amforeas.mocks.UserMock;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import amforeas.AmforeasUtils;
 import amforeas.config.AmforeasConfiguration;
 import amforeas.demo.Demo;
@@ -32,27 +40,27 @@ import amforeas.exceptions.StartupException;
 import amforeas.jdbc.JDBCExecutor;
 import amforeas.jdbc.StoredProcedureParam;
 import amforeas.rest.xstream.Row;
-import amforeas.sql.*;
-
-import org.amforeas.mocks.UserMock;
-import org.junit.AfterClass;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import amforeas.sql.Delete;
+import amforeas.sql.Insert;
+import amforeas.sql.Select;
+import amforeas.sql.SelectParam;
+import amforeas.sql.Table;
+import amforeas.sql.Update;
 
 /**
  *
  * @author Alejandro Ayuso
  */
+@Tag("offline-tests")
 public class JDBCExecutorTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp () throws StartupException {
         System.setProperty("environment", "demo");
         AmforeasUtils.loadConfiguration();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass () throws Exception {
         System.setProperty("environment", "demo");
         AmforeasConfiguration configuration = AmforeasUtils.loadConfiguration();
