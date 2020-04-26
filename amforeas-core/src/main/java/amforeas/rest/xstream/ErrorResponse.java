@@ -21,13 +21,17 @@ package amforeas.rest.xstream;
 import java.sql.SQLException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Represents an error response object. Can be processed with JAX.
  * @author Alejandro Ayuso 
  */
 @XmlRootElement(name = "response")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorResponse implements AmforeasResponse {
 
     private String resource;
@@ -95,6 +99,7 @@ public class ErrorResponse implements AmforeasResponse {
     }
 
     @Override
+    @XmlTransient
     public Response getResponse () {
         return Response.status(getStatus()).entity(this).build();
     }

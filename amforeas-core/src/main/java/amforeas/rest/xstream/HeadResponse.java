@@ -20,13 +20,17 @@ package amforeas.rest.xstream;
 import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Amforeas Response for HTTP HEAD requests for the resources metadata. Currently it only supports tables & views.
  * @author Alejandro Ayuso 
  */
 @XmlRootElement(name = "response")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HeadResponse implements AmforeasResponse {
     private boolean success = true;
     private Response.Status status;
@@ -48,6 +52,7 @@ public class HeadResponse implements AmforeasResponse {
     }
 
     @Override
+    @XmlTransient
     public Response getResponse () {
         return Response.status(this.status).entity(this).build();
     }
