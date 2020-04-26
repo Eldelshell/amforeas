@@ -46,7 +46,7 @@ import amforeas.PerformanceLogger;
 import amforeas.RestController;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
-import amforeas.rest.xstream.AmforeasError;
+import amforeas.rest.xstream.ErrorResponse;
 import amforeas.rest.xstream.AmforeasResponse;
 import amforeas.rest.xstream.Usage;
 import javax.ws.rs.core.Application;
@@ -74,7 +74,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             return new RestController(alias).getDatabaseMetadata().getResponse();
         } catch (IllegalArgumentException e) {
-            return new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            return new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             p.end();
         }
@@ -88,7 +88,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             return new RestController(alias).getResourceMetadata(table).getResponse();
         } catch (IllegalArgumentException e) {
-            return new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            return new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             p.end();
         }
@@ -107,9 +107,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             response = new RestController(alias).getAllResources(table, limit, order).getResponse();
         } catch (IllegalArgumentException e) {
-            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } catch (Exception e) {
-            response = new AmforeasError(alias, Response.Status.INTERNAL_SERVER_ERROR, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.INTERNAL_SERVER_ERROR, e.getMessage()).getResponse();
         } finally {
             u.addRead(p.end(), response.getStatus());
         }
@@ -129,7 +129,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             response = new RestController(alias).getResource(table, pk, id, limit, order).getResponse();
         } catch (IllegalArgumentException e) {
-            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             u.addRead(p.end(), response.getStatus());
         }
@@ -147,7 +147,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             response = new RestController(alias).insertResource(table, pk, jsonRequest).getResponse();
         } catch (IllegalArgumentException e) {
-            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             u.addCreate(p.end(), response.getStatus());
         }
@@ -167,7 +167,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             response = new RestController(alias).insertResource(table, pk, map).getResponse();
         } catch (IllegalArgumentException e) {
-            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             u.addCreate(p.end(), response.getStatus());
         }
@@ -185,7 +185,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             response = new RestController(alias).updateResource(table, pk, id, jsonRequest).getResponse();
         } catch (IllegalArgumentException e) {
-            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             u.addUpdate(p.end(), response.getStatus());
         }
@@ -202,7 +202,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             response = new RestController(alias).deleteResource(table, pk, id).getResponse();
         } catch (IllegalArgumentException e) {
-            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             u.addDelete(p.end(), response.getStatus());
         }
@@ -222,7 +222,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             response = new RestController(alias).findResources(table, col, arg, limit, order).getResponse();
         } catch (IllegalArgumentException e) {
-            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             u.addRead(p.end(), response.getStatus());
         }
@@ -242,7 +242,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             response = new RestController(alias).findByDynamicFinder(table, query, values, limit, order).getResponse();
         } catch (IllegalArgumentException e) {
-            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             u.addDynamic(p.end(), response.getStatus());
         }
@@ -260,7 +260,7 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         try {
             response = new RestController(alias).executeStoredProcedure(query, jsonRequest).getResponse();
         } catch (IllegalArgumentException e) {
-            response = new AmforeasError(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
+            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
             u.addQuery(p.end(), response.getStatus());
         }

@@ -15,39 +15,58 @@
  * You should have received a copy of the GNU General Public License
  * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package amforeas.rest.xstream;
 
 import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Amforeas Response for HTTP HEAD requests for the resources metadata. Currently it only supports tables & views.
+ * Represent that an operation has succeeded. 
  * @author Alejandro Ayuso 
  */
 @XmlRootElement(name = "response")
-public class AmforeasHead implements AmforeasResponse {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class SuccessResponse implements AmforeasResponse {
+
     private boolean success = true;
     private Response.Status status;
     private List<Row> rows;
     private String resource;
 
-    public AmforeasHead() {}
+    public SuccessResponse() {}
 
-    public AmforeasHead(String resource, List<Row> results, Response.Status status) {
+    /**
+     * Instantiates a new success response for the given resource and results with the
+     * given HTTP code.
+     * @param resource the name of the resource being accessed
+     * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
+     * @param status a HTTP code to give to the client
+     */
+    public SuccessResponse(String resource, List<Row> results, Response.Status status) {
         this.resource = resource;
         this.rows = results;
         this.status = status;
     }
 
-    public AmforeasHead(String resource, List<Row> results) {
+    /**
+     * Instantiates a new success response for the given resource and results with a 200 HTTP code.
+     * @param resource the name of the resource being accessed
+     * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
+     */
+    public SuccessResponse(String resource, List<Row> results) {
         this.resource = resource;
         this.rows = results;
         this.status = Response.Status.OK;
     }
 
     @Override
+    @XmlTransient
     public Response getResponse () {
         return Response.status(this.status).entity(this).build();
     }
@@ -62,7 +81,7 @@ public class AmforeasHead implements AmforeasResponse {
     }
 
     @Override
-    public Response.Status getStatus () {
+    public Status getStatus () {
         return status;
     }
 

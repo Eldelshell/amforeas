@@ -30,10 +30,10 @@ import amforeas.jdbc.JDBCExecutor;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
 import amforeas.jdbc.StoredProcedureParam;
-import amforeas.rest.xstream.AmforeasError;
-import amforeas.rest.xstream.AmforeasHead;
+import amforeas.rest.xstream.ErrorResponse;
+import amforeas.rest.xstream.HeadResponse;
 import amforeas.rest.xstream.AmforeasResponse;
-import amforeas.rest.xstream.AmforeasSuccess;
+import amforeas.rest.xstream.SuccessResponse;
 import amforeas.rest.xstream.Row;
 import amforeas.sql.Delete;
 import amforeas.sql.DynamicFinder;
@@ -73,9 +73,9 @@ public class RestController {
     }
     
     /**
-     * Obtains a list of tables for the given database/schema and returns a {@link amforeas.rest.xstream.AmforeasSuccess}
+     * Obtains a list of tables for the given database/schema and returns a {@link amforeas.rest.xstream.SuccessResponse}
      * response.
-     * @return  a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
+     * @return  a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse getDatabaseMetadata(){
         l.debug("Obtaining metadata for " + database);
@@ -89,17 +89,17 @@ public class RestController {
         }
         
         if(response == null){
-            response = new AmforeasSuccess(database, results);
+            response = new SuccessResponse(database, results);
         }
         
         return response;
     }
     
     /**
-     * Obtains a list of columns for the given resource and returns a {@link amforeas.rest.xstream.AmforeasSuccess}
+     * Obtains a list of columns for the given resource and returns a {@link amforeas.rest.xstream.SuccessResponse}
      * response.
      * @param table name of the resource to obtain the metadata from
-     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
+     * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse getResourceMetadata(final String table){
         l.debug("Obtaining metadata for " + table);
@@ -109,7 +109,7 @@ public class RestController {
             t = new Table(database, table);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate select " + e.getMessage());
-            return new AmforeasError(table, Response.Status.BAD_REQUEST, e.getMessage());
+            return new ErrorResponse(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Select select = new Select(t).setLimitParam(new LimitParam(1));
@@ -123,11 +123,11 @@ public class RestController {
         }
         
         if(results == null && response == null){
-            response = new AmforeasError(table, Response.Status.NO_CONTENT);
+            response = new ErrorResponse(table, Response.Status.NO_CONTENT);
         }
         
         if(response == null){
-            response = new AmforeasHead(table, results);
+            response = new HeadResponse(table, results);
         }
         
         return response;
@@ -149,7 +149,7 @@ public class RestController {
             t = new Table(database, table);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate select: {}", e.getMessage());
-            return new AmforeasError(table, Response.Status.BAD_REQUEST, e.getMessage());
+            return new ErrorResponse(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         final Select s = new Select(t).setLimitParam(limit).setOrderParam(order);
@@ -163,11 +163,11 @@ public class RestController {
         }
         
         if(results == null && response == null){
-            response = new AmforeasError(table, Response.Status.NOT_FOUND);
+            response = new ErrorResponse(table, Response.Status.NOT_FOUND);
         }
         
         if(response == null){
-            response = new AmforeasSuccess(table, results);
+            response = new SuccessResponse(table, results);
         }
         
         return response;
@@ -190,7 +190,7 @@ public class RestController {
             t = new Table(database, table);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate select " + e.getMessage());
-            return new AmforeasError(table, Response.Status.BAD_REQUEST, e.getMessage());
+            return new ErrorResponse(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Select select = new Select(t).setParameter(new SelectParam(col, arg)).setLimitParam(limit).setOrderParam(order);
@@ -204,11 +204,11 @@ public class RestController {
         }
         
         if((results == null || results.isEmpty()) && response == null){
-            response = new AmforeasError(table, Response.Status.NOT_FOUND);
+            response = new ErrorResponse(table, Response.Status.NOT_FOUND);
         }
         
         if(response == null){
-            response = new AmforeasSuccess(table, results);
+            response = new SuccessResponse(table, results);
         }
         
         return response;
@@ -227,14 +227,14 @@ public class RestController {
         l.debug("Geting resource from " + alias + "." + table + " with id " + arg);
         
         if(StringUtils.isEmpty(arg) || StringUtils.isEmpty(col))
-            return new AmforeasError(table, Response.Status.BAD_REQUEST, "Invalid argument");
+            return new ErrorResponse(table, Response.Status.BAD_REQUEST, "Invalid argument");
         
         Table t;
         try{
             t = new Table(database, table);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate select " + e.getMessage());
-            return new AmforeasError(table, Response.Status.BAD_REQUEST, e.getMessage());
+            return new ErrorResponse(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Select select = new Select(t).setParameter(new SelectParam(col, arg)).setLimitParam(limit).setOrderParam(order);
@@ -248,11 +248,11 @@ public class RestController {
         }
         
         if((results == null || results.isEmpty()) && response == null){
-            response = new AmforeasError(table, Response.Status.NOT_FOUND);
+            response = new ErrorResponse(table, Response.Status.NOT_FOUND);
         }
         
         if(response == null){
-            response = new AmforeasSuccess(table, results);
+            response = new SuccessResponse(table, results);
         }
         
         return response;
@@ -265,7 +265,7 @@ public class RestController {
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param jsonRequest JSON representation of the values we want to insert. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
+     * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse insertResource(final String resource, final String pk, final String jsonRequest){
         l.debug("Insert new " + alias + "." + resource + " with JSON values: " + jsonRequest);
@@ -277,7 +277,7 @@ public class RestController {
             response = insertResource(resource, pk, params);
         } catch (AmforeasBadRequestException ex){
             l.info("Failed to parse JSON arguments " + ex.getMessage());
-            response = new AmforeasError(resource, Response.Status.BAD_REQUEST, ex.getMessage());
+            response = new ErrorResponse(resource, Response.Status.BAD_REQUEST, ex.getMessage());
         }
         
         return response;
@@ -289,7 +289,7 @@ public class RestController {
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param formParams a x-www-form-urlencoded representation of the values we want to insert.
-     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
+     * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse insertResource(final String resource, final String pk, final Map<String, String> formParams){
         l.debug("Insert new " + alias + "." + resource + " with values: " + formParams);
@@ -300,7 +300,7 @@ public class RestController {
             t = new Table(database, resource);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate Insert " + e.getMessage());
-            return new AmforeasError(resource, Response.Status.BAD_REQUEST, e.getMessage());
+            return new ErrorResponse(resource, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Insert insert = new Insert(t).setColumns(formParams);
@@ -313,7 +313,7 @@ public class RestController {
      * Calls the {@link amforeas.jdbc.JDBCExecutor} insert method with the 
      * given {@link amforeas.sql.Insert} instance and handles errors.
      * @param insert a {@link amforeas.sql.Insert} instance
-     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
+     * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     private AmforeasResponse insertResource(Insert insert){
         AmforeasResponse response = null;
@@ -325,13 +325,13 @@ public class RestController {
         }
         
         if(result == 0 && response == null){
-            response = new AmforeasError(null, Response.Status.NO_CONTENT);
+            response = new ErrorResponse(null, Response.Status.NO_CONTENT);
         }
 
         if(response == null){
             List<Row> results = new ArrayList<Row>();
             results.add(new Row(0));
-            response = new AmforeasSuccess(null, results, Response.Status.CREATED);
+            response = new SuccessResponse(null, results, Response.Status.CREATED);
         }
         return response;
     }
@@ -343,7 +343,7 @@ public class RestController {
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param jsonRequest JSON representation of the values we want to update. For example:
      * {"name":"foo", "age":40}
-     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
+     * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse updateResource(final String resource, final String pk, final String id, final String jsonRequest){
         l.debug("Update record " + id + " in table " + alias + "." + resource + " with values: " + jsonRequest);
@@ -356,7 +356,7 @@ public class RestController {
             t = new Table(database, resource, pk);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate update " + e.getMessage());
-            return new AmforeasError(resource, Response.Status.BAD_REQUEST, e.getMessage());
+            return new ErrorResponse(resource, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Update update = new Update(t).setId(id);
@@ -368,11 +368,11 @@ public class RestController {
         }
         
         if((results == null || results.isEmpty()) && response == null){
-            response =  new AmforeasError(resource, Response.Status.NO_CONTENT);
+            response =  new ErrorResponse(resource, Response.Status.NO_CONTENT);
         }
 
         if(response == null){
-            response = new AmforeasSuccess(resource, results, Response.Status.OK);
+            response = new SuccessResponse(resource, results, Response.Status.OK);
         }
         
         return response;
@@ -384,7 +384,7 @@ public class RestController {
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param id unique pk identifier of the record to delete.
-     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
+     * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse deleteResource(final String resource, final String pk, final String id){
         l.debug("Delete record " + id + " from table " + alias + "." + resource);
@@ -394,7 +394,7 @@ public class RestController {
             t = new Table(database, resource, pk);
         }catch (IllegalArgumentException e){
             l.debug("Failed to generate delete " + e.getMessage());
-            return new AmforeasError(resource, Response.Status.BAD_REQUEST, e.getMessage());
+            return new ErrorResponse(resource, Response.Status.BAD_REQUEST, e.getMessage());
         }
         
         Delete delete = new Delete(t).setId(id);
@@ -407,13 +407,13 @@ public class RestController {
         }
         
         if(result == 0 && response == null){
-            response = new AmforeasError(resource, Response.Status.NO_CONTENT);
+            response = new ErrorResponse(resource, Response.Status.NO_CONTENT);
         }
 
         if(response == null){
             List<Row> results = new ArrayList<Row>();
             results.add(new Row(0));
-            response = new AmforeasSuccess(resource, results, Response.Status.OK);
+            response = new SuccessResponse(resource, results, Response.Status.OK);
         }
         return response;
     }
@@ -426,7 +426,7 @@ public class RestController {
      * @param values a list of arguments to be given to the {@link org.amforeas.jdbc.DynamicFinder}
      * @param limit a {@link amforeas.jdbc.LimitParam} instance.
      * @param order a {@link amforeas.jdbc.OrderParam} instance.
-     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
+     * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse findByDynamicFinder(final String resource, final String query, final List<String> values, final LimitParam limit, final OrderParam order){
         l.debug("Find resource from " + alias + "." + resource + " with " + query);
@@ -435,7 +435,7 @@ public class RestController {
             throw new IllegalArgumentException("Invalid null argument");
         
         if(query == null)
-            return new AmforeasError(resource, Response.Status.BAD_REQUEST, "Invalid query");
+            return new ErrorResponse(resource, Response.Status.BAD_REQUEST, "Invalid query");
         
         AmforeasResponse response = null;
         List<Row> results = null;
@@ -457,11 +457,11 @@ public class RestController {
         }
         
         if((results == null || results.isEmpty()) && response == null){
-            response = new AmforeasError(resource, Response.Status.NOT_FOUND, "No results for " + query);
+            response = new ErrorResponse(resource, Response.Status.NOT_FOUND, "No results for " + query);
         }
         
         if(response == null){
-            response =  new AmforeasSuccess(resource, results);
+            response =  new SuccessResponse(resource, results);
         }
         
         return response;
@@ -476,7 +476,7 @@ public class RestController {
      *  {"value":2010, "name":"year", "outParameter":false, "type":"INTEGER", "index":1},
      *  {"name":"out_total", "outParameter":true, "type":"INTEGER", "index":2}
      * ]
-     * @return a {@link amforeas.rest.xstream.AmforeasSuccess} or a {@link amforeas.rest.xstream.AmforeasError}
+     * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse executeStoredProcedure(final String query, final String json){
         l.debug("Executing Stored Procedure " + query);
@@ -497,7 +497,7 @@ public class RestController {
         }
         
         if(response == null){
-            response = new AmforeasSuccess(query, results);
+            response = new SuccessResponse(query, results);
         }
         return response;
     }
@@ -506,10 +506,10 @@ public class RestController {
      * Method in charge of handling the possible exceptions thrown by the JDBCExecutor or any other
      * operation. The current implementation handles SQLException, AmforeasBadRequestException &
      * IllegalArgumentException to return different errors. For any other exception 
-     * a {@link amforeas.rest.xstream.AmforeasError} with a 500 status code is returned.
+     * a {@link amforeas.rest.xstream.ErrorResponse} with a 500 status code is returned.
      * @param t the exception to handle.
      * @param resource the name of the resource which is throwing the exception.
-     * @return a {@link amforeas.rest.xstream.AmforeasError} with different error codes depending
+     * @return a {@link amforeas.rest.xstream.ErrorResponse} with different error codes depending
      * on the exception being handled. If we can't handle the exception, a 500 error code is used.
      */
     private AmforeasResponse handleException(final Throwable t, final String resource){
@@ -525,22 +525,22 @@ public class RestController {
             b.append(ex.getErrorCode());
             b.append("]");
             l.debug(b.toString());
-            response = new AmforeasError(resource, ex);
+            response = new ErrorResponse(resource, ex);
         }else if(t instanceof AmforeasBadRequestException){
             b = new StringBuilder("Received a AmforeasBadRequestException ");
             b.append(t.getMessage());
             l.debug(b.toString());
-            response = new AmforeasError(resource, Response.Status.BAD_REQUEST, t.getMessage());
+            response = new ErrorResponse(resource, Response.Status.BAD_REQUEST, t.getMessage());
         }else if(t instanceof IllegalArgumentException){
             b = new StringBuilder("Received an IllegalArgumentException ");
             b.append(t.getMessage());
             l.debug(b.toString());
-            response = new AmforeasError(resource, Response.Status.BAD_REQUEST, t.getMessage());
+            response = new ErrorResponse(resource, Response.Status.BAD_REQUEST, t.getMessage());
         }else{
             b = new StringBuilder("Received an Unhandled Exception ");
             b.append(t.getMessage());
             l.error(b.toString());
-            response = new AmforeasError(resource, Response.Status.INTERNAL_SERVER_ERROR);
+            response = new ErrorResponse(resource, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return response;
     }

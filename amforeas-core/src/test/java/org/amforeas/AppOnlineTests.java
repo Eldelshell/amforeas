@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.Response;
 
-import amforeas.rest.xstream.AmforeasError;
+import amforeas.rest.xstream.ErrorResponse;
 import amforeas.rest.xstream.AmforeasResponse;
-import amforeas.rest.xstream.AmforeasSuccess;
+import amforeas.rest.xstream.SuccessResponse;
 import amforeas.rest.xstream.Row;
 
 import org.apache.http.NameValuePair;
@@ -152,15 +152,15 @@ public class AppOnlineTests {
     private List<UserMock> doTestResponse (AmforeasResponse r, Response.Status expectedStatus, int expectedCount) {
         List<UserMock> users = new ArrayList<UserMock>();
         assertNotNull(r);
-        if (r instanceof AmforeasSuccess) {
-            AmforeasSuccess s = (AmforeasSuccess) r;
+        if (r instanceof SuccessResponse) {
+            SuccessResponse s = (SuccessResponse) r;
             List<Row> rows = s.getRows();
             assertEquals(rows.size(), expectedCount);
             for (Row row : rows) {
                 users.add(UserMock.instanceOf(row.getCells()));
             }
         } else {
-            AmforeasError e = (AmforeasError) r;
+            ErrorResponse e = (ErrorResponse) r;
         }
         return users;
     }
@@ -168,15 +168,15 @@ public class AppOnlineTests {
     private void doTestPagingResponse (AmforeasResponse r, Response.Status expectedStatus, int expectedCount,
             String col, String first, String last) {
         assertNotNull(r);
-        if (r instanceof AmforeasSuccess) {
-            AmforeasSuccess s = (AmforeasSuccess) r;
+        if (r instanceof SuccessResponse) {
+            SuccessResponse s = (SuccessResponse) r;
             List<Row> rows = s.getRows();
             int lastIndex = s.getRows().size() - 1;
             assertEquals(rows.size(), expectedCount);
             assertEquals(first, rows.get(0).getCells().get(col));
             assertEquals(last, rows.get(lastIndex).getCells().get(col));
         } else {
-            AmforeasError e = (AmforeasError) r;
+            ErrorResponse e = (ErrorResponse) r;
             assertFalse(e.isSuccess());
         }
     }

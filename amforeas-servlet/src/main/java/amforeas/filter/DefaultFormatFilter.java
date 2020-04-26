@@ -31,9 +31,9 @@ import org.glassfish.jersey.server.ContainerResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import amforeas.AmforeasUtils;
-import amforeas.rest.xstream.AmforeasError;
-import amforeas.rest.xstream.AmforeasHead;
-import amforeas.rest.xstream.AmforeasSuccess;
+import amforeas.rest.xstream.ErrorResponse;
+import amforeas.rest.xstream.HeadResponse;
+import amforeas.rest.xstream.SuccessResponse;
 import amforeas.rest.xstream.Row;
 
 /**
@@ -75,12 +75,12 @@ public class DefaultFormatFilter implements AmforeasFormatFilter {
     public Response format (Response response, final MediaType mime) {
         final Object entity = response.getEntity();
         final Integer status = response.getStatus();
-        if (entity instanceof AmforeasSuccess) {
-            return formatSuccessResponse((AmforeasSuccess) entity, mime, status);
-        } else if (entity instanceof AmforeasError) {
-            return formatErrorResponse((AmforeasError) entity, mime, status);
-        } else if (entity instanceof AmforeasHead) {
-            return formatHeadResponse((AmforeasHead) entity, mime, status);
+        if (entity instanceof SuccessResponse) {
+            return formatSuccessResponse((SuccessResponse) entity, mime, status);
+        } else if (entity instanceof ErrorResponse) {
+            return formatErrorResponse((ErrorResponse) entity, mime, status);
+        } else if (entity instanceof HeadResponse) {
+            return formatHeadResponse((HeadResponse) entity, mime, status);
         } else {
             return response;
         }
@@ -121,15 +121,15 @@ public class DefaultFormatFilter implements AmforeasFormatFilter {
 
     /**
      * Generates a new {@linkplain javax.ws.rs.core.Response} for a given 
-     * {@link amforeas.rest.xstream.AmforeasSuccess} generating the appropriate XML or JSON representation 
+     * {@link amforeas.rest.xstream.SuccessResponse} generating the appropriate XML or JSON representation 
      * and setting the Content-Count and Content-Location headers.
-     * @param response a {@link amforeas.rest.xstream.AmforeasSuccess} to be converted to JSON or XML.
+     * @param response a {@link amforeas.rest.xstream.SuccessResponse} to be converted to JSON or XML.
      * @param mime the {@linkplain javax.ws.rs.core.MediaType} used to determine the transport format.
      * @param status the current HTTP code of the response.
      * @return a new {@linkplain javax.ws.rs.core.Response} with the new headers and the content body
      * in either XML or JSON.
      */
-    private Response formatSuccessResponse (final AmforeasSuccess response, final MediaType mime, final Integer status) {
+    private Response formatSuccessResponse (final SuccessResponse response, final MediaType mime, final Integer status) {
         String res;
         l.debug("Formatting Success Response");
         if (isXMLCompatible(mime)) {
@@ -145,7 +145,7 @@ public class DefaultFormatFilter implements AmforeasFormatFilter {
             .build();
     }
 
-    private String formatSuccessJSONResponse (final AmforeasSuccess response) {
+    private String formatSuccessJSONResponse (final SuccessResponse response) {
         final StringBuilder b = new StringBuilder("{");
         b.append("\"success\":");
         b.append(response.isSuccess());
@@ -175,7 +175,7 @@ public class DefaultFormatFilter implements AmforeasFormatFilter {
         return b.toString();
     }
 
-    private String formatSuccessXMLResponse (final AmforeasSuccess response) {
+    private String formatSuccessXMLResponse (final SuccessResponse response) {
         StringBuilder b = new StringBuilder("<response><success>");
         b.append(response.isSuccess());
         b.append("</success><resource>");
@@ -203,15 +203,15 @@ public class DefaultFormatFilter implements AmforeasFormatFilter {
 
     /**
      * Generates a new {@linkplain javax.ws.rs.core.Response} for a given 
-     * {@link amforeas.rest.xstream.AmforeasError} generating the appropriate XML or JSON representation 
+     * {@link amforeas.rest.xstream.ErrorResponse} generating the appropriate XML or JSON representation 
      * and setting the Content-Location header.
-     * @param response a {@link amforeas.rest.xstream.AmforeasSuccess} to be converted to JSON or XML.
+     * @param response a {@link amforeas.rest.xstream.SuccessResponse} to be converted to JSON or XML.
      * @param mime the {@linkplain javax.ws.rs.core.MediaType} used to determine the transport format.
      * @param status the current HTTP code of the response.
      * @return a new {@linkplain javax.ws.rs.core.Response} with the new headers and the content body
      * in either XML or JSON.
      */
-    private Response formatErrorResponse (final AmforeasError response, final MediaType mime, final Integer status) {
+    private Response formatErrorResponse (final ErrorResponse response, final MediaType mime, final Integer status) {
         String res;
         l.debug("Formatting Error Response");
         if (isXMLCompatible(mime)) {
@@ -226,7 +226,7 @@ public class DefaultFormatFilter implements AmforeasFormatFilter {
             .build();
     }
 
-    private String formatErrorJSONResponse (final AmforeasError response) {
+    private String formatErrorJSONResponse (final ErrorResponse response) {
         StringBuilder b = new StringBuilder("{")
             .append("\"success\":")
             .append(response.isSuccess())
@@ -240,7 +240,7 @@ public class DefaultFormatFilter implements AmforeasFormatFilter {
         return b.toString();
     }
 
-    private String formatErrorXMLResponse (final AmforeasError response) {
+    private String formatErrorXMLResponse (final ErrorResponse response) {
         final StringBuilder b = new StringBuilder("<response><success>")
             .append(response.isSuccess())
             .append("</success><message>")
@@ -256,14 +256,14 @@ public class DefaultFormatFilter implements AmforeasFormatFilter {
 
     /**
      * Generates a new {@linkplain javax.ws.rs.core.Response} for a given 
-     * {@link amforeas.rest.xstream.AmforeasHead} generating the appropriate XML or JSON representation 
+     * {@link amforeas.rest.xstream.HeadResponse} generating the appropriate XML or JSON representation 
      * and setting the Content-Location header.
-     * @param response a {@link amforeas.rest.xstream.AmforeasSuccess} to be converted to JSON or XML.
+     * @param response a {@link amforeas.rest.xstream.SuccessResponse} to be converted to JSON or XML.
      * @param mime the {@linkplain javax.ws.rs.core.MediaType} used to determine the transport format.
      * @param status the current HTTP code of the response.
      * @return a new {@linkplain javax.ws.rs.core.Response} with the new headers.
      */
-    private Response formatHeadResponse (final AmforeasHead response, final MediaType mime, final Integer status) {
+    private Response formatHeadResponse (final HeadResponse response, final MediaType mime, final Integer status) {
         final List<String> args = new ArrayList<String>();
         for (Row row : response.getRows()) {
             final String columnname = row.getCells().get("columnName");

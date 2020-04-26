@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Alejandro Ayuso 
  */
 @XmlRootElement(name = "response")
-public class AmforeasError implements AmforeasResponse {
+public class ErrorResponse implements AmforeasResponse {
 
     private String resource;
     private boolean success = false;
@@ -37,14 +37,14 @@ public class AmforeasError implements AmforeasResponse {
     private String sqlState;
     private Integer sqlCode;
 
-    public AmforeasError() {}
+    public ErrorResponse() {}
 
     /**
      * Instantiates a new AmforeasError for a given resource and HTTP code.
      * @param resource the name of the resource being accessed
      * @param status a HTTP code to give to the client
      */
-    public AmforeasError(String resource, Response.Status status) {
+    public ErrorResponse(String resource, Response.Status status) {
         this.resource = resource;
         this.status = status.getStatusCode();
         this.message = status.getReasonPhrase();
@@ -58,7 +58,7 @@ public class AmforeasError implements AmforeasResponse {
      * @param errorCode a HTTP code to give to the client
      * @param message a message explaining the error
      */
-    public AmforeasError(String resource, Integer errorCode, String message) {
+    public ErrorResponse(String resource, Integer errorCode, String message) {
         this.resource = resource;
         this.status = errorCode;
         this.message = message;
@@ -72,7 +72,7 @@ public class AmforeasError implements AmforeasResponse {
      * @param status a HTTP code to give to the client
      * @param message a message explaining the error
      */
-    public AmforeasError(String resource, Response.Status status, String message) {
+    public ErrorResponse(String resource, Response.Status status, String message) {
         this.resource = resource;
         this.status = status.getStatusCode();
         this.message = message;
@@ -86,7 +86,7 @@ public class AmforeasError implements AmforeasResponse {
      * @param resource the name of the resource being accessed
      * @param ex the exception thrown by the driver.
      */
-    public AmforeasError(final String resource, final SQLException ex) {
+    public ErrorResponse(final String resource, final SQLException ex) {
         this.resource = resource;
         this.status = 400;
         this.message = ex.getMessage();

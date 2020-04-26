@@ -36,8 +36,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.thoughtworks.xstream.XStream;
 import amforeas.jdbc.StoredProcedureParam;
-import amforeas.rest.xstream.AmforeasError;
-import amforeas.rest.xstream.AmforeasSuccess;
+import amforeas.rest.xstream.ErrorResponse;
+import amforeas.rest.xstream.SuccessResponse;
 import amforeas.rest.xstream.Row;
 
 /**
@@ -72,7 +72,7 @@ public class XmlXstreamTest {
 
         rows.add(new Row(1, m1));
 
-        AmforeasSuccess s = new AmforeasSuccess("test", rows);
+        SuccessResponse s = new SuccessResponse("test", rows);
         printXMLObject(s, "AmforeasSuccess.xml");
         //        System.out.println(s.toXML());
         //        s = successFromXML(s.toXML());
@@ -91,23 +91,23 @@ public class XmlXstreamTest {
     //        Assert.assertFalse(s.isSuccess());
     //    }
 
-    public static AmforeasSuccess successFromXML (final String xml) {
+    public static SuccessResponse successFromXML (final String xml) {
         XStream xStreamInstance = new XStream();
         xStreamInstance.setMode(XStream.NO_REFERENCES);
         xStreamInstance.autodetectAnnotations(false);
-        xStreamInstance.alias("response", AmforeasSuccess.class);
+        xStreamInstance.alias("response", SuccessResponse.class);
         xStreamInstance.alias("row", Row.class);
         xStreamInstance.registerConverter(new AmforeasMapConverter());
         xStreamInstance.aliasAttribute(Row.class, "roi", "roi");
-        return (AmforeasSuccess) xStreamInstance.fromXML(xml);
+        return (SuccessResponse) xStreamInstance.fromXML(xml);
     }
 
-    public static AmforeasError errorFromXML (final String xml) {
+    public static ErrorResponse errorFromXML (final String xml) {
         XStream xStreamInstance = new XStream();
         xStreamInstance.setMode(XStream.NO_REFERENCES);
         xStreamInstance.autodetectAnnotations(false);
-        xStreamInstance.alias("response", AmforeasError.class);
-        return (AmforeasError) xStreamInstance.fromXML(xml);
+        xStreamInstance.alias("response", ErrorResponse.class);
+        return (ErrorResponse) xStreamInstance.fromXML(xml);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class XmlXstreamTest {
         m1.put("age", "526");
 
         rows.add(new Row(1, m1));
-        AmforeasSuccess s = new AmforeasSuccess("test", rows);
+        SuccessResponse s = new SuccessResponse("test", rows);
 
         List<StoredProcedureParam> ps = new ArrayList<StoredProcedureParam>();
         ps.add(new StoredProcedureParam("car_id", "1", false, 1, "INTEGER"));
