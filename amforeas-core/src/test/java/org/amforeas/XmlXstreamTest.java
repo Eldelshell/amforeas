@@ -55,36 +55,41 @@ public class XmlXstreamTest {
     @AfterAll
     public static void tearDownClass () throws Exception {}
 
-    // @Test
-    // public void testSuccessToXML(){
-    // Map<String, String> m1 = new HashMap<String, String>();
-    // List<Row> rows = new ArrayList<Row>();
-    //
-    // m1.put("id", "1");m1.put("name", "test1");m1.put("age", "56");
-    // rows.add(new Row(1, m1));
-    //
-    // m1 = new HashMap<String, String>();
-    // m1.put("id", "2");m1.put("name", "test2");m1.put("age", "526");
-    //
-    // rows.add(new Row(1, m1));
-    //
-    // AmforeasSuccess s = new AmforeasSuccess("test", rows);
-    // System.out.println(s.toXML());
-    // s = successFromXML(s.toXML());
-    // Assert.assertTrue(s.isSuccess());
-    // }
-    //
-    // @Test
-    // public void testErrorToXML(){
-    // AmforeasError s = new AmforeasError("grrr", 500, "grrrr error");
-    // System.out.println(s.toXML());
-    // s = errorFromXML(s.toXML());
-    // Assert.assertFalse(s.isSuccess());
-    // s = new AmforeasError("grrr", new SQLException("grrr", "GR101", 54333));
-    // System.out.println(s.toXML());
-    // s = errorFromXML(s.toXML());
-    // Assert.assertFalse(s.isSuccess());
-    // }
+    @Test
+    public void testSuccessToXML () {
+        Map<String, String> m1 = new HashMap<String, String>();
+        List<Row> rows = new ArrayList<Row>();
+
+        m1.put("id", "1");
+        m1.put("name", "test1");
+        m1.put("age", "56");
+        rows.add(new Row(1, m1));
+
+        m1 = new HashMap<String, String>();
+        m1.put("id", "2");
+        m1.put("name", "test2");
+        m1.put("age", "526");
+
+        rows.add(new Row(1, m1));
+
+        AmforeasSuccess s = new AmforeasSuccess("test", rows);
+        printXMLObject(s, "AmforeasSuccess.xml");
+        //        System.out.println(s.toXML());
+        //        s = successFromXML(s.toXML());
+        //        Assert.assertTrue(s.isSuccess());
+    }
+
+    //    @Test
+    //    public void testErrorToXML () {
+    //        AmforeasError s = new AmforeasError("grrr", 500, "grrrr error");
+    //        System.out.println(s.toXML());
+    //        s = errorFromXML(s.toXML());
+    //        Assert.assertFalse(s.isSuccess());
+    //        s = new AmforeasError("grrr", new SQLException("grrr", "GR101", 54333));
+    //        System.out.println(s.toXML());
+    //        s = errorFromXML(s.toXML());
+    //        Assert.assertFalse(s.isSuccess());
+    //    }
 
     public static AmforeasSuccess successFromXML (final String xml) {
         XStream xStreamInstance = new XStream();

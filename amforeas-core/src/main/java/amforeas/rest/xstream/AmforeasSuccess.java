@@ -21,13 +21,17 @@ package amforeas.rest.xstream;
 import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Represent that an operation has succeeded. 
  * @author Alejandro Ayuso 
  */
 @XmlRootElement(name = "response")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class AmforeasSuccess implements AmforeasResponse {
 
     private boolean success = true;
@@ -62,6 +66,7 @@ public class AmforeasSuccess implements AmforeasResponse {
     }
 
     @Override
+    @XmlTransient
     public Response getResponse () {
         return Response.status(this.status).entity(this).build();
     }
