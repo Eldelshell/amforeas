@@ -33,13 +33,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import amforeas.AmforeasUtils;
 import amforeas.AmforeasWS;
 import amforeas.PerformanceLogger;
@@ -47,9 +46,7 @@ import amforeas.RestController;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
 import amforeas.rest.xstream.ErrorResponse;
-import amforeas.rest.xstream.AmforeasResponse;
 import amforeas.rest.xstream.Usage;
-import javax.ws.rs.core.Application;
 
 /**
  *
@@ -111,7 +108,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         } catch (Exception e) {
             response = new ErrorResponse(alias, Response.Status.INTERNAL_SERVER_ERROR, e.getMessage()).getResponse();
         } finally {
-            u.addRead(p.end(), response.getStatus());
+            if (response != null) {
+                u.addRead(p.end(), response.getStatus());
+            }
         }
         return response;
     }
@@ -131,7 +130,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
-            u.addRead(p.end(), response.getStatus());
+            if (response != null) {
+                u.addRead(p.end(), response.getStatus());
+            }
         }
         return response;
 
@@ -149,7 +150,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
-            u.addCreate(p.end(), response.getStatus());
+            if (response != null) {
+                u.addCreate(p.end(), response.getStatus());
+            }
         }
         return response;
     }
@@ -169,7 +172,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
-            u.addCreate(p.end(), response.getStatus());
+            if (response != null) {
+                u.addCreate(p.end(), response.getStatus());
+            }
         }
         return response;
     }
@@ -187,7 +192,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
-            u.addUpdate(p.end(), response.getStatus());
+            if (response != null) {
+                u.addUpdate(p.end(), response.getStatus());
+            }
         }
         return response;
     }
@@ -204,7 +211,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
-            u.addDelete(p.end(), response.getStatus());
+            if (response != null) {
+                u.addDelete(p.end(), response.getStatus());
+            }
         }
         return response;
     }
@@ -224,7 +233,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
-            u.addRead(p.end(), response.getStatus());
+            if (response != null) {
+                u.addRead(p.end(), response.getStatus());
+            }
         }
         return response;
     }
@@ -244,7 +255,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
-            u.addDynamic(p.end(), response.getStatus());
+            if (response != null) {
+                u.addDynamic(p.end(), response.getStatus());
+            }
         }
         return response;
     }
@@ -262,7 +275,9 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
-            u.addQuery(p.end(), response.getStatus());
+            if (response != null) {
+                u.addQuery(p.end(), response.getStatus());
+            }
         }
         return response;
     }
@@ -273,6 +288,6 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getJongoStatistics () {
         Response response = u.getUsageData().getResponse();
-        return response;
+        return u.getUsageData().getResponse();
     }
 }

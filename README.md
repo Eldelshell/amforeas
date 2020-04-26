@@ -52,6 +52,7 @@ This examples are from data when running Amforeas en demo mode.
 
 ### Read (GET) a resource
 To read (GET) a user with id 1 from its table, we perform the following:
+
 ```
 $curl -i -X GET -H "Accept: application/json" "http://localhost:8080/amforeas/demo1/user/1"
 HTTP/1.1 200 OK
@@ -63,6 +64,7 @@ Content-MD5: uLcUX7L3SZknHpLvhUkERg==
 Content-Length: 143
 Server: Jetty(8.1.2.v20120308)
 ```
+
 ```json
 {
    "success":true,
@@ -201,6 +203,7 @@ Server: Jetty(8.1.2.v20120308)
 ### Delete (DELETE) a resource
 
 To delete you use a DELETE request with the ID in the table.
+
 ```
 curl -i -X DELETE -H "Accept: application/json"  "http://localhost:8080/amforeas/demo1/user/2"
 HTTP/1.1 200 OK
@@ -212,6 +215,7 @@ Content-MD5: eLzHpBV+Q6y46F/teUejMA==
 Content-Length: 30
 Server: Jetty(8.1.2.v20120308)
 ```
+
 ```json
 {"success":true,"cells":[ {}]}
 ```
@@ -286,6 +290,7 @@ Content-MD5: dWYBu98TXrlGBjdvsDa8Gg==
 Content-Length: 801
 Server: Jetty(8.1.2.v20120308)
 ```
+
 In this case, the HEAD response doesn't include any body, but your table metadata is included in a header with the name of it.
 
 * * *
@@ -404,7 +409,8 @@ gives a pretty good layout to conform to. Amforeas tries to follow the conventio
 ### Java
 Amforeas works as a stand alone server or daemon and uses the following open source projects:
 
-* NetBeans
+* Jetty 9
+* Jersey 2
 * Maven 3
 * Jakarta Commons DBUtils
 * Jakarta Commons DBCP
