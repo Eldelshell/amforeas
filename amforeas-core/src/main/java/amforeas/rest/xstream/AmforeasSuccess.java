@@ -27,16 +27,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Represent that an operation has succeeded. 
  * @author Alejandro Ayuso 
  */
-@XmlRootElement(name="response")
-public class AmforeasSuccess implements AmforeasResponse{
-    
+@XmlRootElement(name = "response")
+public class AmforeasSuccess implements AmforeasResponse {
+
     private boolean success = true;
     private Response.Status status;
     private List<Row> rows;
     private String resource;
-    
-    public AmforeasSuccess(){}
-    
+
+    public AmforeasSuccess() {}
+
     /**
      * Instantiates a new success response for the given resource and results with the
      * given HTTP code.
@@ -49,7 +49,7 @@ public class AmforeasSuccess implements AmforeasResponse{
         this.rows = results;
         this.status = status;
     }
-    
+
     /**
      * Instantiates a new success response for the given resource and results with a 200 HTTP code.
      * @param resource the name of the resource being accessed
@@ -60,44 +60,44 @@ public class AmforeasSuccess implements AmforeasResponse{
         this.rows = results;
         this.status = Response.Status.OK;
     }
-    
+
     @Override
-    public Response getResponse() {
+    public Response getResponse () {
         return Response.status(this.status).entity(this).build();
     }
-    
+
     @Override
-    public String getResource() {
+    public String getResource () {
         return resource;
     }
 
-    public List<Row> getRows() {
+    public List<Row> getRows () {
         return rows;
     }
 
     @Override
-    public Status getStatus() {
+    public Status getStatus () {
         return status;
     }
 
     @Override
-    public boolean isSuccess() {
+    public boolean isSuccess () {
         return success;
     }
 
-    public void setResource(String resource) {
+    public void setResource (String resource) {
         this.resource = resource;
     }
 
-    public void setRows(List<Row> rows) {
+    public void setRows (List<Row> rows) {
         this.rows = rows;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus (Status status) {
         this.status = status;
     }
 
-    public void setSuccess(boolean success) {
+    public void setSuccess (boolean success) {
         this.success = success;
     }
 }

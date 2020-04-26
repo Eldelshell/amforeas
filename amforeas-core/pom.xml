@@ -16,20 +16,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-bundle</artifactId>
-      <version>${jersey-version}</version>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>2.1.1</version>
     </dependency>
     <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-json</artifactId>
-      <version>${jersey-version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>jettison</artifactId>
-          <groupId>org.codehaus.jettison</groupId>
-        </exclusion>
-      </exclusions>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+      <version>2.10.3</version>
     </dependency>
     <dependency>
       <groupId>commons-dbcp</groupId>
@@ -41,8 +35,19 @@
       <artifactId>commons-dbutils</artifactId>
       <version>1.7</version>
     </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.14</version>
+    </dependency>
+
     <!-- Testing Dependencies -->
 
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.14</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
@@ -55,11 +60,7 @@
       <version>1.4.12</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.14</version>
-    </dependency>
+
   </dependencies>
   <build>
     <finalName>amforeas-${project.version}</finalName>
@@ -83,9 +84,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire-plugin.version}</version>
         <configuration>
-          <systemProperties>
-            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-          </systemProperties>
           <properties>
             <groups>offline-tests, dialect-tests</groups>
           </properties>

@@ -27,17 +27,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Represents an error response object. Can be processed with JAX.
  * @author Alejandro Ayuso 
  */
-@XmlRootElement(name="response")
+@XmlRootElement(name = "response")
 public class AmforeasError implements AmforeasResponse {
-    
+
     private String resource;
     private boolean success = false;
     private Integer status;
     private String message;
     private String sqlState;
     private Integer sqlCode;
-    
-    public AmforeasError(){}
+
+    public AmforeasError() {}
 
     /**
      * Instantiates a new AmforeasError for a given resource and HTTP code.
@@ -65,7 +65,7 @@ public class AmforeasError implements AmforeasResponse {
         this.sqlState = null;
         this.sqlCode = null;
     }
-    
+
     /**
      * Instantiates a new AmforeasError for a given resource, error code and message.
      * @param resource the name of the resource being accessed
@@ -79,14 +79,14 @@ public class AmforeasError implements AmforeasResponse {
         this.sqlState = null;
         this.sqlCode = null;
     }
-    
+
     /**
      * Special instance of a AmforeasError for SQLExceptions where we return the
      * driver SqlState and SqlCode with a 400 HTTP code.
      * @param resource the name of the resource being accessed
      * @param ex the exception thrown by the driver.
      */
-    public AmforeasError(final String resource, final SQLException ex){
+    public AmforeasError(final String resource, final SQLException ex) {
         this.resource = resource;
         this.status = 400;
         this.message = ex.getMessage();
@@ -95,38 +95,38 @@ public class AmforeasError implements AmforeasResponse {
     }
 
     @Override
-    public Response getResponse() {
+    public Response getResponse () {
         return Response.status(getStatus()).entity(this).build();
     }
 
     @Override
-    public Status getStatus() {
+    public Status getStatus () {
         return Response.Status.fromStatusCode(status);
     }
 
-    public String getMessage() {
+    public String getMessage () {
         return message;
     }
 
     @Override
-    public String getResource() {
+    public String getResource () {
         return resource;
     }
 
     @Override
-    public boolean isSuccess() {
+    public boolean isSuccess () {
         return success;
     }
 
-    public Integer getSqlCode() {
+    public Integer getSqlCode () {
         return sqlCode;
     }
 
-    public String getSqlState() {
+    public String getSqlState () {
         return sqlState;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus (Integer status) {
         this.status = status;
     }
 }

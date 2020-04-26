@@ -24,16 +24,16 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import org.amforeas.mocks.AmforeasMapConverter;
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.type.TypeReference;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.thoughtworks.xstream.XStream;
 import amforeas.jdbc.StoredProcedureParam;
 import amforeas.rest.xstream.AmforeasError;
@@ -132,7 +132,7 @@ public class XmlXstreamTest {
         System.out.println(k);
         printXMLObject(p, "");
         List<StoredProcedureParam> ret =
-                new ObjectMapper().readValue(k, new TypeReference<List<StoredProcedureParam>>() {});
+            new ObjectMapper().readValue(k, new TypeReference<List<StoredProcedureParam>>() {});
         System.out.println(ret);
 
 
@@ -155,12 +155,8 @@ public class XmlXstreamTest {
         System.out.println(message);
         try {
             final ObjectMapper mapper = new ObjectMapper();
-            ObjectWriter writer = mapper.defaultPrettyPrintingWriter();
-            final AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-            mapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
-            mapper.getSerializationConfig().setAnnotationIntrospector(introspector);
-            mapper.getSerializationConfig().setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
-            System.out.println(writer.writeValueAsString(obj));
+            String k = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+            System.out.println(k);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

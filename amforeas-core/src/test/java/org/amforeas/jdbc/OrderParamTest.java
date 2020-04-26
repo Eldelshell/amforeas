@@ -20,12 +20,12 @@ package org.amforeas.jdbc;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import amforeas.jdbc.OrderParam;
 
 /**
@@ -45,7 +45,7 @@ public class OrderParamTest {
 
     @Test
     public void testSomeMethod () {
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<>();
         OrderParam op = OrderParam.valueOf(formParams);
         assertNotNull(op);
         assertTrue(op.getColumn().equals("id"));
@@ -68,14 +68,14 @@ public class OrderParamTest {
         assertEquals("anotherColumn", op.getColumn());
         assertEquals("DESC", op.getDirection());
 
-        formParams = new MultivaluedMapImpl();
+        formParams = new MultivaluedHashMap<>();
         formParams.add("sort", "anotherColumn");
         op = OrderParam.valueOf(formParams);
         assertNotNull(op);
         assertEquals("anotherColumn", op.getColumn());
         assertEquals("ASC", op.getDirection());
 
-        formParams = new MultivaluedMapImpl();
+        formParams = new MultivaluedHashMap<>();
         formParams.add("customId", "anotherColumn");
         op = OrderParam.valueOf(formParams, "anotherColumn");
         assertNotNull(op);

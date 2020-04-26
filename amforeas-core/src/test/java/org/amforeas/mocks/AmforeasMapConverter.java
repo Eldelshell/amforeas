@@ -18,60 +18,60 @@
 
 package org.amforeas.mocks;
 
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+import java.util.HashMap;
+import java.util.Map;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import java.util.HashMap;
-import java.util.Map;
-import javax.ws.rs.core.MultivaluedMap;
 
 /**
  *
  * @author Alejandro Ayuso 
  */
 public class AmforeasMapConverter implements Converter {
-    
+
     @Override
-    public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext mc) {
-        Map<String, Object> map = (Map<String, Object>)o;
-        for(String key: map.keySet()){
+    public void marshal (Object o, HierarchicalStreamWriter writer, MarshallingContext mc) {
+        Map<String, Object> map = (Map<String, Object>) o;
+        for (String key : map.keySet()) {
             Object val = map.get(key);
             writer.startNode(key.toLowerCase());
-            if(val != null){
+            if (val != null) {
                 writer.setValue(val.toString());
-            }else{
+            } else {
                 writer.setValue("");
             }
-            
+
             writer.endNode();
         }
     }
 
     @Override
-    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext uc) {
+    public Object unmarshal (HierarchicalStreamReader reader, UnmarshallingContext uc) {
         Map<String, Object> map = new HashMap<String, Object>();
-        MultivaluedMap<String, String> mv = new MultivaluedMapImpl();
-        while(reader.hasMoreChildren()){
+        MultivaluedMap<String, String> mv = new MultivaluedHashMap<>();
+        while (reader.hasMoreChildren()) {
             reader.moveDown();
             mv.add(reader.getNodeName(), reader.getValue());
             map.put(reader.getNodeName(), reader.getValue());
             reader.moveUp();
         }
-        
-        if(uc.getRequiredType().equals(MultivaluedMap.class)){
+
+        if (uc.getRequiredType().equals(MultivaluedMap.class)) {
             return mv;
-        }else{
+        } else {
             return map;
         }
-        
+
     }
 
     @Override
-    public boolean canConvert(Class type) {
+    public boolean canConvert (Class type) {
         return type.equals(HashMap.class) || type.equals(MultivaluedMap.class);
     }
-    
+
 }

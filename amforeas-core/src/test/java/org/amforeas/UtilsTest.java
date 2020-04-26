@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Map;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -33,7 +34,6 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import amforeas.AmforeasUtils;
 import amforeas.config.AmforeasConfiguration;
 import amforeas.exceptions.StartupException;
@@ -126,7 +126,7 @@ public class UtilsTest {
 
     @Test
     public void testOrderParam () {
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<>();
         assertEquals(OrderParam.valueOf(formParams).toString(), "id ASC");
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -150,7 +150,7 @@ public class UtilsTest {
 
     @Test
     public void testLimitParam () {
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<>();
         LimitParam instance = LimitParam.valueOf(formParams);
         assertEquals(instance.getLimit(), Integer.valueOf(25));
         assertEquals(instance.getStart(), Integer.valueOf(0));
@@ -206,7 +206,7 @@ public class UtilsTest {
             assertTrue(e instanceof IllegalArgumentException);
         }
 
-        MultivaluedMap<String, String> m = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> m = new MultivaluedHashMap<>();
         Map<String, String> map = AmforeasUtils.hashMapOf(m);
         assertTrue(map.isEmpty());
 
