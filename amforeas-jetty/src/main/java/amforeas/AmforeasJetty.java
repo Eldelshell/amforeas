@@ -18,77 +18,38 @@
 
 package amforeas;
 
-import java.io.IOException;
-
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.xml.XmlConfiguration;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 /**
  * Main class of Amforeas. Reads configuration file and starts jetty embedded.
  * @author Alejandro Ayuso
  */
-public class AmforeasJetty{
-    
+public class AmforeasJetty {
+
     private static final Logger l = LoggerFactory.getLogger(AmforeasJetty.class);
-    
-    public static void main(String[] args) throws Exception {
+
+    public static void main (String[] args) throws Exception {
         l.debug("Load Jetty Configuration");
-        XmlConfiguration jettyConf = getJettyConfiguration();
-        
-        if(jettyConf == null){
-            l.error("Failed to load Jetty Configuration. Quitting.");
-            System.exit(1);
-        }
-        
-        Server server = (Server)jettyConf.configure();
-        
+
+        Server server = new Server(8080);
+
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+        context.setContextPath("/");
+
+        ServletHolder jerseyServlet = context.addServlet(ServletContainer.class, "/amforeas/*");
+        jerseyServlet.setInitOrder(0);
+        jerseyServlet.setInitParameter("jersey.config.server.provider.packages", "amforeas.rest");
+
+        server.setHandler(context);
+
         l.info("Starting Amforeas in Jetty Embedded mode");
         server.start();
         server.join();
     }
-    
-    private static XmlConfiguration getJettyConfiguration(){
-        // First we try from the command line
-        String jettyFile = System.getProperty("jetty.configuration");
-        
-        if(StringUtils.isEmpty(jettyFile)){
-            l.info("No jetty.configuration option given. Using etc/jetty.xml");
-            jettyFile = "etc/jetty.xml";
-        }
-        
-        Resource jettyXml = null;
-        try {
-            jettyXml = Resource.newSystemResource(jettyFile);
-        } catch (IOException ex) {
-            l.warn("Failed to read Jetty Configuration file: {}. Trying with jetty.xml", jettyFile);
-        }
-        
-        if(jettyXml == null){
-            jettyFile = "jetty.xml";
-            try {
-                jettyXml = Resource.newSystemResource(jettyFile);
-            } catch (IOException ex1) {
-                l.error("Failed to read jetty configuration.", ex1);
-            }
-        }
-        
-        XmlConfiguration configuration = null;
-        if(jettyXml != null){
-            try {
-                configuration = new XmlConfiguration(jettyXml.getInputStream());
-            } catch (SAXException ex) {
-                l.error("Failed to parse Jetty configuration");
-                l.error(ex.getMessage(), ex);
-            } catch (IOException ex) {
-                l.error("Failed to read Jetty configuration");
-                l.error(ex.getMessage(), ex);
-            }
-        }
-        return configuration;
-    }
+
 }
