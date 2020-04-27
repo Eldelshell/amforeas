@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>amforeas</groupId>
+    <artifactId>amforeas-parent</artifactId>
+    <version>1</version>
+  </parent>
+  
+  <!-- Use mvn org.codehaus.cargo:cargo-maven2-plugin:run to run with tomcat -->
+
+  <artifactId>amforeas-war</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+  
+  <dependencies>
+    <dependency>
+      <groupId>amforeas</groupId>
+      <artifactId>amforeas-core</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>amforeas</groupId>
+      <artifactId>amforeas-servlet</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+  
+  <repositories>
+    <repository>
+      <id>maven-central</id>
+      <name>maven-central</name>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+  </repositories>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>1.7.11</version>
+        <configuration>
+          <container>
+            <containerId>tomcat9x</containerId>
+            <type>embedded</type>
+          </container>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

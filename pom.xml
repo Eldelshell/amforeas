@@ -14,6 +14,9 @@
       <roles>
         <role>Owner</role>
       </roles>
+      <properties>
+        <github>https://github.com/Eldelshell</github>
+      </properties>
     </developer>
   </developers>
 
@@ -137,6 +140,7 @@
     <module>amforeas-core</module>
     <module>amforeas-jetty</module>
     <module>amforeas-servlet</module>
+    <module>amforeas-war</module>
   </modules>
 
 </project>
