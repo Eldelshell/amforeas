@@ -1,4 +1,7 @@
 # Amforeas
+
+The Greek word for ‘amphora’, a type of container usually found on ancient ships.
+
 ## A RESTful Interface for JDBC
 
 Amforeas is a Java server which provides CRUD operations over any JDBC supported RDBMS using REST.
@@ -9,10 +12,12 @@ By REST we basically mean that the different CRUD operations are performed by di
 * GET to read a resource
 * PUT to update a resource
 * DELETE to delete a resource
+* HEAD to describe a resource
 
 Amforeas is based on the premise that you love your database, hence there's no administration. If there's something missing in Amforeas, it probably means you have to do it in your database (roles, triggers, stored procedures, views, etc.)
 
 ## Features
+
 * Easy installation & configuration.
 * Support for any RDBMS with a JDBC Driver.
 * Support for multiple databases on a single instance.
@@ -20,19 +25,27 @@ Amforeas is based on the premise that you love your database, hence there's no a
 * No administration.
 * Grails style Dynamic Finders
 * Model/Store API for Python.
-* Convention over configuration
+* Convention over configuration.
 * Call functions and stored procedures.
+
+You can
+
+* Deploy in the cloud.
+* Run as a standalone server.
 * Deploy in your favorite JEE application server (JBoss, Tomcat, Glassfish).
 
 ##Usages
 This are some projects where Amforeas is ideal:
 
+* Microservices access to data.
 * JavaScript applications without any server-side coding (Reach, Angular, AJAX).
 * Python, Perl and Bash scripts without any database driver.
 * ETL & KPIs.
 * Data-warehousing.
 * Cron jobs.
 * Provide restricted access to a database server.
+* Mock server
+
 
 ## Future
 * GraphQL
@@ -43,7 +56,7 @@ This are some projects where Amforeas is ideal:
 
 ## Installation
 
-For installation instructions check the [Wiki](https://github.com/ubersoldat/amforeas/wiki/Installation)
+For installation instructions check the [Wiki](https://github.com/Eldelshell/amforeas/wiki/Installation)
 
 * * *
 
