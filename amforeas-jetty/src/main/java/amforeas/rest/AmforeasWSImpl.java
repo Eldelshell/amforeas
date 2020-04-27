@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
  * This file is part of Amforeas.
  * Amforeas is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 package amforeas.rest;
 
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -39,227 +38,131 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import amforeas.AmforeasUtils;
 import amforeas.AmforeasWS;
-import amforeas.PerformanceLogger;
-import amforeas.RestController;
-import amforeas.jdbc.LimitParam;
-import amforeas.jdbc.OrderParam;
-import amforeas.rest.xstream.ErrorResponse;
-import amforeas.rest.xstream.Usage;
+import amforeas.DefaultRestService;
+import amforeas.RestService;
 
-/**
- *
- * @author Alejandro Ayuso
- */
-@ApplicationPath("/")
 @Path("/")
+@ApplicationPath("/")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class AmforeasWSImpl extends Application implements AmforeasWS {
 
-    //    private static final Logger l = LoggerFactory.getLogger(AmforeasWSImpl.class);
-    private static final Usage u = Usage.getInstance();
-
     @Context
     UriInfo ui;
+
+    private final RestService restService = new DefaultRestService();
 
     @GET
     @Path("{alias}")
     @Override
     public Response dbMeta (@PathParam("alias") String alias) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.DBMETA);
-        try {
-            return new RestController(alias).getDatabaseMetadata().getResponse();
-        } catch (IllegalArgumentException e) {
-            return new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            p.end();
-        }
+        return restService.dbMeta(alias);
     }
 
     @HEAD
-    @Path("{alias}/{table}")
+    @Path("{alias}/{resource}")
     @Override
-    public Response resourceMeta (@PathParam("alias") String alias, @PathParam("table") String table) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.RSMETA);
-        try {
-            return new RestController(alias).getResourceMetadata(table).getResponse();
-        } catch (IllegalArgumentException e) {
-            return new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            p.end();
-        }
+    public Response resourceMeta (@PathParam("alias") String alias, @PathParam("resource") String resource) {
+        return restService.resourceMeta(alias, resource);
     }
 
     @GET
-    @Path("{alias}/{table}")
+    @Path("{alias}/{resource}")
     @Override
-    public Response getAll (@PathParam("alias") String alias, @PathParam("table") String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READALL);
-        MultivaluedMap<String, String> pathParams = ui.getQueryParameters();
-        LimitParam limit = LimitParam.valueOf(pathParams);
-        OrderParam order = OrderParam.valueOf(pathParams, pk);
+    public Response getAll (
+        @PathParam("alias") String alias,
+        @PathParam("resource") String resource,
+        @DefaultValue("id") @HeaderParam("Primary-Key") String pk) {
 
-        Response response = null;
-        try {
-            response = new RestController(alias).getAllResources(table, limit, order).getResponse();
-        } catch (IllegalArgumentException e) {
-            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } catch (Exception e) {
-            response = new ErrorResponse(alias, Response.Status.INTERNAL_SERVER_ERROR, e.getMessage()).getResponse();
-        } finally {
-            if (response != null) {
-                u.addRead(p.end(), response.getStatus());
-            }
-        }
-        return response;
+        return restService.getAll(alias, resource, pk, ui.getQueryParameters());
     }
 
     @GET
-    @Path("{alias}/{table}/{id}")
+    @Path("{alias}/{resource}/{id}")
     @Override
-    public Response get (@PathParam("alias") String alias, @PathParam("table") String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @PathParam("id") String id) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
-        MultivaluedMap<String, String> pathParams = ui.getQueryParameters();
-        LimitParam limit = LimitParam.valueOf(pathParams);
-        OrderParam order = OrderParam.valueOf(pathParams, pk);
+    public Response get (
+        @PathParam("alias") String alias,
+        @PathParam("resource") String resource,
+        @DefaultValue("id") @HeaderParam("Primary-Key") String pk,
+        @PathParam("id") String id) {
 
-        Response response = null;
-        try {
-            response = new RestController(alias).getResource(table, pk, id, limit, order).getResponse();
-        } catch (IllegalArgumentException e) {
-            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            if (response != null) {
-                u.addRead(p.end(), response.getStatus());
-            }
-        }
-        return response;
-
+        return restService.get(alias, resource, pk, id, ui.getQueryParameters());
     }
 
     @POST
-    @Path("{alias}/{table}")
+    @Path("{alias}/{resource}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
-    public Response insert (@PathParam("alias") String alias, @PathParam("table") final String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, final String jsonRequest) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.CREATE);
-        Response response = null;
-        try {
-            response = new RestController(alias).insertResource(table, pk, jsonRequest).getResponse();
-        } catch (IllegalArgumentException e) {
-            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            if (response != null) {
-                u.addCreate(p.end(), response.getStatus());
-            }
-        }
-        return response;
+    public Response insert (
+        @PathParam("alias") String alias,
+        @PathParam("resource") final String resource,
+        @DefaultValue("id") @HeaderParam("Primary-Key") String pk,
+        final String jsonRequest) {
+
+        return restService.insert(alias, resource, pk, jsonRequest);
     }
 
     @POST
-    @Path("{alias}/{table}")
+    @Path("{alias}/{resource}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Override
-    public Response insert (@PathParam("alias") String alias, @PathParam("table") final String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk,
+    public Response insert (
+        @PathParam("alias") String alias,
+        @PathParam("resource") final String resource,
+        @DefaultValue("id") @HeaderParam("Primary-Key") String pk,
         final MultivaluedMap<String, String> formParams) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.CREATE);
-        Map<String, String> map = AmforeasUtils.hashMapOf(formParams);
 
-        Response response = null;
-        try {
-            response = new RestController(alias).insertResource(table, pk, map).getResponse();
-        } catch (IllegalArgumentException e) {
-            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            if (response != null) {
-                u.addCreate(p.end(), response.getStatus());
-            }
-        }
-        return response;
+        return restService.insert(alias, resource, pk, formParams);
     }
 
     @PUT
-    @Path("{alias}/{table}/{id}")
+    @Path("{alias}/{resource}/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
-    public Response update (@PathParam("alias") String alias, @PathParam("table") final String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @PathParam("id") final String id,
+    public Response update (
+        @PathParam("alias") String alias,
+        @PathParam("resource") final String resource,
+        @DefaultValue("id") @HeaderParam("Primary-Key") String pk,
+        @PathParam("id") final String id,
         final String jsonRequest) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.UPDATE);
-        Response response = null;
-        try {
-            response = new RestController(alias).updateResource(table, pk, id, jsonRequest).getResponse();
-        } catch (IllegalArgumentException e) {
-            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            if (response != null) {
-                u.addUpdate(p.end(), response.getStatus());
-            }
-        }
-        return response;
+
+        return restService.update(alias, resource, pk, id, jsonRequest);
     }
 
     @DELETE
-    @Path("{alias}/{table}/{id}")
+    @Path("{alias}/{resource}/{id}")
     @Override
-    public Response delete (@PathParam("alias") String alias, @PathParam("table") final String table, @DefaultValue("id") @HeaderParam("Primary-Key") String pk, @PathParam("id") final String id) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.UPDATE);
+    public Response delete (
+        @PathParam("alias") String alias,
+        @PathParam("resource") final String resource,
+        @DefaultValue("id") @HeaderParam("Primary-Key") String pk,
+        @PathParam("id") final String id) {
 
-        Response response = null;
-        try {
-            response = new RestController(alias).deleteResource(table, pk, id).getResponse();
-        } catch (IllegalArgumentException e) {
-            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            if (response != null) {
-                u.addDelete(p.end(), response.getStatus());
-            }
-        }
-        return response;
+        return restService.delete(alias, resource, pk, id);
     }
 
     @GET
-    @Path("{alias}/{table}/{column}/{arg}")
+    @Path("{alias}/{resource}/{column}/{arg}")
     @Override
-    public Response find (@PathParam("alias") String alias, @PathParam("table") String table, @PathParam("column") final String col, @PathParam("arg") final String arg) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
-        MultivaluedMap<String, String> pathParams = ui.getQueryParameters();
-        LimitParam limit = LimitParam.valueOf(pathParams);
-        OrderParam order = OrderParam.valueOf(pathParams);
+    public Response find (
+        @PathParam("alias") String alias,
+        @PathParam("resource") String resource,
+        @PathParam("column") final String col,
+        @PathParam("arg") final String arg) {
 
-        Response response = null;
-        try {
-            response = new RestController(alias).findResources(table, col, arg, limit, order).getResponse();
-        } catch (IllegalArgumentException e) {
-            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            if (response != null) {
-                u.addRead(p.end(), response.getStatus());
-            }
-        }
-        return response;
+        return restService.find(alias, resource, col, arg, ui.getQueryParameters());
     }
 
     @GET
-    @Path("{alias}/{table}/dynamic/{query}")
+    @Path("{alias}/{resource}/dynamic/{query}")
     @Override
-    public Response findBy (@PathParam("alias") String alias, @PathParam("table") final String table, @PathParam("query") String query, @QueryParam("args") List<String> values) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
-        MultivaluedMap<String, String> pathParams = ui.getQueryParameters();
-        LimitParam limit = LimitParam.valueOf(pathParams);
-        OrderParam order = OrderParam.valueOf(pathParams);
+    public Response findBy (
+        @PathParam("alias") String alias,
+        @PathParam("resource") final String resource,
+        @PathParam("query") String query,
+        @QueryParam("args") List<String> args) {
 
-        Response response = null;
-        try {
-            response = new RestController(alias).findByDynamicFinder(table, query, values, limit, order).getResponse();
-        } catch (IllegalArgumentException e) {
-            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            if (response != null) {
-                u.addDynamic(p.end(), response.getStatus());
-            }
-        }
-        return response;
+        return restService.findBy(alias, resource, query, args, ui.getQueryParameters());
     }
 
     @POST
@@ -267,27 +170,15 @@ public class AmforeasWSImpl extends Application implements AmforeasWS {
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
     public Response storedProcedure (@PathParam("alias") String alias, @PathParam("query") String query, final String jsonRequest) {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
-
-        Response response = null;
-        try {
-            response = new RestController(alias).executeStoredProcedure(query, jsonRequest).getResponse();
-        } catch (IllegalArgumentException e) {
-            response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
-        } finally {
-            if (response != null) {
-                u.addQuery(p.end(), response.getStatus());
-            }
-        }
-        return response;
+        return restService.storedProcedure(alias, query, jsonRequest);
     }
 
-    @Override
+
     @GET
     @Path("stats")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getJongoStatistics () {
-        Response response = u.getUsageData().getResponse();
-        return u.getUsageData().getResponse();
+    @Override
+    public Response getStatistics () {
+        return restService.getStatistics();
     }
 }
