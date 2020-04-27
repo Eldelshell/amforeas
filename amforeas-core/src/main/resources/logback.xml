@@ -47,9 +47,9 @@
   <logger name="org.mortbay" level="INFO"/>
   <logger name="com.sun.jersey" level="OFF"/>
   <logger name="org.slf4j" level="OFF"/>
-  <logger name="amforeas" level="DEBUG"/>
+  <logger name="amforeas" level="INFO"/>
 
-  <root level="DEBUG">
+  <root level="INFO">
     <appender-ref ref="S"/>
   <!--   <appender-ref ref="R"/> -->
 <!--    <appender-ref ref="H"/>-->

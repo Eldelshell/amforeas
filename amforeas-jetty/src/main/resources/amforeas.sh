@@ -37,12 +37,12 @@ do_demo () {
 }
 
 do_stop () {
-    pkill -f "org.amforeas.JongoJetty"
+    pkill -f "amforeas.AmforeasJetty"
     exit $?
 }
 
 do_status () {
-    pkill -0 -f "org.amforeas.JongoJetty" > /dev/null 2>&1 && echo "Process is running" && exit 0
+    pkill -0 -f "amforeas.AmforeasJetty" > /dev/null 2>&1 && echo "Process is running" && exit 0
     echo "Amforeas is not running" && exit 0
 }
 

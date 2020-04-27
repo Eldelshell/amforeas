@@ -19,11 +19,14 @@
 package amforeas;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import amforeas.config.AmforeasConfiguration;
 
 /**
  * Main class of Amforeas. Reads configuration file and starts jetty embedded.
@@ -34,21 +37,33 @@ public class AmforeasJetty {
     private static final Logger l = LoggerFactory.getLogger(AmforeasJetty.class);
 
     public static void main (String[] args) throws Exception {
-        l.debug("Load Jetty Configuration");
+        l.debug("Loading Configuration");
 
-        Server server = new Server(8080);
+        AmforeasConfiguration conf = AmforeasConfiguration.instanceOf();
+
+        QueuedThreadPool threadPool = new QueuedThreadPool();
+        threadPool.setMinThreads(conf.getServerThreadsMin());
+        threadPool.setMaxThreads(conf.getServerThreadsMax());
+
+        Server server = new Server(threadPool);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.setContextPath("/");
 
-        ServletHolder jerseyServlet = context.addServlet(ServletContainer.class, "/amforeas/*");
+        ServletHolder jerseyServlet = context.addServlet(ServletContainer.class, conf.getServerRoot());
         jerseyServlet.setInitOrder(0);
         jerseyServlet.setInitParameter("jersey.config.server.provider.packages", "amforeas.rest");
 
         server.setHandler(context);
 
+        ServerConnector connector = new ServerConnector(server);
+        connector.setPort(conf.getServerPort());
+        connector.setHost(conf.getServerHost());
+        server.addConnector(connector);
+
         l.info("Starting Amforeas in Jetty Embedded mode");
         server.start();
+        server.setStopAtShutdown(true);
         server.join();
     }
 

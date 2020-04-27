@@ -17,6 +17,7 @@
  */
 package org.amforeas;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,17 +29,15 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.thoughtworks.xstream.XStream;
 import amforeas.jdbc.StoredProcedureParam;
 import amforeas.rest.xstream.ErrorResponse;
-import amforeas.rest.xstream.SuccessResponse;
 import amforeas.rest.xstream.Row;
+import amforeas.rest.xstream.SuccessResponse;
 
 /**
  *
@@ -46,6 +45,8 @@ import amforeas.rest.xstream.Row;
  */
 @Tag("offline-tests")
 public class XmlXstreamTest {
+
+    private static final Logger l = LoggerFactory.getLogger(XmlXstreamTest.class);
 
     public XmlXstreamTest() {}
 
@@ -74,22 +75,8 @@ public class XmlXstreamTest {
 
         SuccessResponse s = new SuccessResponse("test", rows);
         printXMLObject(s, "AmforeasSuccess.xml");
-        //        System.out.println(s.toXML());
-        //        s = successFromXML(s.toXML());
-        //        Assert.assertTrue(s.isSuccess());
     }
 
-    //    @Test
-    //    public void testErrorToXML () {
-    //        AmforeasError s = new AmforeasError("grrr", 500, "grrrr error");
-    //        System.out.println(s.toXML());
-    //        s = errorFromXML(s.toXML());
-    //        Assert.assertFalse(s.isSuccess());
-    //        s = new AmforeasError("grrr", new SQLException("grrr", "GR101", 54333));
-    //        System.out.println(s.toXML());
-    //        s = errorFromXML(s.toXML());
-    //        Assert.assertFalse(s.isSuccess());
-    //    }
 
     public static SuccessResponse successFromXML (final String xml) {
         XStream xStreamInstance = new XStream();
@@ -134,21 +121,16 @@ public class XmlXstreamTest {
         StoredProcedureParam p = new StoredProcedureParam("car_id", "1", false, 1, "INTEGER");
         final ObjectMapper mapper = new ObjectMapper();
         String k = mapper.writeValueAsString(ps);
-        System.out.println(k);
-        printXMLObject(p, "");
-        List<StoredProcedureParam> ret =
-            new ObjectMapper().readValue(k, new TypeReference<List<StoredProcedureParam>>() {});
-        System.out.println(ret);
-
-
+        List<StoredProcedureParam> ret = new ObjectMapper().readValue(k, new TypeReference<List<StoredProcedureParam>>() {});
+        l.debug(ret.toString());
     }
 
     public String printJSONObject (final Object obj, final String message) {
-        System.out.println(message);
+        l.debug(message);
         try {
             final ObjectMapper mapper = new ObjectMapper();
             String k = mapper.writeValueAsString(obj);
-            System.out.println(k);
+            l.debug(k);
             return k;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -157,23 +139,26 @@ public class XmlXstreamTest {
     }
 
     public void prettyPrintJSONObject (final Object obj, final String message) {
-        System.out.println(message);
+        l.debug(message);
         try {
             final ObjectMapper mapper = new ObjectMapper();
             String k = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
-            System.out.println(k);
+            l.debug(k);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     public void printXMLObject (final Object obj, final String message) {
-        System.out.println(message);
+        l.debug(message);
         try {
             JAXBContext context = JAXBContext.newInstance(obj.getClass());
             final Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(obj, System.out);
+
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            marshaller.marshal(obj, os);
+            l.debug(os.toString("UTF-8"));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
