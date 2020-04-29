@@ -46,10 +46,16 @@ public class AmforeasConfiguration {
 
     /* Server */
     private static final String server_root = p_prefix + "server.root";
-    private static final String server_port = p_prefix + "server.port";
     private static final String server_host = p_prefix + "server.host";
+    private static final String server_port = p_prefix + "server.http.port";
+
     private static final String server_threads_min = p_prefix + "server.threads.min";
     private static final String server_threads_max = p_prefix + "server.threads.max";
+
+    /* SSL */
+    private static final String server_secure_port = p_prefix + "server.https.port";
+    private static final String server_secure_file = p_prefix + "server.https.jks";
+    private static final String server_secure_file_password = p_prefix + "server.https.jks.password";
 
     /* Database */
 
@@ -307,5 +313,17 @@ public class AmforeasConfiguration {
 
     public Integer getServerThreadsMax () {
         return Integer.parseInt(this.getProperty(server_threads_max));
+    }
+
+    public Integer getSecurePort () {
+        return Integer.parseInt(this.getProperty(server_secure_port, "0"));
+    }
+
+    public String getJKSFile () {
+        return this.getProperty(server_secure_file);
+    }
+
+    public String getJKSFilePassword () {
+        return this.getProperty(server_secure_file_password);
     }
 }

@@ -18,10 +18,13 @@
 
 package amforeas;
 
+import java.io.File;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
@@ -39,14 +42,25 @@ public class AmforeasJetty {
     public static void main (String[] args) throws Exception {
         l.debug("Loading Configuration");
 
-        AmforeasConfiguration conf = AmforeasConfiguration.instanceOf();
+        final AmforeasConfiguration conf = AmforeasConfiguration.instanceOf();
 
-        QueuedThreadPool threadPool = new QueuedThreadPool();
+        final QueuedThreadPool threadPool = new QueuedThreadPool();
         threadPool.setMinThreads(conf.getServerThreadsMin());
         threadPool.setMaxThreads(conf.getServerThreadsMax());
 
-        Server server = new Server(threadPool);
+        final Server server = new Server(threadPool);
 
+        setupJerseyServlet(conf, server);
+        setupHTTPConnection(conf, server);
+        setupHTTPSConnection(conf, server);
+
+        l.info("Starting Amforeas in Jetty Embedded mode");
+        server.start();
+        server.setStopAtShutdown(true);
+        server.join();
+    }
+
+    private static void setupJerseyServlet (final AmforeasConfiguration conf, final Server server) {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.setContextPath("/");
 
@@ -55,16 +69,60 @@ public class AmforeasJetty {
         jerseyServlet.setInitParameter("jersey.config.server.provider.packages", "amforeas.rest");
 
         server.setHandler(context);
+    }
 
+    private static void setupHTTPConnection (final AmforeasConfiguration conf, final Server server) {
+        final Integer port = conf.getServerPort();
+
+        if (port == null || port == 0) {
+            l.debug("Invalid HTTP configuration {}", port);
+            return;
+        }
+
+        l.info("Listening on HTTP port {}", port);
         ServerConnector connector = new ServerConnector(server);
-        connector.setPort(conf.getServerPort());
+        connector.setPort(port);
         connector.setHost(conf.getServerHost());
         server.addConnector(connector);
+    }
 
-        l.info("Starting Amforeas in Jetty Embedded mode");
-        server.start();
-        server.setStopAtShutdown(true);
-        server.join();
+    private static void setupHTTPSConnection (final AmforeasConfiguration conf, final Server server) {
+        final Integer port = conf.getSecurePort();
+        final String path = conf.getJKSFile();
+        final String pwd = conf.getJKSFilePassword();
+
+        if (port == null || port == 0) {
+            l.debug("Invalid HTTPS configuration {}", port);
+            return;
+        }
+
+        if (StringUtils.isNotEmpty(path) && StringUtils.isEmpty(pwd)) {
+            l.debug("No valid password provided for {}. Set the correct value for amforeas.server.https.jks.password", path);
+            return;
+        }
+
+        if (StringUtils.isEmpty(path) && StringUtils.isNotEmpty(pwd)) {
+            l.debug("No valid JKS file provided. Set the correct value for amforeas.server.https.jks", path);
+            return;
+        }
+
+        l.debug("Reading JKS from {}", path);
+        File jks = new File(path);
+
+        if (!jks.exists() || !jks.canRead()) {
+            l.warn("Can't read JKS file on {}", path);
+            return;
+        }
+
+        l.info("Listening on HTTPS port {}", port);
+        SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
+        sslContextFactory.setKeyStorePath(jks.getAbsolutePath());
+        sslContextFactory.setKeyStorePassword(pwd);
+
+        ServerConnector https = new ServerConnector(server, sslContextFactory);
+        https.setPort(port);
+        https.setHost(conf.getServerHost());
+        server.addConnector(https);
     }
 
 }
