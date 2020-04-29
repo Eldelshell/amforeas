@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+  <property name="amforeas.logs.level" value="DEBUG" />
+  <property name="amforeas.logs.folder" value="logs" />
+  <property name="amforeas.logs.pattern" value="[%d{yyyy-MM-dd HH:mm:ss}] [%thread] [%c{1}:%L] [%p] %m%n" />
+
+  <appender name="STDIN" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${amforeas.logs.pattern}</pattern>
+    </encoder>
+  </appender>
+  
+  <appender name="PERFORMANCE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %m%n</pattern>
+    </encoder>
+  </appender>
+  
+  <logger name="org.eclipse" level="OFF"/>
+  <logger name="com.sun.jersey" level="OFF"/>
+  <logger name="org.slf4j" level="OFF"/>
+  
+  <logger name="amforeas" level="${amforeas.logs.level}">
+    <appender-ref ref="MAIN"/>
+  </logger>
+  
+  <logger name="amforeas.PerformanceLogger" level="${amforeas.logs.level}">
+    <appender-ref ref="PERFORMANCE"/>
+  </logger>
+  
+  <root level="${amforeas.logs.level}">
+    <appender-ref ref="STDIN"/>
+  </root>
+</configuration>

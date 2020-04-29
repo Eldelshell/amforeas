@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
-    
-  <!-- Console -->  
-    
-  <appender name="S" class="ch.qos.logback.core.ConsoleAppender">
+
+  <property name="amforeas.logs.level" value="INFO" />
+  <property name="amforeas.logs.folder" value="logs" />
+  <property name="amforeas.logs.pattern" value="[%d{yyyy-MM-dd HH:mm:ss}] [%thread] [%c{1}:%L] [%p] %m%n" />
+
+  <appender name="STDIN" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%d{yyyy-MM-dd HH:mm:ss} %c{1}:%L [%p] %m%n</pattern>
+      <pattern>${amforeas.logs.pattern}</pattern>
     </encoder>
   </appender>
   
   <!-- HTML Rolling Appender
   
-  <appender name="H" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <appender name="HTMLLogger" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>logs/amforeas.html</file>
     <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
         <layout class="ch.qos.logback.classic.html.HTMLLayout">
@@ -30,28 +32,43 @@
   
   -->
   
-  <!-- Plain Text Rolling Appender -->
-  
-  <appender name="R" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <appender name="MAIN" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <Append>true</Append>
-    <File>logs/amforeas.log</File>
+    <File>${amforeas.logs.folder}/amforeas.log</File>
     <encoder>
-      <pattern>%d{yyyy-MM-dd HH:mm:ss} %c{1}:%L [%p] %m%n</pattern>
+      <pattern>${amforeas.logs.pattern}</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>logs/amforeas.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <fileNamePattern>${amforeas.logs.folder}/old/amforeas.log.%d{yyyy-MM-dd}</fileNamePattern>
       <maxHistory>30</maxHistory>
     </rollingPolicy>
   </appender>
   
-  <logger name="org.mortbay" level="INFO"/>
+  <appender name="PERFORMANCE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <Append>true</Append>
+    <File>${amforeas.logs.folder}/performance.log</File>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${amforeas.logs.folder}/old/performance.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <maxHistory>5</maxHistory>
+    </rollingPolicy>
+  </appender>
+  
+  <logger name="org.eclipse" level="OFF"/>
   <logger name="com.sun.jersey" level="OFF"/>
   <logger name="org.slf4j" level="OFF"/>
-  <logger name="amforeas" level="INFO"/>
-
-  <root level="INFO">
-    <appender-ref ref="S"/>
-  <!--   <appender-ref ref="R"/> -->
-<!--    <appender-ref ref="H"/>-->
+  
+  <logger name="amforeas" level="${amforeas.logs.level}">
+    <appender-ref ref="MAIN"/>
+  </logger>
+  
+  <logger name="amforeas.PerformanceLogger" level="DEBUG">
+    <appender-ref ref="PERFORMANCE"/>
+  </logger>
+  
+  <root level="${amforeas.logs.level}">
+    <appender-ref ref="STDIN"/>
   </root>
 </configuration>
