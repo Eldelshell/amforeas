@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import amforeas.exceptions.AmforeasBadRequestException;
@@ -41,8 +41,8 @@ import amforeas.sql.dialect.OracleDialect;
 @Tag("offline-tests")
 public class DynamicFinderTest {
 
-    @BeforeEach
-    public void setUp () {
+    @BeforeAll
+    public static void setUp () {
         System.setProperty("environment", "demo");
     }
 
@@ -234,9 +234,9 @@ public class DynamicFinderTest {
         String my_result = my.toStatementString(DynamicFinder.valueOf("sometable", dynamicQuery), l, o);
         String ora_result = ora.toStatementString(DynamicFinder.valueOf("sometable", dynamicQuery), l, o);
         String my_query =
-                "SELECT * FROM sometable WHERE date BETWEEN ? AND ? AND market = ? ORDER BY id ASC LIMIT 25 OFFSET 0";
+            "SELECT * FROM sometable WHERE date BETWEEN ? AND ? AND market = ? ORDER BY id ASC LIMIT 25 OFFSET 0";
         String ora_query =
-                "SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY sometable.id ASC ) AS ROW_NUMBER, sometable.* FROM sometable WHERE  date BETWEEN ? AND ? AND market = ? ) WHERE ROW_NUMBER BETWEEN 0 AND 25";
+            "SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY sometable.id ASC ) AS ROW_NUMBER, sometable.* FROM sometable WHERE  date BETWEEN ? AND ? AND market = ? ) WHERE ROW_NUMBER BETWEEN 0 AND 25";
         assertEquals(my_query, my_result);
         assertEquals(ora_query, ora_result);
     }
@@ -345,10 +345,10 @@ public class DynamicFinderTest {
         tests.put("findByAgeAndNameIsNull", "SELECT * FROM sometable WHERE age = ? AND name IS NULL");
         tests.put("findByAgeEqualsAndNameIsNull", "SELECT * FROM sometable WHERE age = ? AND name IS NULL");
         tests.put("findByNameIsNotNullAndAgeIsNotNull",
-                "SELECT * FROM sometable WHERE name IS NOT NULL AND age IS NOT NULL");
+            "SELECT * FROM sometable WHERE name IS NOT NULL AND age IS NOT NULL");
         tests.put("findByNameGreaterThanAndAgeIsNull", "SELECT * FROM sometable WHERE name > ? AND age IS NULL");
         tests.put("findByNameGreaterThanEqualsAndAgeIsNotNull",
-                "SELECT * FROM sometable WHERE name >= ? AND age IS NOT NULL");
+            "SELECT * FROM sometable WHERE name >= ? AND age IS NOT NULL");
         tests.put("findAllByAgeBetween", "SELECT * FROM sometable WHERE age BETWEEN ? AND ?");
         tests.put("findAllByAgeBetweenAndNameEquals", "SELECT * FROM sometable WHERE age BETWEEN ? AND ? AND name = ?");
 
@@ -357,7 +357,7 @@ public class DynamicFinderTest {
             StringBuilder b = new StringBuilder("@Test\npublic void test_");
             b.append(str);
             b.append(
-                    "(){\nString dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split(\"_\")[1];\nString query = \"");
+                "(){\nString dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split(\"_\")[1];\nString query = \"");
             b.append(result);
             b.append("\";\n");
             b.append("assertTrue(doTest(dynamicQuery, query));\n}");
