@@ -13,36 +13,54 @@
 package amforeas.jdbc;
 
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import amforeas.AmforeasUtils;
-import amforeas.config.DatabaseConfiguration;
-import amforeas.exceptions.AmforeasBadRequestException;
-import amforeas.config.AmforeasConfiguration;
-import amforeas.handler.AmforeasResultSetHandler;
-import amforeas.handler.ResultSetMetaDataHandler;
-import amforeas.rest.xstream.Row;
-import amforeas.sql.*;
-import amforeas.sql.dialect.Dialect;
-import amforeas.sql.dialect.DialectFactory;
-
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import amforeas.AmforeasUtils;
+import amforeas.SingletonFactory;
+import amforeas.config.AmforeasConfiguration;
+import amforeas.config.DatabaseConfiguration;
+import amforeas.exceptions.AmforeasBadRequestException;
+import amforeas.handler.AmforeasResultSetHandler;
+import amforeas.handler.ResultSetMetaDataHandler;
+import amforeas.rest.xstream.Row;
+import amforeas.sql.Delete;
+import amforeas.sql.DynamicFinder;
+import amforeas.sql.Insert;
+import amforeas.sql.Select;
+import amforeas.sql.Update;
+import amforeas.sql.dialect.Dialect;
+import amforeas.sql.dialect.DialectFactory;
 
 /**
  * Class in charge of executing SQL statements against a given RDBMS.
- * @author Alejandro Ayuso
  */
 public class JDBCExecutor {
 
     private static final Logger l = LoggerFactory.getLogger(JDBCExecutor.class);
-    private static final AmforeasConfiguration conf = AmforeasConfiguration.instanceOf();
+
+    private final SingletonFactory factory = new SingletonFactory();
+
+    private final JDBCConnectionFactory connectionFactory;
+    private final AmforeasConfiguration conf;
+
+    public JDBCExecutor() {
+        this.connectionFactory = factory.getJDBCConnectionFactory();
+        this.conf = factory.getConfiguration();
+    }
 
     /**
      * Executes the given {@link amforeas.sql.Delete} object
@@ -51,10 +69,10 @@ public class JDBCExecutor {
      * @throws SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
      */
-    public static int delete (final Delete delete) throws SQLException {
+    public int delete (final Delete delete) throws SQLException {
         l.debug(delete.toString());
         final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(delete.getTable().getDatabase());
-        final QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
+        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
         final Dialect dialect = DialectFactory.getDialect(dbconf);
 
         try {
@@ -74,11 +92,11 @@ public class JDBCExecutor {
      * @throws SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
      */
-    public static int insert (final Insert insert) throws SQLException {
+    public int insert (final Insert insert) throws SQLException {
         l.debug(insert.toString());
 
         final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(insert.getTable().getDatabase());
-        final QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
+        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
         final Dialect dialect = DialectFactory.getDialect(dbconf);
 
         try {
@@ -103,11 +121,11 @@ public class JDBCExecutor {
      * @throws SQLException from the QueryRunner
      * @see org.apache.commons.dbutils.QueryRunner
      */
-    public static List<Row> update (final Update update) throws SQLException {
+    public List<Row> update (final Update update) throws SQLException {
         l.debug(update.toString());
 
         final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(update.getTable().getDatabase());
-        final QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
+        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
         final Dialect dialect = DialectFactory.getDialect(dbconf);
 
         List<Row> results = new ArrayList<Row>();
@@ -134,12 +152,12 @@ public class JDBCExecutor {
      * @see org.apache.commons.dbutils.QueryRunner
      * @see amforeas.handler.AmforeasResultSetHandler
      */
-    public static List<Row> get (final Select select, final boolean allRecords) throws SQLException {
+    public List<Row> get (final Select select, final boolean allRecords) throws SQLException {
         l.debug(select.toString());
         List<Row> response = null;
 
         final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(select.getTable().getDatabase());
-        final QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
+        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
         final Dialect dialect = DialectFactory.getDialect(dbconf);
 
         final ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(allRecords);
@@ -178,7 +196,7 @@ public class JDBCExecutor {
      * @see org.apache.commons.dbutils.QueryRunner
      * @see amforeas.sql.dialect.Dialect
      */
-    public static List<Row> find (final String database, final DynamicFinder df, final LimitParam limit, final OrderParam order, Object... params) throws SQLException {
+    public List<Row> find (final String database, final DynamicFinder df, final LimitParam limit, final OrderParam order, Object... params) throws SQLException {
         l.debug(df.getSql());
         l.debug(AmforeasUtils.varargToString(params));
 
@@ -186,7 +204,7 @@ public class JDBCExecutor {
         final Dialect dialect = DialectFactory.getDialect(dbconf);
         final String query = dialect.toStatementString(df, limit, order);
 
-        final QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
+        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
         final ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(true);
         try {
             List<Row> results = run.query(query, res, params);
@@ -207,13 +225,13 @@ public class JDBCExecutor {
      * @see org.apache.commons.dbutils.QueryRunner
      * @see amforeas.handler.ResultSetMetaDataHandler
      */
-    public static List<Row> getTableMetaData (final Select select) throws SQLException {
+    public List<Row> getTableMetaData (final Select select) throws SQLException {
         l.debug("Obtaining metadata from table " + select.toString());
 
         final ResultSetHandler<List<Row>> res = new ResultSetMetaDataHandler();
 
         final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(select.getTable().getDatabase());
-        final QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
+        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
         final Dialect dialect = DialectFactory.getDialect(dbconf);
 
         try {
@@ -237,11 +255,11 @@ public class JDBCExecutor {
      * @throws SQLException
      * @throws AmforeasBadRequestException 
      */
-    public static List<Row> executeQuery (final String database, final String queryName, final List<StoredProcedureParam> params) throws SQLException, AmforeasBadRequestException {
+    public List<Row> executeQuery (final String database, final String queryName, final List<StoredProcedureParam> params) throws SQLException, AmforeasBadRequestException {
         l.debug("Executing stored procedure " + database + "." + queryName);
 
         final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(database);
-        final QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
+        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
         final String call = AmforeasUtils.getCallableStatementCallString(queryName, params.size());
         List<Row> rows = new ArrayList<Row>();
 
@@ -298,10 +316,10 @@ public class JDBCExecutor {
     /**
      * Close all connections to the databases
      */
-    public static void shutdown () {
+    public void shutdown () {
         l.debug("Shutting down JDBC connections");
         try {
-            JDBCConnectionFactory.closeConnections();
+            connectionFactory.closeConnections();
         } catch (Exception ex) {
             l.warn("Failed to close connection to database?");
             l.debug(ex.getMessage());
@@ -315,7 +333,7 @@ public class JDBCExecutor {
      * @return a List of {@link amforeas.rest.xstream.Row} with all the tables available.
      * @throws SQLException 
      */
-    public static List<Row> getListOfTables (final String database) throws SQLException {
+    public List<Row> getListOfTables (final String database) throws SQLException {
         l.debug("Obtaining the list of tables for the database " + database);
         // if(!conf.allowListTables()){
         // throw JongoJDBCExceptionFactory.getException(database, "Cant read database metadata. Access Denied", JongoJDBCException.ILLEGAL_READ_CODE);
@@ -323,7 +341,7 @@ public class JDBCExecutor {
         final ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(true);
         final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(database);
         final Dialect dialect = DialectFactory.getDialect(dbconf);
-        final QueryRunner run = JDBCConnectionFactory.getQueryRunner(dbconf);
+        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
 
         try {
             List<Row> results = run.query(dialect.listOfTablesStatement(), res);
@@ -344,7 +362,7 @@ public class JDBCExecutor {
      * @throws SQLException if we fail to register any of the parameters in the CallableStatement
      * @throws AmforeasBadRequestException 
      */
-    private static List<StoredProcedureParam> addParameters (final CallableStatement cs, final List<StoredProcedureParam> params) throws SQLException, AmforeasBadRequestException {
+    private List<StoredProcedureParam> addParameters (final CallableStatement cs, final List<StoredProcedureParam> params) throws SQLException, AmforeasBadRequestException {
         final List<StoredProcedureParam> outParams = new ArrayList<StoredProcedureParam>();
         int i = 1;
         for (StoredProcedureParam p : params) {

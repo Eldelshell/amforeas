@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
  * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Random;
 
 import amforeas.AmforeasUtils;
+import amforeas.SingletonFactory;
 import amforeas.config.DatabaseConfiguration;
 import amforeas.enums.JDBCDriver;
-import amforeas.jdbc.JDBCConnectionFactory;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.joda.time.DateTime;
@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Create the database resources for the demo
- * @author Alejandro Ayuso 
  */
 public class Demo {
 
@@ -50,7 +49,8 @@ public class Demo {
 
     private static void generateDemoDatabase (final DatabaseConfiguration dbcfg) {
         final String database = dbcfg.getDatabase();
-        QueryRunner run = new QueryRunner(JDBCConnectionFactory.getDataSource(dbcfg));
+        SingletonFactory factory = new SingletonFactory();
+        QueryRunner run = new QueryRunner(factory.getJDBCConnectionFactory().getDataSource(dbcfg));
 
         l.info("Generating Demo resources in database {}", database);
         update(run, getCreateAuthTable());
@@ -132,7 +132,8 @@ public class Demo {
 
     private static void destroyDemoDatabase (final DatabaseConfiguration dbcfg) {
         final String database = dbcfg.getDatabase();
-        QueryRunner run = new QueryRunner(JDBCConnectionFactory.getDataSource(dbcfg));
+        SingletonFactory factory = new SingletonFactory();
+        QueryRunner run = new QueryRunner(factory.getJDBCConnectionFactory().getDataSource(dbcfg));
         l.info("Destroying Demo Tables in database " + database);
         try {
             run.update("DROP FUNCTION simpleStoredProcedure");
@@ -259,8 +260,8 @@ public class Demo {
         }
         try {
             run.update(stmt, args);
-        } catch (SQLException ex) {
-            l.error("Failed to update database", ex);
+        } catch (Exception ex) {
+            l.error("Failed to update database", ex.getMessage());
         }
     }
 }

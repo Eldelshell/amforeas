@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.amforeas;
 
@@ -23,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Map;
@@ -34,18 +29,22 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import amforeas.AmforeasUtils;
+import amforeas.SingletonFactory;
 import amforeas.config.AmforeasConfiguration;
 import amforeas.exceptions.StartupException;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
 
-/**
- *
- * @author Alejandro Ayuso
- */
+@ExtendWith(MockitoExtension.class)
 @Tag("offline-tests")
 public class UtilsTest {
+
+    @Mock
+    SingletonFactory factory;
 
     @BeforeEach
     public void setUp () {
@@ -224,11 +223,16 @@ public class UtilsTest {
     @Test
     public void testLoadConfiguration () throws StartupException {
         System.setProperty("environment", "demo");
-        AmforeasConfiguration conf = AmforeasUtils.loadConfiguration();
+
+        // This way we stop the configuration from setting up the database
+        when(factory.getConfiguration()).thenReturn(new AmforeasConfiguration());
+
+        AmforeasConfiguration conf = factory.getConfiguration();
         assertTrue(conf.isDemoModeActive());
 
         System.setProperty("environment", "");
-        conf = AmforeasUtils.loadConfiguration();
+        factory.resetConfiguration();
+        conf = factory.getConfiguration();
         assertTrue(conf.isDemoModeActive());
     }
 

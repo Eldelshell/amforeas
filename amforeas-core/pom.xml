@@ -20,7 +20,7 @@
       <artifactId>javax.ws.rs-api</artifactId>
       <version>2.1.1</version>
     </dependency>
-    
+
     <!-- XML output -->
     <dependency>
       <groupId>javax.xml.bind</groupId>
@@ -99,7 +99,7 @@
         <version>${surefire-plugin.version}</version>
         <configuration>
           <properties>
-            <groups>offline-tests, dialect-tests</groups>
+            <groups>offline-tests, dialect-tests, sql-tests</groups>
           </properties>
         </configuration>
       </plugin>

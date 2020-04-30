@@ -23,10 +23,12 @@ import java.util.Map;
 import org.amforeas.mocks.UserMock;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import amforeas.AmforeasUtils;
-import amforeas.config.AmforeasConfiguration;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import amforeas.SingletonFactory;
 import amforeas.demo.Demo;
 import amforeas.enums.Operator;
 import amforeas.exceptions.AmforeasBadRequestException;
@@ -42,23 +44,32 @@ import amforeas.sql.Table;
 import amforeas.sql.Update;
 
 /**
- * Tests of {@link amforeas.jdbc.JDBCExecutor}
+ * Tests of {@link amforeas.jdbc.executor}
  */
-@Tag("offline-tests")
+@ExtendWith(MockitoExtension.class)
+@Tag("sql-tests")
 public class JDBCExecutorTest {
+
+    private JDBCExecutor executor;
+
+    @BeforeEach
+    public void setUpEach () {
+        SingletonFactory factory = new SingletonFactory();
+        executor = factory.getJDBCExecutor();
+    }
 
     @BeforeAll
     public static void setUp () throws StartupException {
         System.setProperty("environment", "demo");
-        AmforeasUtils.loadConfiguration();
+        SingletonFactory factory = new SingletonFactory();
+        factory.getConfiguration();
     }
 
     @AfterAll
     public static void tearDownClass () throws Exception {
-        System.setProperty("environment", "demo");
-        AmforeasConfiguration configuration = AmforeasUtils.loadConfiguration();
-        Demo.destroyDemoDatabases(configuration.getDatabases());
-        AmforeasConfiguration.reset();
+        SingletonFactory factory = new SingletonFactory();
+        Demo.destroyDemoDatabases(factory.getConfiguration().getDatabases());
+        factory.resetConfiguration();
     }
 
     @Test
@@ -66,39 +77,39 @@ public class JDBCExecutorTest {
         Table t = new Table("my_demo_db", "users");
 
         // select * from users
-        List<Row> rs = JDBCExecutor.get(new Select(t), true);
+        List<Row> rs = executor.get(new Select(t), true);
         assertEquals(6, rs.size());
 
         // select * from car
-        rs = JDBCExecutor.get(new Select(new Table("my_demo_db", "car", "cid")), true);
+        rs = executor.get(new Select(new Table("my_demo_db", "car", "cid")), true);
         assertEquals(3, rs.size());
 
         // select * from car where cid = 0
-        rs = JDBCExecutor.get(new Select(new Table("my_demo_db", "car", "cid")).setParameter(new SelectParam("cid", "0")), false);
+        rs = executor.get(new Select(new Table("my_demo_db", "car", "cid")).setParameter(new SelectParam("cid", "0")), false);
         assertEquals(1, rs.size());
 
         // select * from users where id = 0
-        rs = JDBCExecutor.get(new Select(t).setParameter(new SelectParam(t.getPrimaryKey(), "0")), false);
+        rs = executor.get(new Select(t).setParameter(new SelectParam(t.getPrimaryKey(), "0")), false);
         assertEquals(1, rs.size());
 
         // select * from users where name = bar
-        rs = JDBCExecutor.get(new Select(t).setParameter(new SelectParam("name", "bar")), true);
+        rs = executor.get(new Select(t).setParameter(new SelectParam("name", "bar")), true);
         assertEquals(1, rs.size());
 
         // select birthday from users where name = bar
-        rs = JDBCExecutor.get(new Select(t).setParameter(new SelectParam("name", "bar")).addColumn("birthday"), true);
+        rs = executor.get(new Select(t).setParameter(new SelectParam("name", "bar")).addColumn("birthday"), true);
         assertEquals(1, rs.size());
         assertFalse(rs.get(0).getCells().containsKey("credit"));
         assertTrue(rs.get(0).getCells().containsKey("birthday"));
 
         // select birthday from users where id = 1
-        rs = JDBCExecutor.get(new Select(t).addColumn("birthday").setParameter(new SelectParam("id", "1")), true);
+        rs = executor.get(new Select(t).addColumn("birthday").setParameter(new SelectParam("id", "1")), true);
         assertEquals(1, rs.size());
         assertFalse(rs.get(0).getCells().containsKey("credit"));
         assertTrue(rs.get(0).getCells().containsKey("birthday"));
 
         // select birthday from users
-        rs = JDBCExecutor.get(new Select(t).addColumn("birthday"), true);
+        rs = executor.get(new Select(t).addColumn("birthday"), true);
         assertEquals(6, rs.size());
         assertFalse(rs.get(0).getCells().containsKey("credit"));
         assertTrue(rs.get(0).getCells().containsKey("birthday"));
@@ -109,7 +120,7 @@ public class JDBCExecutorTest {
         Table t = new Table("my_demo_db", "users");
         Select s = new Select(t);
         s.setParameter(new SelectParam("id", Operator.BETWEEN, "1", "3"));
-        List<Row> rs = JDBCExecutor.get(s, true);
+        List<Row> rs = executor.get(s, true);
         assertEquals(3, rs.size());
     }
 
@@ -118,7 +129,7 @@ public class JDBCExecutorTest {
         Table t = new Table("my_demo_db", "users");
         Select s = new Select(t);
         s.setParameter(new SelectParam("name", Operator.LIKE, "bar%"));
-        List<Row> rs = JDBCExecutor.get(s, true);
+        List<Row> rs = executor.get(s, true);
         assertEquals(5, rs.size());
     }
 
@@ -129,25 +140,25 @@ public class JDBCExecutorTest {
         List<UserMock> createdusers = new ArrayList<UserMock>();
         for (UserMock u : users) {
             Insert i = new Insert(t).setColumns(u.toMap());
-            int r = JDBCExecutor.insert(i);
+            int r = executor.insert(i);
             assertEquals(1, r);
             createdusers.add(u);
 
             Select s = new Select(t).setParameter(new SelectParam("name", Operator.EQUALS, u.name));
 
-            List<Row> rs = JDBCExecutor.get(s, true);
+            List<Row> rs = executor.get(s, true);
             Row row = rs.get(0);
             assertEquals(String.valueOf(u.age), row.getCells().get("age"));
 
             Update up = new Update(t);
             up.addColumn("name", "foo1").setId(row.getCells().get("id"));
 
-            rs = JDBCExecutor.update(up);
+            rs = executor.update(up);
             row = rs.get(0);
             assertEquals(String.valueOf(u.age), row.getCells().get("age"));
 
             Delete d = new Delete(t).setId(row.getCells().get("id"));
-            r = JDBCExecutor.delete(d);
+            r = executor.delete(d);
             assertEquals(1, r);
         }
     }
@@ -156,31 +167,31 @@ public class JDBCExecutorTest {
     public void testInsert () throws SQLException {
         Table t = new Table("my_demo_db", "users");
         try {
-            JDBCExecutor.insert(new Insert(t));
+            executor.insert(new Insert(t));
         } catch (IllegalArgumentException e) {
             assertNotNull(e);
         }
 
         Map<String, String> params = UserMock.getRandomInstance().toMap();
-        assertEquals(1, JDBCExecutor.insert(new Insert(t).setColumns(params)));
+        assertEquals(1, executor.insert(new Insert(t).setColumns(params)));
 
         // test if one of the params is null
         params.put("age", null);
-        assertEquals(1, JDBCExecutor.insert(new Insert(t).setColumns(params)));
+        assertEquals(1, executor.insert(new Insert(t).setColumns(params)));
 
         // test if one of the params is empty
         params.put("age", "30");
         params.put("name", "");
-        assertEquals(1, JDBCExecutor.insert(new Insert(t).setColumns(params)));
+        assertEquals(1, executor.insert(new Insert(t).setColumns(params)));
 
         // clean up
-        JDBCExecutor.delete(new Delete(t).setId("2"));
-        JDBCExecutor.delete(new Delete(t).setId("3"));
-        JDBCExecutor.delete(new Delete(t).setId("4"));
+        executor.delete(new Delete(t).setId("2"));
+        executor.delete(new Delete(t).setId("3"));
+        executor.delete(new Delete(t).setId("4"));
 
         // test with a readonly table
         try {
-            JDBCExecutor.insert(new Insert(new Table("my_demo_db", "maker")).addColumn("name", "RO"));
+            executor.insert(new Insert(new Table("my_demo_db", "maker")).addColumn("name", "RO"));
         } catch (SQLException e) {
             assertNotNull(e);
         }
@@ -190,29 +201,29 @@ public class JDBCExecutorTest {
     public void testUpdate () throws SQLException {
         Table t = new Table("my_demo_db", "users");
         Select s = new Select(t).setParameter(new SelectParam(t.getPrimaryKey(), Operator.EQUALS, "0"));
-        Row row = JDBCExecutor.get(s, false).get(0);
+        Row row = executor.get(s, false).get(0);
         assertEquals("0", row.getCells().get("id"));
 
-        List<Row> rs = JDBCExecutor.update(new Update(t).setId("0").addColumn("age", "60"));
+        List<Row> rs = executor.update(new Update(t).setId("0").addColumn("age", "60"));
         row = rs.get(0);
         assertEquals("0", row.getCells().get("id"));
         assertEquals("foo", row.getCells().get("name"));
         assertEquals("60", row.getCells().get("age"));
 
-        rs = JDBCExecutor.update(new Update(t).setId("0").addColumn("age", "70").addColumn("name", "foooer"));
+        rs = executor.update(new Update(t).setId("0").addColumn("age", "70").addColumn("name", "foooer"));
         row = rs.get(0);
         assertEquals("0", row.getCells().get("id"));
         assertEquals("foooer", row.getCells().get("name"));
         assertEquals("70", row.getCells().get("age"));
 
         // test for empty value
-        rs = JDBCExecutor.update(new Update(t).setId("0").addColumn("name", ""));
+        rs = executor.update(new Update(t).setId("0").addColumn("name", ""));
         row = rs.get(0);
         assertEquals("0", row.getCells().get("id"));
         assertEquals("", row.getCells().get("name"));
 
         // test for null value
-        rs = JDBCExecutor.update(new Update(t).setId("0").addColumn("age", null));
+        rs = executor.update(new Update(t).setId("0").addColumn("age", null));
         row = rs.get(0);
         assertEquals("0", row.getCells().get("id"));
         assertEquals(null, row.getCells().get("age"));
@@ -230,7 +241,7 @@ public class JDBCExecutorTest {
     @Test
     public void testSimpleFunction () throws SQLException, AmforeasBadRequestException {
         List<StoredProcedureParam> params = new ArrayList<StoredProcedureParam>();
-        List<Row> rows = JDBCExecutor.executeQuery("my_demo_db", "simpleStoredProcedure", params);
+        List<Row> rows = executor.executeQuery("my_demo_db", "simpleStoredProcedure", params);
         assertEquals(1, rows.size());
     }
 
@@ -238,16 +249,16 @@ public class JDBCExecutorTest {
     public void testSimpleStoredProcedure () throws AmforeasBadRequestException, SQLException {
         List<StoredProcedureParam> params = new ArrayList<StoredProcedureParam>();
         Select s = new Select(new Table("my_demo_db", "comments"));
-        List<Row> rs = JDBCExecutor.get(s, true);
+        List<Row> rs = executor.get(s, true);
         assertEquals(3, rs.size());
 
         params.add(new StoredProcedureParam("car_id", "1", false, 1, "INTEGER"));
         params.add(new StoredProcedureParam("comment", "grrrr asdsa  asd asd asda asdd )/(&&/($%/(&$=)/&/$·/(&", false,
             2, "VARCHAR"));
-        List<Row> rows = JDBCExecutor.executeQuery("my_demo_db", "insert_comment", params);
+        List<Row> rows = executor.executeQuery("my_demo_db", "insert_comment", params);
         assertEquals(0, rows.size());
 
-        rs = JDBCExecutor.get(s, true);
+        rs = executor.get(s, true);
         assertEquals(4, rs.size());
     }
 
@@ -257,7 +268,7 @@ public class JDBCExecutorTest {
         params = new ArrayList<StoredProcedureParam>();
         params.add(new StoredProcedureParam("in_year", "2010", false, 1, "INTEGER"));
         params.add(new StoredProcedureParam("out_total", "", true, 2, "INTEGER"));
-        List<Row> rows = JDBCExecutor.executeQuery("my_demo_db", "get_year_sales", params);
+        List<Row> rows = executor.executeQuery("my_demo_db", "get_year_sales", params);
         assertEquals(1, rows.size());
         assertEquals("12", rows.get(0).getCells().get("out_total"));
     }
@@ -266,10 +277,10 @@ public class JDBCExecutorTest {
     public void testGetMetaData () throws AmforeasBadRequestException, SQLException {
         Table t = new Table("my_demo_db", "users");
         Select s = new Select(t);
-        List<Row> rs = JDBCExecutor.getTableMetaData(s);
+        List<Row> rs = executor.getTableMetaData(s);
         assertEquals(6, rs.size());
 
-        rs = JDBCExecutor.getListOfTables("my_demo_db");
+        rs = executor.getListOfTables("my_demo_db");
         assertEquals(9, rs.size());
 
     }

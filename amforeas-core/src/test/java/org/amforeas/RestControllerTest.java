@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
  * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import amforeas.AmforeasUtils;
 import amforeas.RestController;
-import amforeas.config.AmforeasConfiguration;
+import amforeas.SingletonFactory;
 import amforeas.demo.Demo;
 import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.exceptions.StartupException;
@@ -38,14 +38,13 @@ import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
 import amforeas.rest.xstream.ErrorResponse;
 import amforeas.rest.xstream.HeadResponse;
-import amforeas.rest.xstream.SuccessResponse;
 import amforeas.rest.xstream.Row;
+import amforeas.rest.xstream.SuccessResponse;
 
 /**
  *
- * @author Alejandro Ayuso
  */
-@Tag("offline-tests")
+@Tag("sql-tests")
 public class RestControllerTest {
 
     private static final Logger l = LoggerFactory.getLogger(RestControllerTest.class);
@@ -57,15 +56,15 @@ public class RestControllerTest {
     @BeforeAll
     public static void setUp () throws StartupException {
         System.setProperty("environment", "demo");
-        AmforeasUtils.loadConfiguration();
+        SingletonFactory factory = new SingletonFactory();
+        factory.getConfiguration();
     }
 
     @AfterAll
     public static void tearDownClass () throws Exception {
-        System.setProperty("environment", "demo");
-        AmforeasConfiguration configuration = AmforeasUtils.loadConfiguration();
-        Demo.destroyDemoDatabases(configuration.getDatabases());
-        AmforeasConfiguration.reset();
+        SingletonFactory factory = new SingletonFactory();
+        Demo.destroyDemoDatabases(factory.getConfiguration().getDatabases());
+        factory.resetConfiguration();
     }
 
     @Test
