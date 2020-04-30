@@ -2,7 +2,7 @@
 
 The Greek word for ‘amphora’, a type of container usually found on ancient ships.
 
-## A RESTful Interface for JDBC
+## A RESTful Interface to your database
 
 Amforeas is a Java server which provides CRUD operations over any JDBC supported RDBMS using REST.
 
@@ -32,7 +32,7 @@ You can
 
 * Deploy in the cloud.
 * Run as a standalone server.
-* Deploy in your favorite JEE application server (JBoss, Tomcat, Glassfish).
+* Deploy in your favorite JEE application server (Wildfly, Tomcat, Glassfish).
 
 ##Usages
 This are some projects where Amforeas is ideal:
@@ -46,10 +46,10 @@ This are some projects where Amforeas is ideal:
 * Provide restricted access to a database server.
 * Mock server
 
-
 ## Future
+
 * GraphQL
-* OAuth authentication
+* JWT authorization
 * More RDBMS dialects
 * NoSQL database dialects
 * First Level Cache
@@ -75,7 +75,6 @@ Content-Count: 1
 Content-Location: user
 Content-MD5: uLcUX7L3SZknHpLvhUkERg==
 Content-Length: 143
-Server: Jetty(8.1.2.v20120308)
 ```
 
 ```json
@@ -107,7 +106,6 @@ Content-Count: 1
 Content-Location: user
 Content-MD5: eOsCCV/1/zkXhxKIRMV4ug==
 Content-Length: 261
-Server: Jetty(8.1.2.v20120308)
 ```
 
 ```xml
@@ -140,7 +138,6 @@ Content-MD5: 0+WJ/rKID3SXLnjerbee1g==
 Content-Length: 39
 Content-Length: 39
 Content-Location: user
-Server: Jetty(8.1.2.v20120308)
 ```
 
 ```json
@@ -165,7 +162,6 @@ Date: 2012-03-26T23:29:17.125+02:00
 Content-Count: 1
 Content-MD5: eLzHpBV+Q6y46F/teUejMA==
 Content-Length: 30
-Server: Jetty(8.1.2.v20120308)
 ```
 
 ```json
@@ -192,7 +188,6 @@ Content-Count: 1
 Content-Location: user
 Content-MD5: dtt+NFNh9z5Ssh5ZYGt9yw==
 Content-Length: 152
-Server: Jetty(8.1.2.v20120308)
 ```
 
 ```json
@@ -226,7 +221,6 @@ Content-Count: 1
 Content-Location: user
 Content-MD5: eLzHpBV+Q6y46F/teUejMA==
 Content-Length: 30
-Server: Jetty(8.1.2.v20120308)
 ```
 
 ```json
@@ -248,7 +242,6 @@ Content-Count: 8
 Content-Location: demo1
 Content-MD5: Fq5vDIHzxEYTBBeamLXbGQ==
 Content-Length: 2337
-Server: Jetty(8.1.2.v20120308)
 ```
 
 ```json
@@ -301,7 +294,6 @@ Content-Location: user
 User: ID=INTEGER(11);NAME=VARCHAR(25);AGE=INTEGER(11);BIRTHDAY=DATE(10);LASTUPDATE=TIMESTAMP(26);CREDIT=DECIMAL(8)
 Content-MD5: dWYBu98TXrlGBjdvsDa8Gg==
 Content-Length: 801
-Server: Jetty(8.1.2.v20120308)
 ```
 
 In this case, the HEAD response doesn't include any body, but your table metadata is included in a header with the name of it.
@@ -349,7 +341,6 @@ Content-Count: 4
 Content-Location: user
 Content-MD5: 3mTUmmN9ody68WB6/YXz7Q==
 Content-Length: 507
-Server: Jetty(8.1.2.v20120308)
 ```
 
 Here we are telling Amforeas to find all `demo1.user` entities where id is between 0 and 4
