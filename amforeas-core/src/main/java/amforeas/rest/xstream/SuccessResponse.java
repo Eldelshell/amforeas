@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package amforeas.rest.xstream;
@@ -25,6 +19,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represent that an operation has succeeded. 
@@ -39,7 +34,9 @@ public class SuccessResponse implements AmforeasResponse {
     private List<Row> rows;
     private String resource;
 
-    public SuccessResponse() {}
+    public SuccessResponse() {
+        this.status = Response.Status.OK;
+    }
 
     /**
      * Instantiates a new success response for the given resource and results with the
@@ -67,6 +64,7 @@ public class SuccessResponse implements AmforeasResponse {
 
     @Override
     @XmlTransient
+    @JsonIgnore
     public Response getResponse () {
         return Response.status(this.status).entity(this).build();
     }
