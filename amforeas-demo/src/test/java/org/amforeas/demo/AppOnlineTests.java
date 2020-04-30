@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.amforeas.demo;
@@ -74,7 +68,7 @@ public class AppOnlineTests {
         doTestResponse(client.doGET("user/999"), Response.Status.NOT_FOUND, 0);
         // let's try an update/insert with invalid data
         doTestResponse(client.doPUT("comments/0", "{\"car_comment\":\"this should fail!\""),
-                Response.Status.BAD_REQUEST, 0);
+            Response.Status.BAD_REQUEST, 0);
         doTestResponse(client.doPUT("pictures/0", "{}"), Response.Status.BAD_REQUEST, 0);
         doTestResponse(client.doPUT("pictures/0", ""), Response.Status.BAD_REQUEST, 0);
         doTestResponse(client.doPOST("pictures", "{}"), Response.Status.BAD_REQUEST, 0);
@@ -82,19 +76,19 @@ public class AppOnlineTests {
         doTestResponse(client.doPOST("pictures", new ArrayList<NameValuePair>()), Response.Status.BAD_REQUEST, 0);
         // in the demo, by default, maker is not writtable
         doTestResponse(client.doPOST("maker", "{\"maker\":\"this should fail!\",\"id\":1}"),
-                Response.Status.BAD_REQUEST, 0);
+            Response.Status.BAD_REQUEST, 0);
         doTestResponse(client.doPUT("maker/0", "{\"maker\":\"this should fail!\"}"), Response.Status.BAD_REQUEST, 0);
         // table is not in Amforeas
         doTestResponse(client.doPOST("notInJongo", "{\"comment\":\"this should fail!\",\"cid\":1}"),
-                Response.Status.BAD_REQUEST, 0);
+            Response.Status.BAD_REQUEST, 0);
         doTestResponse(client.doPUT("notInJongo/0", "{\"comment\":\"this should fail!\"}"), Response.Status.BAD_REQUEST,
-                0);
+            0);
     }
 
     public void testDynamicFinders () {
         doTestResponse(client.doGET("users/dynamic/findAllByAgeBetween?args=18&args=99"), Response.Status.OK, 2);
         doTestResponse(client.doGET("users/dynamic/findAllByBirthdayBetween?args=1992-01-01&args=1992-12-31"),
-                Response.Status.OK, 1);
+            Response.Status.OK, 1);
         doTestResponse(client.doGET("car/dynamic/findAllByFuelIsNull?sort=cid"), Response.Status.OK, 1);
         doTestResponse(client.doGET("car/dynamic/findAllByFuelIsNotNull?sort=cid"), Response.Status.OK, 2);
         doTestResponse(client.doGET("users/dynamic/findAllByCreditGreaterThan?args=0"), Response.Status.OK, 1);
@@ -102,8 +96,8 @@ public class AppOnlineTests {
         doTestResponse(client.doGET("users/dynamic/findAllByCreditLessThan?args=0"), Response.Status.NOT_FOUND, 0);
         doTestResponse(client.doGET("users/dynamic/findAllByCreditLessThanEquals?args=0"), Response.Status.OK, 1);
         doTestResponse(client.doGET(
-                "sales_stats/dynamic/findAllByLast_updateBetween?args=2000-01-01T00:00:00.000Z&args=2000-06-01T23:55:00.000Z"),
-                Response.Status.OK, 6);
+            "sales_stats/dynamic/findAllByLast_updateBetween?args=2000-01-01T00:00:00.000Z&args=2000-06-01T23:55:00.000Z"),
+            Response.Status.OK, 6);
     }
 
     public void testPaging () {
@@ -125,11 +119,11 @@ public class AppOnlineTests {
         doTestPagingResponse(client.doGET("car?sort=maker&dir=DESC"), Response.Status.OK, 3, "maker", "FIAT", "BMW");
         doTestPagingResponse(client.doGET("car?sort=maker&dir=DESC"), Response.Status.OK, 3, "model", "500", "X5");
         doTestPagingResponse(client.doGET("car?sort=maker&dir=ASC&limit=1"), Response.Status.OK, 1, "model", "X5",
-                "X5");
+            "X5");
         doTestPagingResponse(client.doGET("car?sort=maker&dir=DESC&limit=2"), Response.Status.OK, 2, "model", "500",
-                "C2");
+            "C2");
         doTestPagingResponse(client.doGET("car?sort=maker&dir=DESC&limit=2&offset=1"), Response.Status.OK, 2, "model",
-                "C2", "X5");
+            "C2", "X5");
     }
 
     public void testSQLInject () {
@@ -164,7 +158,7 @@ public class AppOnlineTests {
     }
 
     private void doTestPagingResponse (AmforeasResponse r, Response.Status expectedStatus, int expectedCount,
-            String col, String first, String last) {
+        String col, String first, String last) {
         assertNotNull(r);
         if (r instanceof SuccessResponse) {
             SuccessResponse s = (SuccessResponse) r;
