@@ -60,7 +60,7 @@ public class AmforeasJetty {
 
         ServletHolder jerseyServlet = context.addServlet(ServletContainer.class, conf.getServerRoot());
         jerseyServlet.setInitOrder(0);
-        jerseyServlet.setInitParameter("jersey.config.server.provider.packages", "amforeas.rest");
+        jerseyServlet.setInitParameter("jersey.config.server.provider.packages", "amforeas.rest, amforeas.filter");
 
         server.setHandler(context);
     }
