@@ -48,7 +48,6 @@
         <configuration>
           <descriptors>
             <descriptor>${project.parent.basedir}/extras/assembly/jetty.xml</descriptor>
-            <descriptor>${project.parent.basedir}/extras/assembly/jetty-demo.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>

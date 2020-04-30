@@ -24,6 +24,7 @@ public class DemoConfiguration extends AmforeasConfiguration {
         super();
     }
 
+    @Override
     public synchronized void load () {
         l.debug("Registering the shutdown hook!");
         Runtime.getRuntime().addShutdownHook(new AmforeasShutdown());
@@ -34,6 +35,21 @@ public class DemoConfiguration extends AmforeasConfiguration {
 
         if (!this.isValid())
             throw new IllegalStateException("Configuration is not valid");
+    }
+
+    @Override
+    public String getServerRoot () {
+        return "/amforeas/*";
+    }
+
+    @Override
+    public String getServerHost () {
+        return "0.0.0.0";
+    }
+
+    @Override
+    public Integer getServerPort () {
+        return 8080;
     }
 
 }
