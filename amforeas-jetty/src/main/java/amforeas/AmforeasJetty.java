@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package amforeas;
@@ -33,7 +27,6 @@ import amforeas.config.AmforeasConfiguration;
 
 /**
  * Main class of Amforeas. Reads configuration file and starts jetty embedded.
- * @author Alejandro Ayuso
  */
 public class AmforeasJetty {
 
@@ -42,7 +35,8 @@ public class AmforeasJetty {
     public static void main (String[] args) throws Exception {
         l.debug("Loading Configuration");
 
-        final AmforeasConfiguration conf = AmforeasConfiguration.instanceOf();
+        SingletonFactory factory = new SingletonFactory();
+        final AmforeasConfiguration conf = factory.getConfiguration();
 
         final QueuedThreadPool threadPool = new QueuedThreadPool();
         threadPool.setMinThreads(conf.getServerThreadsMin());

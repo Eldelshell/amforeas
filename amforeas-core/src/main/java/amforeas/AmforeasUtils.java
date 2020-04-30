@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package amforeas;
@@ -36,14 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import amforeas.config.AmforeasConfiguration;
 import amforeas.exceptions.AmforeasBadRequestException;
-import amforeas.exceptions.StartupException;
 import amforeas.jdbc.StoredProcedureParam;
 
 /**
  * Collection of commonly used methods and constants.
- * @author Alejandro Ayuso 
  */
 public class AmforeasUtils {
 
@@ -244,26 +235,6 @@ public class AmforeasUtils {
         } catch (Exception ex) {
             throw new AmforeasBadRequestException(ex.getMessage());
         }
-    }
-
-    /**
-     * Calls the AmforeasConfiguration.instanceOf() method and returns the given instance of {@link amforeas.config.AmforeasConfiguration}
-     * @return an instance of {@link amforeas.config.AmforeasConfiguration}
-     * @throws StartupException if {@link amforeas.config.AmforeasConfiguration} fails to instantiate.
-     */
-    public static AmforeasConfiguration loadConfiguration () throws StartupException {
-        AmforeasConfiguration configuration = null;
-        try {
-            configuration = AmforeasConfiguration.instanceOf();
-        } catch (IllegalArgumentException e) {
-            l.error(e.getMessage());
-        }
-
-        if (configuration == null) {
-            throw new StartupException("Failed to load configuration", true);
-        }
-
-        return configuration;
     }
 
     /**
