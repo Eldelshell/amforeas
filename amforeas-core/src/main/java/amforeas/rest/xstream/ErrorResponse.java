@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package amforeas.rest.xstream;
@@ -25,10 +19,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represents an error response object. Can be processed with JAX.
- * @author Alejandro Ayuso 
  */
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -36,12 +30,14 @@ public class ErrorResponse implements AmforeasResponse {
 
     private String resource;
     private boolean success = false;
-    private Integer status;
+    private Response.Status status;
     private String message;
     private String sqlState;
     private Integer sqlCode;
 
-    public ErrorResponse() {}
+    public ErrorResponse() {
+        this.status = Response.Status.BAD_REQUEST;
+    }
 
     /**
      * Instantiates a new AmforeasError for a given resource and HTTP code.
@@ -50,7 +46,7 @@ public class ErrorResponse implements AmforeasResponse {
      */
     public ErrorResponse(String resource, Response.Status status) {
         this.resource = resource;
-        this.status = status.getStatusCode();
+        this.status = status;
         this.message = status.getReasonPhrase();
         this.sqlState = null;
         this.sqlCode = null;
@@ -62,9 +58,10 @@ public class ErrorResponse implements AmforeasResponse {
      * @param errorCode a HTTP code to give to the client
      * @param message a message explaining the error
      */
+    @Deprecated
     public ErrorResponse(String resource, Integer errorCode, String message) {
         this.resource = resource;
-        this.status = errorCode;
+        this.status = Response.Status.fromStatusCode(errorCode);
         this.message = message;
         this.sqlState = null;
         this.sqlCode = null;
@@ -78,7 +75,7 @@ public class ErrorResponse implements AmforeasResponse {
      */
     public ErrorResponse(String resource, Response.Status status, String message) {
         this.resource = resource;
-        this.status = status.getStatusCode();
+        this.status = status;
         this.message = message;
         this.sqlState = null;
         this.sqlCode = null;
@@ -92,7 +89,7 @@ public class ErrorResponse implements AmforeasResponse {
      */
     public ErrorResponse(final String resource, final SQLException ex) {
         this.resource = resource;
-        this.status = 400;
+        this.status = Response.Status.BAD_REQUEST;
         this.message = ex.getMessage();
         this.sqlState = ex.getSQLState();
         this.sqlCode = ex.getErrorCode();
@@ -100,13 +97,14 @@ public class ErrorResponse implements AmforeasResponse {
 
     @Override
     @XmlTransient
+    @JsonIgnore
     public Response getResponse () {
         return Response.status(getStatus()).entity(this).build();
     }
 
     @Override
     public Status getStatus () {
-        return Response.Status.fromStatusCode(status);
+        return status;
     }
 
     public String getMessage () {
@@ -131,7 +129,7 @@ public class ErrorResponse implements AmforeasResponse {
         return sqlState;
     }
 
-    public void setStatus (Integer status) {
+    public void setStatus (Response.Status status) {
         this.status = status;
     }
 }
