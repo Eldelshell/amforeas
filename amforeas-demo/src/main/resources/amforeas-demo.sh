@@ -25,18 +25,18 @@ do_start () {
 
     local exit_code=10
     while [ $exit_code -eq 10 ]; do
-        "${JAVA_HOME}/bin/java" ${opts} -cp "${path}" amforeas.AmforeasJetty
+        "${JAVA_HOME}/bin/java" ${opts} -cp "${path}" amforeas.demo.DemoJetty
         exit_code=$?
     done
 }
 
 do_stop () {
-    pkill -f "amforeas.AmforeasJetty"
+    pkill -f "amforeas.demo.DemoJetty"
     exit $?
 }
 
 do_status () {
-    pkill -0 -f "amforeas.AmforeasJetty" > /dev/null 2>&1 && echo "Process is running" && exit 0
+    pkill -0 -f "amforeas.demo.DemoJetty" > /dev/null 2>&1 && echo "Process is running" && exit 0
     echo "Amforeas is not running" && exit 0
 }
 

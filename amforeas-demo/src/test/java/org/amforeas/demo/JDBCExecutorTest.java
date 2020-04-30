@@ -10,7 +10,7 @@
  * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.amforeas;
+package org.amforeas.demo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.amforeas.mocks.UserMock;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import amforeas.SingletonFactory;
 import amforeas.demo.Demo;
+import amforeas.demo.DemoSingletonFactory;
 import amforeas.enums.Operator;
 import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.exceptions.StartupException;
@@ -54,14 +54,13 @@ public class JDBCExecutorTest {
 
     @BeforeEach
     public void setUpEach () {
-        SingletonFactory factory = new SingletonFactory();
+        SingletonFactory factory = new DemoSingletonFactory();
         executor = factory.getJDBCExecutor();
     }
 
     @BeforeAll
     public static void setUp () throws StartupException {
-        System.setProperty("environment", "demo");
-        SingletonFactory factory = new SingletonFactory();
+        SingletonFactory factory = new DemoSingletonFactory();
         factory.getConfiguration();
     }
 

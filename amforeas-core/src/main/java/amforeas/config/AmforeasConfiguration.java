@@ -17,15 +17,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import amforeas.AmforeasShutdown;
-import amforeas.demo.Demo;
-import amforeas.enums.JDBCDriver;
-import amforeas.exceptions.StartupException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import amforeas.AmforeasShutdown;
+import amforeas.enums.JDBCDriver;
+import amforeas.exceptions.StartupException;
 
 /**
  * Singleton class which loads the amforeas.properties files, reads its content and provides methods to access
@@ -35,42 +32,40 @@ public class AmforeasConfiguration {
 
     private static final Logger l = LoggerFactory.getLogger(AmforeasConfiguration.class);
 
-    private static final String p_prefix = "amforeas.";
+    protected static final String p_prefix = "amforeas.";
 
     /* Server */
-    private static final String server_root = p_prefix + "server.root";
-    private static final String server_host = p_prefix + "server.host";
-    private static final String server_port = p_prefix + "server.http.port";
+    protected static final String server_root = p_prefix + "server.root";
+    protected static final String server_host = p_prefix + "server.host";
+    protected static final String server_port = p_prefix + "server.http.port";
 
-    private static final String server_threads_min = p_prefix + "server.threads.min";
-    private static final String server_threads_max = p_prefix + "server.threads.max";
+    protected static final String server_threads_min = p_prefix + "server.threads.min";
+    protected static final String server_threads_max = p_prefix + "server.threads.max";
 
     /* SSL */
-    private static final String server_secure_port = p_prefix + "server.https.port";
-    private static final String server_secure_file = p_prefix + "server.https.jks";
-    private static final String server_secure_file_password = p_prefix + "server.https.jks.password";
+    protected static final String server_secure_port = p_prefix + "server.https.port";
+    protected static final String server_secure_file = p_prefix + "server.https.jks";
+    protected static final String server_secure_file_password = p_prefix + "server.https.jks.password";
 
     /* Database */
 
-    private static final String p_name_amforeas_database_list = p_prefix + "alias.list";
-    private static final String p_prefix_db_driver = ".jdbc.driver";
-    private static final String p_prefix_db_username = ".jdbc.username";
-    private static final String p_prefix_db_password = ".jdbc.password";
-    private static final String p_prefix_db_database = ".jdbc.database";
-    private static final String p_prefix_db_host = ".jdbc.host";
-    private static final String p_prefix_db_port = ".jdbc.port";
-    private static final String p_prefix_db_readonly = ".jdbc.readonly";
-    private static final String p_prefix_db_max_connections = ".jdbc.max.connections";
-    private static final String p_prefix_db_url = ".jdbc.url";
+    protected static final String p_name_amforeas_database_list = p_prefix + "alias.list";
+    protected static final String p_prefix_db_driver = ".jdbc.driver";
+    protected static final String p_prefix_db_username = ".jdbc.username";
+    protected static final String p_prefix_db_password = ".jdbc.password";
+    protected static final String p_prefix_db_database = ".jdbc.database";
+    protected static final String p_prefix_db_host = ".jdbc.host";
+    protected static final String p_prefix_db_port = ".jdbc.port";
+    protected static final String p_prefix_db_readonly = ".jdbc.readonly";
+    protected static final String p_prefix_db_max_connections = ".jdbc.max.connections";
+    protected static final String p_prefix_db_url = ".jdbc.url";
 
-    private Integer limit;
-    private Integer maxLimit;
-    private boolean listTables;
-    private Properties properties;
+    protected Integer limit;
+    protected Integer maxLimit;
+    protected boolean listTables;
+    protected Properties properties;
 
-    private List<DatabaseConfiguration> databases = null;
-
-    private static final boolean demo = (System.getProperty("environment") != null && System.getProperty("environment").equalsIgnoreCase("demo"));
+    protected List<DatabaseConfiguration> databases = null;
 
     public AmforeasConfiguration() {
         this.properties = this.loadProperties();
@@ -85,17 +80,11 @@ public class AmforeasConfiguration {
         l.debug("Registering the shutdown hook!");
         Runtime.getRuntime().addShutdownHook(new AmforeasShutdown());
 
-        if (demo) {
-            l.debug("Loading demo configuration with memory databases");
-            this.databases = Demo.getDemoDatabasesConfiguration();
-            Demo.generateDemoDatabases(this.getDatabases());
-        } else {
-            l.debug("Loading configuration");
-            try {
-                this.databases = this.getDatabaseConfigurations();
-            } catch (StartupException ex) {
-                l.error(ex.getLocalizedMessage());
-            }
+        l.debug("Loading configuration");
+        try {
+            this.databases = this.getDatabaseConfigurations();
+        } catch (StartupException ex) {
+            l.error(ex.getLocalizedMessage());
         }
 
         if (!this.isValid())
@@ -107,7 +96,7 @@ public class AmforeasConfiguration {
      * @param conf a AmforeasConfiguration instance used to obtain a ClassLoader.
      * @return an instance of {@link java.util.Properties} with the properties from the file.
      */
-    private Properties loadProperties () {
+    protected Properties loadProperties () {
         final Properties prop = new Properties();
         InputStream in = AmforeasConfiguration.class.getClass().getResourceAsStream("/org/amforeas/amforeas.properties");
 
@@ -148,10 +137,10 @@ public class AmforeasConfiguration {
      * @return a list of {@link amforeas.config.DatabaseConfiguration}
      * @throws StartupException if we're unable to load a {@link amforeas.config.DatabaseConfiguration}.
      */
-    private List<DatabaseConfiguration> getDatabaseConfigurations () throws StartupException {
+    protected List<DatabaseConfiguration> getDatabaseConfigurations () throws StartupException {
         String databaseList = this.properties.getProperty(p_name_amforeas_database_list);
         if (databaseList == null) {
-            throw new StartupException("Failed to read list of aliases " + p_name_amforeas_database_list, demo);
+            throw new StartupException("Failed to read list of aliases " + p_name_amforeas_database_list, true);
         }
         final String[] names = databaseList.split(",");
         List<DatabaseConfiguration> databases = new ArrayList<DatabaseConfiguration>(names.length);
@@ -174,7 +163,7 @@ public class AmforeasConfiguration {
      * @return a {@link amforeas.config.DatabaseConfiguration}for the name given to the
      * database/schema.
      */
-    private DatabaseConfiguration generateDatabaseConfiguration (final String name) {
+    protected DatabaseConfiguration generateDatabaseConfiguration (final String name) {
         l.debug("Obtain configuration options for alias {}", name);
 
         JDBCDriver driver = JDBCDriver.valueOf(this.properties.getProperty(p_prefix + name + p_prefix_db_driver));
@@ -194,7 +183,7 @@ public class AmforeasConfiguration {
         return c;
     }
 
-    private static Integer integerValueOf (final Properties prop, final String field, final Integer valueInCaseOfFailure) {
+    protected static Integer integerValueOf (final Properties prop, final String field, final Integer valueInCaseOfFailure) {
         Integer ret;
         try {
             ret = Integer.valueOf(prop.getProperty(field));
@@ -204,7 +193,7 @@ public class AmforeasConfiguration {
         return ret;
     }
 
-    private boolean isValid () {
+    protected boolean isValid () {
         boolean ret = true;
 
         if (this.databases == null) {
@@ -221,10 +210,6 @@ public class AmforeasConfiguration {
         }
         DatabaseConfiguration c = getDatabaseConfiguration(database);
         return c != null ? c.getDriver() : null;
-    }
-
-    public boolean isDemoModeActive () {
-        return demo;
     }
 
     public Integer getLimit () {

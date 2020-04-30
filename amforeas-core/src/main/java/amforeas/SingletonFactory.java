@@ -6,9 +6,9 @@ import amforeas.jdbc.JDBCExecutor;
 
 public class SingletonFactory {
 
-    private static JDBCExecutor jdbcExecutor;
-    private static AmforeasConfiguration configuration;
-    private static JDBCConnectionFactory jdbcConnectionFactory;
+    protected static JDBCExecutor jdbcExecutor;
+    protected static AmforeasConfiguration configuration;
+    protected static JDBCConnectionFactory jdbcConnectionFactory;
 
     public synchronized JDBCExecutor getJDBCExecutor () {
         if (jdbcExecutor == null) {

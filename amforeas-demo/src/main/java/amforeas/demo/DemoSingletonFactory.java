@@ -9,27 +9,19 @@
  * 
  * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.amforeas;
+package amforeas.demo;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import amforeas.PerformanceLogger;
+import amforeas.SingletonFactory;
+import amforeas.config.AmforeasConfiguration;
 
-/**
- *
- */
-@Tag("offline-tests")
-public class PerformanceLoggerTest {
+public class DemoSingletonFactory extends SingletonFactory {
 
-    @Test
-    public void testLogger () {
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.UNK);
-        Long t = p.end();
-        assertTrue(t.equals(0L));
-
-        p = PerformanceLogger.start(PerformanceLogger.Code.UNK, "Test");
-        t = p.end();
-        assertTrue(t.equals(0L));
+    public synchronized AmforeasConfiguration getConfiguration () {
+        if (configuration == null) {
+            configuration = new DemoConfiguration();
+            configuration.load();
+        }
+        return configuration;
     }
+
 }

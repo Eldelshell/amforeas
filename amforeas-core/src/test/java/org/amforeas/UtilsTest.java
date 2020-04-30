@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Map;
@@ -26,30 +25,17 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import amforeas.AmforeasUtils;
-import amforeas.SingletonFactory;
-import amforeas.config.AmforeasConfiguration;
-import amforeas.exceptions.StartupException;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
 
 @ExtendWith(MockitoExtension.class)
 @Tag("offline-tests")
 public class UtilsTest {
-
-    @Mock
-    SingletonFactory factory;
-
-    @BeforeEach
-    public void setUp () {
-        System.setProperty("environment", "demo");
-    }
 
     @Test
     public void testAmforeasUtils () {
@@ -218,22 +204,6 @@ public class UtilsTest {
         map = AmforeasUtils.hashMapOf(m);
         assertFalse(map.isEmpty());
         assertEquals(1, map.size());
-    }
-
-    @Test
-    public void testLoadConfiguration () throws StartupException {
-        System.setProperty("environment", "demo");
-
-        // This way we stop the configuration from setting up the database
-        when(factory.getConfiguration()).thenReturn(new AmforeasConfiguration());
-
-        AmforeasConfiguration conf = factory.getConfiguration();
-        assertTrue(conf.isDemoModeActive());
-
-        System.setProperty("environment", "");
-        factory.resetConfiguration();
-        conf = factory.getConfiguration();
-        assertTrue(conf.isDemoModeActive());
     }
 
     @Test

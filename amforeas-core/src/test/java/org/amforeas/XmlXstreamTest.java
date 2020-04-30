@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import org.amforeas.mocks.AmforeasMapConverter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -32,6 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import amforeas.AmforeasUtils;
 import amforeas.jdbc.StoredProcedureParam;
 import amforeas.rest.xstream.ErrorResponse;
@@ -276,5 +282,49 @@ public class XmlXstreamTest {
         }
 
         return null;
+    }
+
+    static class AmforeasMapConverter implements Converter {
+
+        @Override
+        public void marshal (Object o, HierarchicalStreamWriter writer, MarshallingContext mc) {
+            Map<String, Object> map = (Map<String, Object>) o;
+            for (String key : map.keySet()) {
+                Object val = map.get(key);
+                writer.startNode(key.toLowerCase());
+                if (val != null) {
+                    writer.setValue(val.toString());
+                } else {
+                    writer.setValue("");
+                }
+
+                writer.endNode();
+            }
+        }
+
+        @Override
+        public Object unmarshal (HierarchicalStreamReader reader, UnmarshallingContext uc) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            MultivaluedMap<String, String> mv = new MultivaluedHashMap<>();
+            while (reader.hasMoreChildren()) {
+                reader.moveDown();
+                mv.add(reader.getNodeName(), reader.getValue());
+                map.put(reader.getNodeName(), reader.getValue());
+                reader.moveUp();
+            }
+
+            if (uc.getRequiredType().equals(MultivaluedMap.class)) {
+                return mv;
+            } else {
+                return map;
+            }
+
+        }
+
+        @Override
+        public boolean canConvert (Class type) {
+            return type.equals(HashMap.class) || type.equals(MultivaluedMap.class);
+        }
+
     }
 }

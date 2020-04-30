@@ -120,11 +120,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>2.5.0</version>
-    </dependency>
-    <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
       <version>3.3.1</version>
@@ -141,6 +136,7 @@
     <module>amforeas-jetty</module>
     <module>amforeas-servlet</module>
     <module>amforeas-war</module>
+    <module>amforeas-demo</module>
   </modules>
 
 </project>

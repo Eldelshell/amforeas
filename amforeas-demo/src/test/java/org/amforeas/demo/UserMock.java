@@ -9,7 +9,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.amforeas.mocks;
+package org.amforeas.demo;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import amforeas.exceptions.AmforeasBadRequestException;
@@ -33,11 +32,6 @@ import amforeas.sql.dialect.OracleDialect;
  */
 @Tag("offline-tests")
 public class DynamicFinderTest {
-
-    @BeforeAll
-    public static void setUp () {
-        System.setProperty("environment", "demo");
-    }
 
     @Test
     public void test_findByName () {

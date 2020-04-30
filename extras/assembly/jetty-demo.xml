@@ -25,29 +25,24 @@
         <include>*.xml</include>
       </includes>
     </fileSet>
-
-    <fileSet>
-      <directory>src/main/webapp/</directory>
-      <outputDirectory>/webapp</outputDirectory>
-    </fileSet>
     
     <!-- Put the startup script -->
     <fileSet>
       <directory>src/main/resources/</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
-        <include>amforeas.sh</include>
+        <include>amforeas-demo.sh</include>
       </includes>
     </fileSet>
     
     <!-- In demo we include the demo apps -->
-    <fileSet>
-      <directory>${project.parent.basedir}/extras/extjs/</directory>
-      <outputDirectory>/webapp</outputDirectory>
-      <includes>
-        <include>*/**</include>
-      </includes>
-    </fileSet>
+    <!--     <fileSet> -->
+    <!--       <directory>${project.parent.basedir}/extras/extjs/</directory> -->
+    <!--       <outputDirectory>/webapp</outputDirectory> -->
+    <!--       <includes> -->
+    <!--         <include>*/**</include> -->
+    <!--       </includes> -->
+    <!--     </fileSet> -->
   </fileSets>
 
 </assembly>
