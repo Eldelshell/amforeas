@@ -12,8 +12,6 @@
 package org.amforeas;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import amforeas.PerformanceLogger;
@@ -23,14 +21,6 @@ import amforeas.PerformanceLogger;
  */
 @Tag("offline-tests")
 public class PerformanceLoggerTest {
-
-    public PerformanceLoggerTest() {}
-
-    @BeforeAll
-    public static void setUpClass () throws Exception {}
-
-    @AfterAll
-    public static void tearDownClass () throws Exception {}
 
     @Test
     public void testLogger () {

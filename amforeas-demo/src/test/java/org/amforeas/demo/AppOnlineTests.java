@@ -16,7 +16,7 @@
  * along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.amforeas;
+package org.amforeas.demo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +29,6 @@ import amforeas.rest.xstream.Row;
 
 import org.apache.http.NameValuePair;
 import org.junit.jupiter.api.Tag;
-import org.amforeas.mocks.AmforeasClient;
-import org.amforeas.mocks.UserMock;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
