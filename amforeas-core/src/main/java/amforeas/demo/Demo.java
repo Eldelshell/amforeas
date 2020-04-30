@@ -260,7 +260,7 @@ public class Demo {
         try {
             run.update(stmt, args);
         } catch (SQLException ex) {
-            l.error("Failed to update database", ex);
+            l.error("Failed to update database", ex.getMessage());
         }
     }
 }
