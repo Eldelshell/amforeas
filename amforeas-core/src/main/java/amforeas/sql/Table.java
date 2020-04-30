@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package amforeas.sql;
@@ -25,25 +19,24 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Represents a Table in a RDBMS.
- * @author Alejandro Ayuso 
  */
 public class Table {
-    
+
     /**
      * The name of a registered database or schema.
      */
     private final String database;
-    
+
     /**
      * The name of the table or view.
      */
     private final String name;
-    
+
     /**
      * The primary key column of the table or view. Defaults to <b>id</b>
      */
     private final String primaryKey;
-    
+
     /**
      * A list with the columns in the table or view.
      */
@@ -56,14 +49,14 @@ public class Table {
      * @throws IllegalArgumentException if the database or name are blank, null or empty.
      */
     public Table(String database, String name) {
-        if(StringUtils.isBlank(database) || StringUtils.isBlank(name))
+        if (StringUtils.isBlank(database) || StringUtils.isBlank(name))
             throw new IllegalArgumentException("Argument can't be blank, null or empty");
-            
+
         this.database = database;
         this.name = name;
         this.primaryKey = "id";
     }
-    
+
     /**
      * Instantiates a new Table object for the given database and name with a different primary key column than <b>id</b>
      * @param database name of a registered database/schema
@@ -73,35 +66,35 @@ public class Table {
      * @throws IllegalArgumentException if the database or name are blank, null or empty.
      */
     public Table(String database, String name, String primaryKey) {
-        if(StringUtils.isBlank(database) || StringUtils.isBlank(name))
+        if (StringUtils.isBlank(database) || StringUtils.isBlank(name))
             throw new IllegalArgumentException("Argument can't be blank, null or empty");
-        
-        if(StringUtils.isBlank(primaryKey))
+
+        if (StringUtils.isBlank(primaryKey))
             primaryKey = "id";
-        
+
         this.database = database;
         this.name = name;
         this.primaryKey = primaryKey;
     }
 
-    public List<String> getColumns() {
+    public List<String> getColumns () {
         return columns;
     }
 
-    public String getDatabase() {
+    public String getDatabase () {
         return database;
     }
 
-    public String getName() {
+    public String getName () {
         return name;
     }
 
-    public String getPrimaryKey() {
+    public String getPrimaryKey () {
         return primaryKey;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals (Object obj) {
         if (obj == null) {
             return false;
         }
@@ -122,7 +115,7 @@ public class Table {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode () {
         int hash = 7;
         hash = 59 * hash + (this.database != null ? this.database.hashCode() : 0);
         hash = 59 * hash + (this.name != null ? this.name.hashCode() : 0);
@@ -131,7 +124,7 @@ public class Table {
     }
 
     @Override
-    public String toString() {
+    public String toString () {
         return this.database + "." + this.name;
     }
 }
