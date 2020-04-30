@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.amforeas;
@@ -48,8 +42,7 @@ import amforeas.sql.Table;
 import amforeas.sql.Update;
 
 /**
- *
- * @author Alejandro Ayuso
+ * Tests of {@link amforeas.jdbc.JDBCExecutor}
  */
 @Tag("offline-tests")
 public class JDBCExecutorTest {
@@ -74,15 +67,14 @@ public class JDBCExecutorTest {
 
         // select * from users
         List<Row> rs = JDBCExecutor.get(new Select(t), true);
-        assertEquals(2, rs.size());
+        assertEquals(6, rs.size());
 
         // select * from car
         rs = JDBCExecutor.get(new Select(new Table("my_demo_db", "car", "cid")), true);
         assertEquals(3, rs.size());
 
         // select * from car where cid = 0
-        rs = JDBCExecutor.get(
-                new Select(new Table("my_demo_db", "car", "cid")).setParameter(new SelectParam("cid", "0")), false);
+        rs = JDBCExecutor.get(new Select(new Table("my_demo_db", "car", "cid")).setParameter(new SelectParam("cid", "0")), false);
         assertEquals(1, rs.size());
 
         // select * from users where id = 0
@@ -107,9 +99,27 @@ public class JDBCExecutorTest {
 
         // select birthday from users
         rs = JDBCExecutor.get(new Select(t).addColumn("birthday"), true);
-        assertEquals(2, rs.size());
+        assertEquals(6, rs.size());
         assertFalse(rs.get(0).getCells().containsKey("credit"));
         assertTrue(rs.get(0).getCells().containsKey("birthday"));
+    }
+
+    @Test
+    public void testGet_Between () throws SQLException {
+        Table t = new Table("my_demo_db", "users");
+        Select s = new Select(t);
+        s.setParameter(new SelectParam("id", Operator.BETWEEN, "1", "3"));
+        List<Row> rs = JDBCExecutor.get(s, true);
+        assertEquals(3, rs.size());
+    }
+
+    @Test
+    public void testGet_Like () throws SQLException {
+        Table t = new Table("my_demo_db", "users");
+        Select s = new Select(t);
+        s.setParameter(new SelectParam("name", Operator.LIKE, "bar%"));
+        List<Row> rs = JDBCExecutor.get(s, true);
+        assertEquals(5, rs.size());
     }
 
     @Test
@@ -233,7 +243,7 @@ public class JDBCExecutorTest {
 
         params.add(new StoredProcedureParam("car_id", "1", false, 1, "INTEGER"));
         params.add(new StoredProcedureParam("comment", "grrrr asdsa  asd asd asda asdd )/(&&/($%/(&$=)/&/$·/(&", false,
-                2, "VARCHAR"));
+            2, "VARCHAR"));
         List<Row> rows = JDBCExecutor.executeQuery("my_demo_db", "insert_comment", params);
         assertEquals(0, rows.size());
 

@@ -1,19 +1,13 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.amforeas;
 
@@ -208,7 +202,7 @@ public class RestControllerTest {
 
         // test a view
         r = (SuccessResponse) controller.getAllResources("maker_stats_2010", new LimitParam(1000),
-                new OrderParam("month"));
+            new OrderParam("month"));
         testSuccessResponse(r, Response.Status.OK, 744);
     }
 
@@ -225,27 +219,21 @@ public class RestControllerTest {
         testDynamicFinder("users", "findAllByCreditGreaterThan", 1, "0");
         testDynamicFinder("users", "findAllByCreditGreaterThanEquals", 2, "0");
         testDynamicFinder("users", "findAllByCreditLessThanEquals", 1, "0");
-        testDynamicFinder("sales_stats", "findAllByLast_updateBetween", 6, "2000-01-01T00:00:00.000Z",
-                "2000-06-01T23:55:00.000Z");
+        testDynamicFinder("sales_stats", "findAllByLast_updateBetween", 6, "2000-01-01T00:00:00.000Z", "2000-06-01T23:55:00.000Z");
 
-        ErrorResponse err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThan",
-                Arrays.asList(new String[] {"0"}), limit, order);
+        ErrorResponse err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThan", Arrays.asList(new String[] {"0"}), limit, order);
         testErrorResponse(err, Response.Status.NOT_FOUND, null, null);
 
-        err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThhhhan",
-                Arrays.asList(new String[] {"0"}), limit, order);
+        err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThhhhan", Arrays.asList(new String[] {"0"}), limit, order);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
-        err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThhhhan",
-                Arrays.asList(new String[] {""}), limit, order);
+        err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThhhhan", Arrays.asList(new String[] {""}), limit, order);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
-        err = (ErrorResponse) controller.findByDynamicFinder("users", "", Arrays.asList(new String[] {"0"}), limit,
-                order);
+        err = (ErrorResponse) controller.findByDynamicFinder("users", "", Arrays.asList(new String[] {"0"}), limit, order);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
-        err = (ErrorResponse) controller.findByDynamicFinder("users", null, Arrays.asList(new String[] {"0"}), limit,
-                order);
+        err = (ErrorResponse) controller.findByDynamicFinder("users", null, Arrays.asList(new String[] {"0"}), limit, order);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
         err = (ErrorResponse) controller.findByDynamicFinder("", "", Arrays.asList(new String[] {"0"}), limit, order);
@@ -257,12 +245,10 @@ public class RestControllerTest {
         err = (ErrorResponse) controller.findByDynamicFinder("", null, Arrays.asList(new String[] {"0"}), limit, order);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
-        err = (ErrorResponse) controller.findByDynamicFinder(null, null, Arrays.asList(new String[] {"0"}), limit,
-                order);
+        err = (ErrorResponse) controller.findByDynamicFinder(null, null, Arrays.asList(new String[] {"0"}), limit, order);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
-        err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThan",
-                new ArrayList<String>(), limit, order);
+        err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThan", new ArrayList<String>(), limit, order);
         testErrorResponse(err, Response.Status.BAD_REQUEST, "S1000", -424);
 
         try {
@@ -405,8 +391,7 @@ public class RestControllerTest {
         r = (SuccessResponse) controller.findResources("comments", "car_id", "2", limit, order);
         testSuccessResponse(r, Response.Status.OK, 1);
 
-        r = (SuccessResponse) controller.findResources("maker_stats_2010", "maker", "FIAT", limit,
-                new OrderParam("month"));
+        r = (SuccessResponse) controller.findResources("maker_stats_2010", "maker", "FIAT", limit, new OrderParam("month"));
         testSuccessResponse(r, Response.Status.OK, 12);
 
         ErrorResponse err = (ErrorResponse) controller.findResources("comments", "car_id", "1", limit, order);
@@ -435,7 +420,7 @@ public class RestControllerTest {
     @Test
     public void testSimpleStoredProcedure () throws AmforeasBadRequestException {
         String json =
-                "[{\"value\":4,\"name\":\"car_id\",\"outParameter\":false,\"type\":\"INTEGER\",\"index\":1},{\"value\":\"This is a comment\",\"name\":\"comment\",\"outParameter\":false,\"type\":\"VARCHAR\",\"index\":2}]";
+            "[{\"value\":4,\"name\":\"car_id\",\"outParameter\":false,\"type\":\"INTEGER\",\"index\":1},{\"value\":\"This is a comment\",\"name\":\"comment\",\"outParameter\":false,\"type\":\"VARCHAR\",\"index\":2}]";
         AmforeasUtils.getStoredProcedureParamsFromJSON(json);
         SuccessResponse r = (SuccessResponse) controller.executeStoredProcedure("insert_comment", json);
         testSuccessResponse(r, Response.Status.OK, 0);
@@ -444,7 +429,7 @@ public class RestControllerTest {
     @Test
     public void testComplexStoredProcedure () throws AmforeasBadRequestException {
         String json =
-                "[{\"value\":2010,\"name\":\"in_year\",\"outParameter\":false,\"type\":\"INTEGER\",\"index\":1},{\"name\":\"out_total\",\"outParameter\":true,\"type\":\"INTEGER\",\"index\":2}]";
+            "[{\"value\":2010,\"name\":\"in_year\",\"outParameter\":false,\"type\":\"INTEGER\",\"index\":1},{\"name\":\"out_total\",\"outParameter\":true,\"type\":\"INTEGER\",\"index\":2}]";
         AmforeasUtils.getStoredProcedureParamsFromJSON(json);
         SuccessResponse r = (SuccessResponse) controller.executeStoredProcedure("get_year_sales", json);
         testSuccessResponse(r, Response.Status.OK, 1);
@@ -452,7 +437,7 @@ public class RestControllerTest {
     }
 
     private void testErrorResponse (ErrorResponse err, Response.Status expectedStatus, String expectedSqlState,
-            Integer expectedSqlCode) {
+        Integer expectedSqlCode) {
         assertEquals(expectedStatus, err.getStatus());
         assertNotNull(err.getMessage());
         assertFalse(err.isSuccess());
@@ -470,7 +455,7 @@ public class RestControllerTest {
 
     private void testDynamicFinder (String resource, String finder, int expectedResults, String... arr) {
         SuccessResponse r =
-                (SuccessResponse) controller.findByDynamicFinder(resource, finder, Arrays.asList(arr), limit, order);
+            (SuccessResponse) controller.findByDynamicFinder(resource, finder, Arrays.asList(arr), limit, order);
         testSuccessResponse(r, Response.Status.OK, expectedResults);
     }
 

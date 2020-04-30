@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package amforeas.jdbc;
@@ -25,89 +19,91 @@ import amforeas.sql.Table;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *
- * @author Alejandro Ayuso 
+ * Data ordering parameters POJO.
+ * Used to create the ordering part of the SQL strings:
+ * SELECT * FROM x WHERE y ORDER BY t.{column} {direction}
  */
 public class OrderParam {
     public static final String ASC = "ASC";
     public static final String DESC = "DESC";
-    
+
     private String column;
     private String direction;
-    
-    public OrderParam(){
+
+    public OrderParam() {
         this.column = "id";
         this.direction = ASC;
     }
-    
-    public OrderParam(final Table table){
+
+    public OrderParam(final Table table) {
         this.column = table.getPrimaryKey();
         this.direction = ASC;
     }
-    
-    public OrderParam(String col){
-        if(StringUtils.isBlank(col))
+
+    public OrderParam(String col) {
+        if (StringUtils.isBlank(col))
             throw new IllegalArgumentException("Invalid column parameter");
-        
-        if(ASC.equalsIgnoreCase(col) || DESC.equalsIgnoreCase(col))
+
+        if (ASC.equalsIgnoreCase(col) || DESC.equalsIgnoreCase(col))
             throw new IllegalArgumentException("Invalid column parameter");
-        
+
         this.column = StringUtils.deleteWhitespace(col);
         this.direction = ASC;
     }
-    
-    public OrderParam(String col, String dir){
-        if(StringUtils.isBlank(dir) || StringUtils.isBlank(col))
+
+    public OrderParam(String col, String dir) {
+        if (StringUtils.isBlank(dir) || StringUtils.isBlank(col))
             throw new IllegalArgumentException("Invalid order parameters");
-        
-        if(ASC.equalsIgnoreCase(dir)){
+
+        if (ASC.equalsIgnoreCase(dir)) {
             this.direction = ASC;
-        }else if(DESC.equalsIgnoreCase(dir)){
+        } else if (DESC.equalsIgnoreCase(dir)) {
             this.direction = DESC;
-        }else{
+        } else {
             throw new IllegalArgumentException("Invalid direction parameter");
         }
         this.column = StringUtils.deleteWhitespace(col);
     }
-    
-    public String getColumn() {
+
+    public String getColumn () {
         return column;
     }
 
-    public String getDirection() {
+    public String getDirection () {
         return direction;
     }
-    
-    public static OrderParam valueOf(final MultivaluedMap<String, String> pathParams){
+
+    public static OrderParam valueOf (final MultivaluedMap<String, String> pathParams) {
         return valueOf(pathParams, "id");
     }
-    
-    public static OrderParam valueOf(final MultivaluedMap<String, String> pathParams, final String pk){
+
+    public static OrderParam valueOf (final MultivaluedMap<String, String> pathParams, final String pk) {
         String sort = pathParams.getFirst("sort");
         String dir = pathParams.getFirst("dir");
-        
-        if(StringUtils.isEmpty(dir)) dir = "ASC";
-        
+
+        if (StringUtils.isEmpty(dir))
+            dir = "ASC";
+
         OrderParam instance;
-        if(StringUtils.isEmpty(sort)){
+        if (StringUtils.isEmpty(sort)) {
             instance = new OrderParam(pk, dir);
-        }else{
+        } else {
             instance = new OrderParam(sort, dir);
         }
-        
+
         return instance;
     }
 
-    public void setColumn(String column) {
+    public void setColumn (String column) {
         this.column = column;
     }
 
-    public void setDirection(String direction) {
+    public void setDirection (String direction) {
         this.direction = direction;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString () {
         StringBuilder b = new StringBuilder(getColumn());
         b.append(" ");
         b.append(direction);

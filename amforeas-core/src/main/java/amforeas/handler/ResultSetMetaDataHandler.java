@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
  * This file is part of Amforeas.
  * Amforeas is free software: you can redistribute it and/or modify
@@ -25,24 +25,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.apache.commons.dbutils.ResultSetHandler;
 import amforeas.rest.xstream.Row;
 
-import org.apache.commons.dbutils.ResultSetHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- *
- * @author Alejandro Ayuso 
+ * Converts a {@link java.sql.ResultSet} to a List of {@link amforeas.rest.xstream.Row}
  */
 public class ResultSetMetaDataHandler implements ResultSetHandler<List<Row>> {
 
-    private static final Logger l = LoggerFactory.getLogger(ResultSetMetaDataHandler.class);
-
     @Override
     public List<Row> handle(ResultSet rs) throws SQLException {
-        List<Row> results = new ArrayList<Row>();
+        List<Row> results = new ArrayList<>();
         int rowId = 0;
         ResultSetMetaData metaData = rs.getMetaData();
         Map<String,String> map = null;
@@ -61,7 +54,7 @@ public class ResultSetMetaDataHandler implements ResultSetHandler<List<Row>> {
 //            map.put("schema_name", metaData.getSchemaName(i));
 //            map.put("column_type", String.valueOf(metaData.getColumnType(i)));
  
-            if(map != null) results.add(new Row(rowId++, map));
+            results.add(new Row(rowId++, map));
         }
         return results;
     }
