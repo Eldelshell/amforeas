@@ -11,7 +11,7 @@
   <dependencies>
     <dependency>
       <groupId>amforeas</groupId>
-      <artifactId>amforeas-core</artifactId>
+      <artifactId>amforeas-jetty</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
