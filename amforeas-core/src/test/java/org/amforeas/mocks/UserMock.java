@@ -1,19 +1,13 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.amforeas.mocks;
 
@@ -31,8 +25,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
- *
- * @author Alejandro Ayuso 
+ * Generates a random user
  */
 public class UserMock {
     public int id;
@@ -41,31 +34,33 @@ public class UserMock {
     public BigDecimal credit;
     public DateTime birthday;
     public DateTime lastupdate;
-    
+
     private static final SecureRandom random = new SecureRandom();
     private static final DateTimeFormatter dateTimeFTR = ISODateTimeFormat.dateTime();
     private static final DateTimeFormatter dateFTR = ISODateTimeFormat.date();
 
-    public static UserMock getRandomInstance(){
+    public static UserMock getRandomInstance () {
         final UserMock instance = new UserMock();
         instance.name = new BigInteger(100, random).toString(32);
-        instance.age = 1 + (int)(Math.random() * ((100 - 1) + 1));
+        instance.age = 1 + (int) (Math.random() * ((100 - 1) + 1));
         instance.birthday = dateFTR.parseDateTime(getRandomBirthDate());
         instance.lastupdate = new DateTime();
         instance.credit = new BigDecimal(random.nextDouble());
         return instance;
     }
-    
-    public static String getRandomBirthDate(){
-        String year = String.valueOf(1950 + (int)(Math.random() * ((2010 - 1950) + 1)));
-        String month = String.valueOf(1 + (int)(Math.random() * ((12 - 1) + 1)));
-        String day = String.valueOf(1 + (int)(Math.random() * ((30 - 1) + 1)));
-        if(month.length() == 1) month = "0" + month; 
-        if(day.length() == 1) day = "0" + day; 
+
+    public static String getRandomBirthDate () {
+        String year = String.valueOf(1950 + (int) (Math.random() * ((2020 - 1950) + 1)));
+        String month = String.valueOf(1 + (int) (Math.random() * ((12 - 1) + 1)));
+        String day = String.valueOf(1 + (int) (Math.random() * ((25 - 1) + 1)));
+        if (month.length() == 1)
+            month = "0" + month;
+        if (day.length() == 1)
+            day = "0" + day;
         return year + "-" + month + "-" + day;
     }
-    
-    public List<NameValuePair> toNameValuePair(){
+
+    public List<NameValuePair> toNameValuePair () {
         List<NameValuePair> al = new ArrayList<NameValuePair>();
         al.add(new BasicNameValuePair("name", name));
         al.add(new BasicNameValuePair("age", String.valueOf(age)));
@@ -74,8 +69,8 @@ public class UserMock {
         al.add(new BasicNameValuePair("credit", credit.toPlainString()));
         return al;
     }
-    
-    public Map<String,String> toMap(){
+
+    public Map<String, String> toMap () {
         Map<String, String> m = new HashMap<String, String>();
         m.put("name", name);
         m.put("age", String.valueOf(age));
@@ -84,34 +79,39 @@ public class UserMock {
         m.put("credit", credit.toPlainString());
         return m;
     }
-    
-    public String toJSON(){
+
+    public String toJSON () {
         StringBuilder b = new StringBuilder("{");
-        b.append("\"name\":\"");b.append(name);
-        b.append("\",\"birthday\":\"");b.append(birthday.toString(dateFTR));
-        b.append("\",\"lastupdate\":\"");b.append(lastupdate.toString(dateTimeFTR));
-        b.append("\",\"credit\":");b.append(credit);
-        b.append(",\"age\":");b.append(age);
+        b.append("\"name\":\"");
+        b.append(name);
+        b.append("\",\"birthday\":\"");
+        b.append(birthday.toString(dateFTR));
+        b.append("\",\"lastupdate\":\"");
+        b.append(lastupdate.toString(dateTimeFTR));
+        b.append("\",\"credit\":");
+        b.append(credit);
+        b.append(",\"age\":");
+        b.append(age);
         b.append("}");
         return b.toString();
     }
-    
-    public static UserMock instanceOf(final Map<String, String> columns){
+
+    public static UserMock instanceOf (final Map<String, String> columns) {
         UserMock instance = new UserMock();
-        for(String k: columns.keySet()){
-            if(k.equalsIgnoreCase("id")){
+        for (String k : columns.keySet()) {
+            if (k.equalsIgnoreCase("id")) {
                 instance.id = Integer.valueOf(columns.get(k));
-            }else if(k.equalsIgnoreCase("name")){
+            } else if (k.equalsIgnoreCase("name")) {
                 instance.name = columns.get(k);
-            }else if(k.equalsIgnoreCase("age")){
+            } else if (k.equalsIgnoreCase("age")) {
                 instance.age = Integer.valueOf(columns.get(k));
-            }else if(k.equalsIgnoreCase("credit")){
+            } else if (k.equalsIgnoreCase("credit")) {
                 instance.credit = new BigDecimal(columns.get(k));
-            }else if(k.equalsIgnoreCase("birthday")){
+            } else if (k.equalsIgnoreCase("birthday")) {
                 instance.birthday = dateFTR.parseDateTime(columns.get(k));
-            }else if(k.equalsIgnoreCase("lastupdate")){
+            } else if (k.equalsIgnoreCase("lastupdate")) {
                 instance.lastupdate = dateTimeFTR.parseDateTime(columns.get(k));
-            }else{
+            } else {
                 System.out.println("Failed to parse column " + k + " with value " + columns.get(k));
             }
         }
@@ -119,7 +119,7 @@ public class UserMock {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals (Object obj) {
         if (obj == null) {
             return false;
         }
@@ -143,7 +143,7 @@ public class UserMock {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode () {
         int hash = 7;
         hash = 67 * hash + this.id;
         hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
