@@ -1,22 +1,16 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.amforeas;
+package org.amforeas.sql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,8 +29,7 @@ import amforeas.sql.dialect.MySQLDialect;
 import amforeas.sql.dialect.OracleDialect;
 
 /**
- *
- * @author Alejandro Ayuso
+ * Test that dynamic finders work as expected
  */
 @Tag("offline-tests")
 public class DynamicFinderTest {
@@ -243,7 +236,7 @@ public class DynamicFinderTest {
 
     @Test
     public void test_findAllByAgeGreaterTahnEquals () {
-        AmforeasBadRequestException e = assertThrows(AmforeasBadRequestException.class, () -> {
+        assertThrows(AmforeasBadRequestException.class, () -> {
             String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
             doTest(dynamicQuery);
         });
