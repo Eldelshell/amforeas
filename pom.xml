@@ -47,6 +47,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
     <surefire-plugin.version>2.22.2</surefire-plugin.version>
+    <assembly-plugin.version>3.2.0</assembly-plugin.version>
   </properties>
 
   <build>
@@ -133,8 +134,8 @@
 
   <modules>
     <module>amforeas-core</module>
-    <module>amforeas-jetty</module>
     <module>amforeas-servlet</module>
+    <module>amforeas-jetty</module>
     <module>amforeas-war</module>
     <module>amforeas-demo</module>
   </modules>
