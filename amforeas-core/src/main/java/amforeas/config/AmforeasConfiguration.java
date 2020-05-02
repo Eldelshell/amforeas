@@ -12,10 +12,14 @@
 
 package amforeas.config;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -95,40 +99,53 @@ public class AmforeasConfiguration {
      * Loads the amforeas.properties from different locations using different methods.
      * @param conf a AmforeasConfiguration instance used to obtain a ClassLoader.
      * @return an instance of {@link java.util.Properties} with the properties from the file.
+     * @throws StartupException 
      */
     protected Properties loadProperties () {
+        final Optional<Properties> prop = this.loadFromPath().or( () -> this.loadFromClasspath());
+        return prop.get();
+    }
+
+    private Optional<Properties> loadFromPath () {
+        final String path = System.getProperty("amforeas.properties.file");
+
+        if (StringUtils.isEmpty(path)) {
+            l.debug("-Damforeas.properties.file wasn't set");
+            return Optional.empty();
+        }
+
+        final File file = new File(path);
+
+        if (!file.exists() || !file.canRead()) {
+            l.error("Couldn't read -Damforeas.properties.file = {}", path);
+            return Optional.empty();
+        }
+
         final Properties prop = new Properties();
-        InputStream in = AmforeasConfiguration.class.getClass().getResourceAsStream("/org/amforeas/amforeas.properties");
 
-        if (in == null) {
-            l.warn("Couldn't load configuration file /org/amforeas/amforeas.properties");
-            in = AmforeasConfiguration.class.getClass().getResourceAsStream("/amforeas.properties");
+        try (FileReader reader = new FileReader(file)) {
+            prop.load(new FileReader(file));
+        } catch (FileNotFoundException e) {
+            return Optional.empty();
+        } catch (IOException e) {
+            l.error("Failed to parse file {}", path);
+            return Optional.empty();
         }
 
-        if (in == null) {
-            l.warn("Couldn't load configuration file /amforeas.properties");
-            in = AmforeasConfiguration.class.getClassLoader().getResourceAsStream("amforeas.properties");
+        return Optional.of(prop);
+    }
+
+    private Optional<Properties> loadFromClasspath () {
+        final Properties prop = new Properties();
+
+        try (InputStream in = AmforeasConfiguration.class.getClassLoader().getResourceAsStream("amforeas.properties")) {
+            prop.load(in);
+        } catch (IOException e) {
+            l.error("Failed to parse file amforeas.properties");
+            return Optional.empty();
         }
 
-        if (in == null) {
-            l.error("Couldn't load configuration file amforeas.properties quitting");
-        }
-
-        try {
-            if (in != null) {
-                prop.load(in);
-            }
-        } catch (IOException ex) {
-            l.error("Failed to load configuration", ex);
-        } finally {
-            try {
-                if (in != null)
-                    in.close();
-            } catch (IOException ex) {
-                l.error(ex.getMessage());
-            }
-        }
-        return prop;
+        return Optional.of(prop);
     }
 
     /**
@@ -262,27 +279,32 @@ public class AmforeasConfiguration {
             return env;
         }
 
+        final String property = System.getProperty(name);
+        if (StringUtils.isNotEmpty(property)) {
+            return property;
+        }
+
         return this.getProperties().getProperty(name, defVal);
     }
 
     public Integer getServerPort () {
-        return Integer.parseInt(this.getProperty(server_port));
+        return Integer.parseInt(this.getProperty(server_port, "8080"));
     }
 
     public String getServerRoot () {
-        return this.getProperty(server_root);
+        return this.getProperty(server_root, "/amforeas/*");
     }
 
     public String getServerHost () {
-        return this.getProperty(server_host);
+        return this.getProperty(server_host, "0.0.0.0");
     }
 
     public Integer getServerThreadsMin () {
-        return Integer.parseInt(this.getProperty(server_threads_min));
+        return Integer.parseInt(this.getProperty(server_threads_min, "1"));
     }
 
     public Integer getServerThreadsMax () {
-        return Integer.parseInt(this.getProperty(server_threads_max));
+        return Integer.parseInt(this.getProperty(server_threads_max, "10"));
     }
 
     public Integer getSecurePort () {
