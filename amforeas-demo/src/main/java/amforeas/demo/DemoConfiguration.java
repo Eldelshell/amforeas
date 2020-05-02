@@ -37,19 +37,4 @@ public class DemoConfiguration extends AmforeasConfiguration {
             throw new IllegalStateException("Configuration is not valid");
     }
 
-    @Override
-    public String getServerRoot () {
-        return "/amforeas/*";
-    }
-
-    @Override
-    public String getServerHost () {
-        return "0.0.0.0";
-    }
-
-    @Override
-    public Integer getServerPort () {
-        return 8080;
-    }
-
 }
