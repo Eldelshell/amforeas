@@ -19,6 +19,7 @@ public class DemoSingletonFactory extends SingletonFactory {
     public synchronized AmforeasConfiguration getConfiguration () {
         if (configuration == null) {
             configuration = new DemoConfiguration();
+            configuration.loadProperties();
             configuration.load();
         }
         return configuration;
