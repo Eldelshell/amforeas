@@ -4,10 +4,9 @@
     <format>zip</format>
   </formats>
 
-  <!-- include all runtime libraries in the /lib folder of the output file -->
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/lib</outputDirectory>
+      <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>
         <exclude>hsqldb*.jar</exclude>
@@ -16,25 +15,17 @@
   </dependencySets>
 
   <fileSets>
-    <!-- Put configuration files in conf-->
     <fileSet>
-      <directory>src/main/resources/</directory>
-      <outputDirectory>/etc</outputDirectory>
+      <directory>${project.parent.basedir}/amforeas-core/src/main/resources/</directory>
+      <outputDirectory>etc</outputDirectory>
       <includes>
-        <include>*.properties</include>
-        <include>*.xml</include>
+        <include>amforeas.properties</include>
+        <include>logback.xml</include>
       </includes>
     </fileSet>
-
-    <fileSet>
-      <directory>src/main/webapp/</directory>
-      <outputDirectory>/webapp</outputDirectory>
-    </fileSet>
-    
-    <!-- Put the startup script -->
     <fileSet>
       <directory>src/main/resources/</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>bin</outputDirectory>
       <includes>
         <include>amforeas.sh</include>
       </includes>

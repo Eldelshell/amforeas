@@ -4,45 +4,38 @@
     <format>zip</format>
   </formats>
 
-  <!-- include all runtime libraries in the /lib folder of the output file -->
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/lib</outputDirectory>
+      <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
 
   <fileSets>
-    <!-- Put configuration files in conf-->
     <fileSet>
       <directory>src/main/resources/</directory>
-      <outputDirectory>/etc</outputDirectory>
-      <excludes>
-         <!-- the amforeas.properties is generated in runtime -->
-        <exclude>*.properties</exclude>
-      </excludes>
+      <outputDirectory>etc</outputDirectory>
       <includes>
-        <include>*.xml</include>
+        <include>amforeas.jks</include>
+        <include>amforeas.properties</include>
       </includes>
     </fileSet>
     
-    <!-- Put the startup script -->
     <fileSet>
       <directory>src/main/resources/</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>bin</outputDirectory>
       <includes>
         <include>amforeas-demo.sh</include>
       </includes>
     </fileSet>
     
-    <!-- In demo we include the demo apps -->
-    <!--     <fileSet> -->
-    <!--       <directory>${project.parent.basedir}/extras/extjs/</directory> -->
-    <!--       <outputDirectory>/webapp</outputDirectory> -->
-    <!--       <includes> -->
-    <!--         <include>*/**</include> -->
-    <!--       </includes> -->
-    <!--     </fileSet> -->
+    <fileSet>
+      <directory>${project.parent.basedir}/amforeas-core/src/main/resources/</directory>
+      <outputDirectory>etc</outputDirectory>
+      <includes>
+        <include>logback.xml</include>
+      </includes>
+    </fileSet>
   </fileSets>
 
 </assembly>
