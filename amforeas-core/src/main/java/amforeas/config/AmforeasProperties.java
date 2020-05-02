@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,14 +198,14 @@ public class AmforeasProperties {
         });
     }
 
-    private List<String> getAliases () {
+    public List<String> getAliases () {
         String aliases = this.get(ALIAS_LIST);
 
         if (StringUtils.isEmpty(aliases)) {
             return new ArrayList<>(0);
         }
 
-        return Arrays.asList(aliases.split(","));
+        return Arrays.asList(aliases.split(",")).stream().map(alias -> alias.trim()).collect(Collectors.toList());
     }
 
     /**
@@ -222,9 +223,14 @@ public class AmforeasProperties {
         }
 
         for (String alias : this.getAliases()) {
-            // Check that at least we have the driver. In the future we might do more complex checks
+            // Check that at least we have the driver & database name. In the future we might do more complex checks
             if (StringUtils.isEmpty(this.get(DB_DRIVER, alias))) {
                 l.warn("Invalid configuration. Database property {} is required for alias {}", DB_DRIVER, alias);
+                return false;
+            }
+
+            if (StringUtils.isEmpty(this.get(DB_DATABASE, alias))) {
+                l.warn("Invalid configuration. Database property {} is required for alias {}", DB_DATABASE, alias);
                 return false;
             }
         }
