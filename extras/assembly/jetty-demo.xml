@@ -22,7 +22,7 @@
     </fileSet>
     
     <fileSet>
-      <directory>${project.parent.basedir}/assembly</directory>
+      <directory>${project.parent.basedir}/extras/assembly</directory>
       <outputDirectory>bin</outputDirectory>
       <includes>
         <include>amforeas-demo.sh</include>
