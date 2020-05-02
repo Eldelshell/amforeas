@@ -30,6 +30,12 @@ public class AmforeasShutdown extends Thread {
     public void run () {
         l.info("Shutting down Amforeas");
         SingletonFactory factory = new SingletonFactory();
-        factory.getJDBCExecutor().shutdown();
+
+        try {
+            factory.getJDBCExecutor().shutdown();
+        } catch (Exception e) {
+            l.warn("Failed to cleanup database connections", e.getMessage());
+        }
+
     }
 }
