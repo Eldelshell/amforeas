@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>amforeas</groupId>
@@ -7,7 +9,8 @@
   </parent>
   <artifactId>amforeas-demo</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  
+  <packaging>jar</packaging>
+
   <dependencies>
     <dependency>
       <groupId>amforeas</groupId>
@@ -38,10 +41,22 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
-    <build>
+
+  <build>
     <finalName>${artifactId}-${project.version}</finalName>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin.version}</version>
+        <configuration>
+          <excludes>
+            <exclude>*.properties</exclude>
+            <exclude>*.jks</exclude>
+            <exclude>*.sh</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire-plugin.version}</version>
@@ -51,36 +66,71 @@
           </properties>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>${project.parent.basedir}/extras/assembly/jetty-demo.xml</descriptor>
-          </descriptors>
-        </configuration>
-            <executions>
-     <execution>
-      <phase>package</phase>
-      <goals>
-       <goal>single</goal>
-      </goals>
-     </execution>
-    </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>${maven-jar-plugin.version}</version>
-        <configuration>
-          <excludes>
-            <exclude>logback.xml</exclude>
-            <exclude>*.properties</exclude>
-            <exclude>*.xml</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
-  
+
+  <profiles>
+    <profile>
+      <id>dist</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>${assembly-plugin.version}</version>
+            <configuration>
+              <descriptors>
+                <descriptor>${project.parent.basedir}/extras/assembly/jetty-demo.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jar-with-dependencies</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>${assembly-plugin.version}</version>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>amforeas.demo.DemoJetty</mainClass>
+                </manifest>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+            <executions>
+              <execution>
+                <id>make-assembly</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
