@@ -1,5 +1,6 @@
 <assembly>
   <id>demo</id>
+  <baseDirectory>amforeas-demo</baseDirectory>
   <formats>
     <format>zip</format>
   </formats>
