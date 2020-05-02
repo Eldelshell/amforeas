@@ -40,6 +40,7 @@ public class AmforeasPropertiesTest {
         javaProperties.setProperty("amforeas.server.http.port", "8080");
         javaProperties.setProperty("amforeas.alias.list", "alias1");
         javaProperties.setProperty("amforeas.alias1.jdbc.driver", "H2_MEM");
+        javaProperties.setProperty("amforeas.alias1.jdbc.database", "test_db");
     }
 
     @Test
@@ -63,11 +64,16 @@ public class AmforeasPropertiesTest {
         invalid.setProperty("amforeas.server.http.port", "x");
         assertFalse(AmforeasProperties.of(invalid).isValid());
 
-        invalid.setProperty("amforeas.alias.list", "x");
+        invalid.setProperty("amforeas.alias.list", "alias1");
         assertFalse(AmforeasProperties.of(invalid).isValid());
 
         invalid.setProperty("amforeas.alias.list", "alias1");
         invalid.setProperty("amforeas.alias1.jdbc.driver", "H2_MEM");
+        assertFalse(AmforeasProperties.of(invalid).isValid());
+
+        invalid.setProperty("amforeas.alias.list", "alias1");
+        invalid.setProperty("amforeas.alias1.jdbc.driver", "H2_MEM");
+        invalid.setProperty("amforeas.alias1.jdbc.database", "test_db");
         assertTrue(AmforeasProperties.of(invalid).isValid());
     }
 
@@ -103,6 +109,15 @@ public class AmforeasPropertiesTest {
         assertThrows(IllegalArgumentException.class, () -> properties.get(AmforeasProperties.DB_DRIVER, ""));
         assertThrows(IllegalArgumentException.class, () -> properties.get(AmforeasProperties.DB_DRIVER, null));
         assertThrows(IllegalArgumentException.class, () -> properties.get(AmforeasProperties.DB_DRIVER, "invalid"));
+    }
+
+    @Test
+    public void testGetAliases () {
+        assertEquals(AmforeasProperties.of(javaProperties).getAliases().size(), 1);
+
+        javaProperties.setProperty("amforeas.alias.list", "alias1, alias2");
+        javaProperties.setProperty("amforeas.alias2.jdbc.driver", "H2_MEM");
+        assertEquals(AmforeasProperties.of(javaProperties).getAliases().size(), 2);
     }
 
     @Test
