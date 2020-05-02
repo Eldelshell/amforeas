@@ -20,7 +20,7 @@ else
 fi
 
 do_start () {
-    local path="lib/*:etc"
+    local path="../lib/*:../etc"
     local opts=""
 
     local exit_code=10
