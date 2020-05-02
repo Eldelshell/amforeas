@@ -24,7 +24,7 @@
       </includes>
     </fileSet>
     <fileSet>
-      <directory>src/main/resources/</directory>
+      <directory>${project.parent.basedir}/assembly</directory>
       <outputDirectory>bin</outputDirectory>
       <includes>
         <include>amforeas.sh</include>
