@@ -12,11 +12,15 @@
 
 package amforeas.config;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,44 +36,10 @@ public class AmforeasConfiguration {
 
     private static final Logger l = LoggerFactory.getLogger(AmforeasConfiguration.class);
 
-    protected static final String p_prefix = "amforeas.";
-
-    /* Server */
-    protected static final String server_root = p_prefix + "server.root";
-    protected static final String server_host = p_prefix + "server.host";
-    protected static final String server_port = p_prefix + "server.http.port";
-
-    protected static final String server_threads_min = p_prefix + "server.threads.min";
-    protected static final String server_threads_max = p_prefix + "server.threads.max";
-
-    /* SSL */
-    protected static final String server_secure_port = p_prefix + "server.https.port";
-    protected static final String server_secure_file = p_prefix + "server.https.jks";
-    protected static final String server_secure_file_password = p_prefix + "server.https.jks.password";
-
-    /* Database */
-
-    protected static final String p_name_amforeas_database_list = p_prefix + "alias.list";
-    protected static final String p_prefix_db_driver = ".jdbc.driver";
-    protected static final String p_prefix_db_username = ".jdbc.username";
-    protected static final String p_prefix_db_password = ".jdbc.password";
-    protected static final String p_prefix_db_database = ".jdbc.database";
-    protected static final String p_prefix_db_host = ".jdbc.host";
-    protected static final String p_prefix_db_port = ".jdbc.port";
-    protected static final String p_prefix_db_readonly = ".jdbc.readonly";
-    protected static final String p_prefix_db_max_connections = ".jdbc.max.connections";
-    protected static final String p_prefix_db_url = ".jdbc.url";
-
-    protected Integer limit;
-    protected Integer maxLimit;
-    protected boolean listTables;
-    protected Properties properties;
+    protected final AmforeasProperties properties = new AmforeasProperties();
+    protected final SystemWrapper system = new SystemWrapper();
 
     protected List<DatabaseConfiguration> databases = null;
-
-    public AmforeasConfiguration() {
-        this.properties = this.loadProperties();
-    }
 
     /**
      * Loads the configuration file, registers the shutdown hook, calls the generation of 
@@ -92,43 +62,61 @@ public class AmforeasConfiguration {
     }
 
     /**
-     * Loads the amforeas.properties from different locations using different methods.
-     * @param conf a AmforeasConfiguration instance used to obtain a ClassLoader.
-     * @return an instance of {@link java.util.Properties} with the properties from the file.
+     * Loads the amforeas properties from different locations using different methods.
      */
-    protected Properties loadProperties () {
+    public void loadProperties () {
+        final Optional<Properties> prop = this.loadFromPath().or(this::loadFromClasspath);
+        this.properties.load(prop.get());
+    }
+
+    /**
+     * Loads the {@link Properties} from a given path set with -Damforeas.properties.file
+     * @return Optional of {@link Properties}
+     */
+    private Optional<Properties> loadFromPath () {
+        final String path = System.getProperty("amforeas.properties.file");
+
+        if (StringUtils.isEmpty(path)) {
+            l.debug("-Damforeas.properties.file wasn't set");
+            return Optional.empty();
+        }
+
+        final File file = new File(path);
+
+        if (!file.exists() || !file.canRead()) {
+            l.error("Couldn't read -Damforeas.properties.file = {}", path);
+            return Optional.empty();
+        }
+
         final Properties prop = new Properties();
-        InputStream in = AmforeasConfiguration.class.getClass().getResourceAsStream("/org/amforeas/amforeas.properties");
 
-        if (in == null) {
-            l.warn("Couldn't load configuration file /org/amforeas/amforeas.properties");
-            in = AmforeasConfiguration.class.getClass().getResourceAsStream("/amforeas.properties");
+        try (FileReader reader = new FileReader(file)) {
+            prop.load(new FileReader(file));
+        } catch (FileNotFoundException e) {
+            return Optional.empty();
+        } catch (IOException e) {
+            l.error("Failed to parse file {}", path);
+            return Optional.empty();
         }
 
-        if (in == null) {
-            l.warn("Couldn't load configuration file /amforeas.properties");
-            in = AmforeasConfiguration.class.getClassLoader().getResourceAsStream("amforeas.properties");
+        return Optional.of(prop);
+    }
+
+    /**
+     * Loads the {@link Properties} from the classpath
+     * @return Optional of {@link Properties}
+     */
+    private Optional<Properties> loadFromClasspath () {
+        final Properties prop = new Properties();
+
+        try (InputStream in = AmforeasConfiguration.class.getClassLoader().getResourceAsStream("amforeas.properties")) {
+            prop.load(in);
+        } catch (IOException e) {
+            l.error("Failed to parse file amforeas.properties");
+            return Optional.empty();
         }
 
-        if (in == null) {
-            l.error("Couldn't load configuration file amforeas.properties quitting");
-        }
-
-        try {
-            if (in != null) {
-                prop.load(in);
-            }
-        } catch (IOException ex) {
-            l.error("Failed to load configuration", ex);
-        } finally {
-            try {
-                if (in != null)
-                    in.close();
-            } catch (IOException ex) {
-                l.error(ex.getMessage());
-            }
-        }
-        return prop;
+        return Optional.of(prop);
     }
 
     /**
@@ -138,55 +126,44 @@ public class AmforeasConfiguration {
      * @throws StartupException if we're unable to load a {@link amforeas.config.DatabaseConfiguration}.
      */
     protected List<DatabaseConfiguration> getDatabaseConfigurations () throws StartupException {
-        String databaseList = this.properties.getProperty(p_name_amforeas_database_list);
-        if (databaseList == null) {
-            throw new StartupException("Failed to read list of aliases " + p_name_amforeas_database_list, true);
+        List<DatabaseConfiguration> databases = this.properties.getAliases().stream().map(this::generateDatabaseConfiguration).collect(Collectors.toList());
+
+        if (databases.isEmpty()) {
+            throw new StartupException("Failed to generate database configurations", true);
         }
-        final String[] names = databaseList.split(",");
-        List<DatabaseConfiguration> databases = new ArrayList<DatabaseConfiguration>(names.length);
-        for (String name : names) {
-            name = name.trim();
-            if (StringUtils.isAlphanumeric(name)) {
-                DatabaseConfiguration c = generateDatabaseConfiguration(name);
-                databases.add(c);
-            } else {
-                l.warn("Database name {} is invalid. Continuing without it.", name);
-            }
-        }
+
         return databases;
     }
 
     /**
      * From the given properties object, load a {@link amforeas.config.DatabaseConfiguration}.
-     * @param prop an instance of {@link java.util.Properties} with the properties from the file.
-     * @param name the name of the database to load.
-     * @return a {@link amforeas.config.DatabaseConfiguration}for the name given to the
-     * database/schema.
+     * @param alias - the alias of the database to load.
+     * @return a {@link amforeas.config.DatabaseConfiguration} for the alias
      */
-    protected DatabaseConfiguration generateDatabaseConfiguration (final String name) {
-        l.debug("Obtain configuration options for alias {}", name);
+    protected DatabaseConfiguration generateDatabaseConfiguration (final String alias) {
+        l.debug("Obtain configuration options for alias {}", alias);
 
-        JDBCDriver driver = JDBCDriver.valueOf(this.properties.getProperty(p_prefix + name + p_prefix_db_driver));
-        String username = this.properties.getProperty(p_prefix + name + p_prefix_db_username);
-        String password = this.properties.getProperty(p_prefix + name + p_prefix_db_password);
-        String database = this.properties.getProperty(p_prefix + name + p_prefix_db_database);
-        String host = this.properties.getProperty(p_prefix + name + p_prefix_db_host);
-        Integer port = integerValueOf(this.properties, p_prefix + name + p_prefix_db_port, driver.getDefaultPort());
-        Integer max = integerValueOf(this.properties, p_prefix + name + p_prefix_db_max_connections, Integer.valueOf(25));
-        Boolean readOnly = Boolean.valueOf(this.properties.getProperty(p_prefix + name + p_prefix_db_readonly));
-        String url = this.properties.getProperty(p_prefix + name + p_prefix_db_url);
+        JDBCDriver driver = JDBCDriver.valueOf(this.properties.get(AmforeasProperties.DB_DRIVER, alias));
+        String username = this.properties.get(AmforeasProperties.DB_USERNAME, alias);
+        String password = this.properties.get(AmforeasProperties.DB_PASSWORD, alias);
+        String database = this.properties.get(AmforeasProperties.DB_DATABASE, alias);
+        String host = this.properties.get(AmforeasProperties.DB_HOST, alias);
+        Integer port = integerValueOf(AmforeasProperties.DB_PORT, alias, driver.getDefaultPort());
+        Integer max = integerValueOf(AmforeasProperties.DB_MAX_CONNECTIONS, alias, Integer.valueOf(25));
+        Boolean readOnly = Boolean.valueOf(this.properties.get(AmforeasProperties.DB_READONLY, alias));
+        String url = this.properties.get(AmforeasProperties.DB_URL, alias);
 
-        DatabaseConfiguration c = DatabaseConfiguration.instanceOf(name, driver, username, password, database, host, port, max, readOnly);
+        DatabaseConfiguration c = DatabaseConfiguration.instanceOf(alias, driver, username, password, database, host, port, max, readOnly);
         c.setUrl(url);
 
         l.debug("Loaded DB config {}", c.toString());
         return c;
     }
 
-    protected static Integer integerValueOf (final Properties prop, final String field, final Integer valueInCaseOfFailure) {
+    protected Integer integerValueOf (final String field, final String alias, final Integer valueInCaseOfFailure) {
         Integer ret;
         try {
-            ret = Integer.valueOf(prop.getProperty(field));
+            ret = Integer.valueOf(this.properties.get(field, alias));
         } catch (Exception e) {
             ret = valueInCaseOfFailure;
         }
@@ -203,97 +180,62 @@ public class AmforeasConfiguration {
         return ret;
     }
 
-    public JDBCDriver getDriver (final String database) {
-        for (DatabaseConfiguration c : this.databases) {
-            if (c.getDatabase().equalsIgnoreCase(database))
-                return c.getDriver();
-        }
-        DatabaseConfiguration c = getDatabaseConfiguration(database);
-        return c != null ? c.getDriver() : null;
-    }
-
-    public Integer getLimit () {
-        return limit;
-    }
-
-    public Integer getMaxLimit () {
-        return maxLimit;
-    }
-
     public DatabaseConfiguration getDatabaseConfiguration (final String database) {
-        for (DatabaseConfiguration c : this.databases) {
-            if (c.getDatabase().equalsIgnoreCase(database))
-                return c;
-        }
-        return null;
+        return this.databases.stream().filter(conf -> conf.getDatabase().equalsIgnoreCase(database)).findFirst().orElse(null);
     }
 
     public DatabaseConfiguration getDatabaseConfigurationForAlias (final String alias) {
-        for (DatabaseConfiguration c : this.databases) {
-            if (c.getAlias().equalsIgnoreCase(alias))
-                return c;
-        }
-        throw new IllegalArgumentException("Alias doesn't exists or is not registered in amforeas");
+        return this.databases
+            .stream()
+            .filter(conf -> conf.getAlias().equalsIgnoreCase(alias))
+            .findFirst()
+            .orElseThrow( () -> new IllegalArgumentException("Alias doesn't exists or is not registered in amforeas"));
     }
 
     public List<DatabaseConfiguration> getDatabases () {
         return this.databases;
     }
 
-    public boolean allowListTables () {
-        return listTables;
-    }
-
-    public Properties getProperties () {
+    public AmforeasProperties getProperties () {
         return this.properties;
     }
 
-    public String formatProperty (final String property) {
-        return property.replace(".", "_").replace("-", "_").toUpperCase();
-    }
-
-    public String getProperty (final String name) {
-        return this.getProperty(name, null);
-    }
-
-    public String getProperty (final String name, final String defVal) {
-        final String env = System.getenv(this.formatProperty(name));
-        if (StringUtils.isNotEmpty(env)) {
-            return env;
-        }
-
-        return this.getProperties().getProperty(name, defVal);
-    }
-
     public Integer getServerPort () {
-        return Integer.parseInt(this.getProperty(server_port));
+        return Integer.parseInt(this.properties.get(AmforeasProperties.SERVER_PORT));
     }
 
     public String getServerRoot () {
-        return this.getProperty(server_root);
+        return this.properties.get(AmforeasProperties.SERVER_ROOT);
     }
 
     public String getServerHost () {
-        return this.getProperty(server_host);
+        return this.properties.get(AmforeasProperties.SERVER_HOST);
     }
 
     public Integer getServerThreadsMin () {
-        return Integer.parseInt(this.getProperty(server_threads_min));
+        return Integer.parseInt(this.properties.get(AmforeasProperties.SERVER_THREADS_MIN));
     }
 
     public Integer getServerThreadsMax () {
-        return Integer.parseInt(this.getProperty(server_threads_max));
+        return Integer.parseInt(this.properties.get(AmforeasProperties.SERVER_THREADS_MAX));
     }
 
     public Integer getSecurePort () {
-        return Integer.parseInt(this.getProperty(server_secure_port, "0"));
+        final String port = this.properties.get(AmforeasProperties.SERVER_SECURE_PORT);
+
+        if (StringUtils.isEmpty(port) || !StringUtils.isNumeric(port)) {
+            return null;
+        }
+
+        return Integer.parseInt(port);
     }
 
     public String getJKSFile () {
-        return this.getProperty(server_secure_file);
+        return this.properties.get(AmforeasProperties.SERVER_SECURE_FILE);
     }
 
     public String getJKSFilePassword () {
-        return this.getProperty(server_secure_file_password);
+        return this.properties.get(AmforeasProperties.SERVER_SECURE_FILE_PASSWORD);
     }
+
 }

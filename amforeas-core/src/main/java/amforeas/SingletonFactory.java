@@ -20,6 +20,7 @@ public class SingletonFactory {
     public synchronized AmforeasConfiguration getConfiguration () {
         if (configuration == null) {
             configuration = new AmforeasConfiguration();
+            configuration.loadProperties();
             configuration.load();
         }
         return configuration;

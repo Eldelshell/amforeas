@@ -20,23 +20,23 @@ else
 fi
 
 do_start () {
-    local path="lib/*:etc"
+    local path="../lib/*:../etc"
     local opts=""
 
     local exit_code=10
     while [ $exit_code -eq 10 ]; do
-        "${JAVA_HOME}/bin/java" ${opts} -cp "${path}" amforeas.demo.DemoJetty
+        "${JAVA_HOME}/bin/java" ${opts} -cp "${path}" amforeas.AmforeasJetty
         exit_code=$?
     done
 }
 
 do_stop () {
-    pkill -f "amforeas.demo.DemoJetty"
+    pkill -f "amforeas.AmforeasJetty"
     exit $?
 }
 
 do_status () {
-    pkill -0 -f "amforeas.demo.DemoJetty" > /dev/null 2>&1 && echo "Process is running" && exit 0
+    pkill -0 -f "amforeas.AmforeasJetty" > /dev/null 2>&1 && echo "Process is running" && exit 0
     echo "Amforeas is not running" && exit 0
 }
 
