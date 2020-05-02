@@ -17,10 +17,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +40,6 @@ public class AmforeasConfiguration {
     protected final SystemWrapper system = new SystemWrapper();
 
     protected List<DatabaseConfiguration> databases = null;
-
-    public AmforeasConfiguration() {
-        this.loadProperties();
-    }
 
     /**
      * Loads the configuration file, registers the shutdown hook, calls the generation of 
@@ -68,7 +64,7 @@ public class AmforeasConfiguration {
     /**
      * Loads the amforeas properties from different locations using different methods.
      */
-    protected void loadProperties () {
+    public void loadProperties () {
         final Optional<Properties> prop = this.loadFromPath().or(this::loadFromClasspath);
         this.properties.load(prop.get());
     }
@@ -130,22 +126,12 @@ public class AmforeasConfiguration {
      * @throws StartupException if we're unable to load a {@link amforeas.config.DatabaseConfiguration}.
      */
     protected List<DatabaseConfiguration> getDatabaseConfigurations () throws StartupException {
-        String databaseList = this.properties.get(AmforeasProperties.ALIAS_LIST);
-        if (databaseList == null) {
-            throw new StartupException("Failed to read list of aliases " + AmforeasProperties.ALIAS_LIST, true);
+        List<DatabaseConfiguration> databases = this.properties.getAliases().stream().map(this::generateDatabaseConfiguration).collect(Collectors.toList());
+
+        if (databases.isEmpty()) {
+            throw new StartupException("Failed to generate database configurations", true);
         }
 
-        final String[] names = databaseList.split(",");
-        List<DatabaseConfiguration> databases = new ArrayList<>(names.length);
-        for (String name : names) {
-            name = name.trim();
-            if (StringUtils.isAlphanumeric(name)) {
-                DatabaseConfiguration c = generateDatabaseConfiguration(name);
-                databases.add(c);
-            } else {
-                l.warn("Database name {} is invalid. Continuing without it.", name);
-            }
-        }
         return databases;
     }
 
@@ -164,7 +150,7 @@ public class AmforeasConfiguration {
         String host = this.properties.get(AmforeasProperties.DB_HOST, alias);
         Integer port = integerValueOf(AmforeasProperties.DB_PORT, alias, driver.getDefaultPort());
         Integer max = integerValueOf(AmforeasProperties.DB_MAX_CONNECTIONS, alias, Integer.valueOf(25));
-        Boolean readOnly = Boolean.valueOf(this.properties.get(AmforeasProperties.DB_READONLY));
+        Boolean readOnly = Boolean.valueOf(this.properties.get(AmforeasProperties.DB_READONLY, alias));
         String url = this.properties.get(AmforeasProperties.DB_URL, alias);
 
         DatabaseConfiguration c = DatabaseConfiguration.instanceOf(alias, driver, username, password, database, host, port, max, readOnly);
@@ -192,11 +178,6 @@ public class AmforeasConfiguration {
         }
 
         return ret;
-    }
-
-    public JDBCDriver getDriver (final String database) {
-        final DatabaseConfiguration conf = this.getDatabaseConfiguration(database);
-        return conf != null ? conf.getDriver() : null;
     }
 
     public DatabaseConfiguration getDatabaseConfiguration (final String database) {
@@ -240,7 +221,13 @@ public class AmforeasConfiguration {
     }
 
     public Integer getSecurePort () {
-        return Integer.parseInt(this.properties.get(AmforeasProperties.SERVER_SECURE_PORT));
+        final String port = this.properties.get(AmforeasProperties.SERVER_SECURE_PORT);
+
+        if (StringUtils.isEmpty(port) || !StringUtils.isNumeric(port)) {
+            return null;
+        }
+
+        return Integer.parseInt(port);
     }
 
     public String getJKSFile () {
