@@ -27,6 +27,8 @@
       <includes>
         <include>amforeas-demo.sh</include>
       </includes>
+      <fileMode>0775</fileMode>
+      <directoryMode>0775</directoryMode>
     </fileSet>
     
     <fileSet>
