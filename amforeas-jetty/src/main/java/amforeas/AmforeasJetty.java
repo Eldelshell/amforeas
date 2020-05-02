@@ -13,6 +13,7 @@
 package amforeas;
 
 import java.io.File;
+import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -34,10 +35,15 @@ public class AmforeasJetty {
 
     public static void main (String[] args) throws Exception {
         l.debug("Loading Configuration");
-
         SingletonFactory factory = new SingletonFactory();
         final AmforeasConfiguration conf = factory.getConfiguration();
 
+        l.info("Starting Amforeas in Jetty Embedded mode");
+        AmforeasJetty me = new AmforeasJetty();
+        me.startServer(conf);
+    }
+
+    protected void startServer (final AmforeasConfiguration conf) throws Exception {
         final QueuedThreadPool threadPool = new QueuedThreadPool();
         threadPool.setMinThreads(conf.getServerThreadsMin());
         threadPool.setMaxThreads(conf.getServerThreadsMax());
@@ -48,13 +54,13 @@ public class AmforeasJetty {
         setupHTTPConnection(conf, server);
         setupHTTPSConnection(conf, server);
 
-        l.info("Starting Amforeas in Jetty Embedded mode");
+
         server.start();
         server.setStopAtShutdown(true);
         server.join();
     }
 
-    private static void setupJerseyServlet (final AmforeasConfiguration conf, final Server server) {
+    private void setupJerseyServlet (final AmforeasConfiguration conf, final Server server) {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.setContextPath("/");
 
@@ -65,7 +71,7 @@ public class AmforeasJetty {
         server.setHandler(context);
     }
 
-    private static void setupHTTPConnection (final AmforeasConfiguration conf, final Server server) {
+    private void setupHTTPConnection (final AmforeasConfiguration conf, final Server server) {
         final Integer port = conf.getServerPort();
 
         if (port == null || port == 0) {
@@ -80,7 +86,7 @@ public class AmforeasJetty {
         server.addConnector(connector);
     }
 
-    private static void setupHTTPSConnection (final AmforeasConfiguration conf, final Server server) {
+    private void setupHTTPSConnection (final AmforeasConfiguration conf, final Server server) {
         final Integer port = conf.getSecurePort();
         final String path = conf.getJKSFile();
         final String pwd = conf.getJKSFilePassword();
@@ -105,7 +111,19 @@ public class AmforeasJetty {
 
         if (!jks.exists() || !jks.canRead()) {
             l.warn("Can't read JKS file on {}", path);
-            return;
+
+            URL classpath = AmforeasJetty.class.getClassLoader().getResource(path);
+
+            if (classpath == null) {
+                return;
+            }
+
+            jks = new File(classpath.getFile());
+
+            if (!jks.exists() || !jks.canRead()) {
+                l.warn("Can't read JKS file on {}", classpath.getFile());
+                return;
+            }
         }
 
         l.info("Listening on HTTPS port {}", port);
