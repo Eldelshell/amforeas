@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -138,6 +139,36 @@ public class AmforeasPropertiesTest {
         properties.setSystem(system);
         properties.load(javaProperties);
         assertEquals(properties.get(AmforeasProperties.SERVER_PORT), "4444");
+    }
+
+    @Test
+    public void testACL () {
+        javaProperties.setProperty("amforeas.alias1.acl.allow", "all");
+        javaProperties.setProperty("amforeas.alias1.acl.rules.users.allow", "all");
+        AmforeasProperties properties = AmforeasProperties.of(javaProperties);
+
+        assertEquals(properties.get(AmforeasProperties.DB_ACL_ALLOW_RULE, "alias1"), "all");
+        assertEquals(properties.rule(AmforeasProperties.DB_ALIAS_ALLOW_RULE, "alias1", "users"), "all");
+
+        assertThrows(IllegalArgumentException.class, () -> properties.rule(AmforeasProperties.DB_ALIAS_ALLOW_RULE, "wahh", "users"));
+        assertThrows(IllegalArgumentException.class, () -> properties.rule(AmforeasProperties.DB_ALIAS_ALLOW_RULE, "alias1", "what"));
+    }
+
+    @Test
+    public void test_getAliasRules () {
+        javaProperties.setProperty("amforeas.alias1.acl.allow", "all");
+        javaProperties.setProperty("amforeas.alias1.acl.rules.users.allow", "all");
+        AmforeasProperties properties = AmforeasProperties.of(javaProperties);
+
+        assertTrue(properties.getAliasRules("invalid").isEmpty());
+        assertEquals(properties.getAliasRules("alias1").size(), 2);
+
+        /* check that we have a rule for the users table */
+        assertEquals(properties.getAliasRules("alias1")
+            .stream()
+            .filter(e -> e.getResource().isPresent() && e.getResource().get().equals("users"))
+            .collect(Collectors.toList())
+            .size(), 1);
     }
 
 }

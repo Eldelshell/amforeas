@@ -1,10 +1,21 @@
+/**
+ * Copyright (C) Alejandro Ayuso
+ *
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.amforeas.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import java.util.Properties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,13 +23,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import amforeas.SingletonFactory;
+import amforeas.acl.ACLRule;
 import amforeas.config.AmforeasConfiguration;
 
 @ExtendWith(MockitoExtension.class)
 @Tag("offline-tests")
 class AmforeasConfigurationTest {
-
-    private final Properties javaProperties = new Properties();
 
     private AmforeasConfiguration conf;
 
@@ -27,16 +37,6 @@ class AmforeasConfigurationTest {
 
     @BeforeEach
     public void setUpEach () {
-        javaProperties.clear();
-        javaProperties.setProperty("amforeas.server.root", "/amforeas/*");
-        javaProperties.setProperty("amforeas.server.host", "0.0.0.0");
-        javaProperties.setProperty("amforeas.server.http.port", "8080");
-        javaProperties.setProperty("amforeas.alias.list", "alias1, alias2");
-        javaProperties.setProperty("amforeas.alias1.jdbc.driver", "H2_MEM");
-        javaProperties.setProperty("amforeas.alias1.jdbc.database", "test_db");
-        javaProperties.setProperty("amforeas.alias2.jdbc.driver", "MSSQL_JTDS");
-        javaProperties.setProperty("amforeas.alias2.jdbc.database", "test_db2");
-
         // This way we stop the configuration from setting up the database
         when(factory.getConfiguration()).thenReturn(new AmforeasConfigurationStub());
         conf = factory.getConfiguration();
@@ -72,12 +72,26 @@ class AmforeasConfigurationTest {
         assertNull(conf.getJKSFilePassword());
     }
 
-    private class AmforeasConfigurationStub extends AmforeasConfiguration {
+    @Test
+    void test_getAliasRule () {
+        /* default is always all */
+        assertEquals(conf.getAliasRule("alias1"), ACLRule.of("alias1", "all"));
 
-        public void loadProperties () {
-            this.properties.load(javaProperties);
-        }
-
+        assertEquals(conf.getAliasRule("alias2"), ACLRule.of("alias2", "none"));
+        assertEquals(conf.getAliasRule("alias3"), ACLRule.of("alias3", "meta, read, update"));
     }
+
+    @Test
+    void test_getResourceRules () {
+        /* this are the inherited */
+        assertEquals(conf.getResourceRules("alias1", "notdefined"), ACLRule.of("alias1", "notdefined", "all"));
+        assertEquals(conf.getResourceRules("alias2", "notdefined"), ACLRule.of("alias2", "notdefined", "none"));
+        assertEquals(conf.getResourceRules("alias3", "notdefined"), ACLRule.of("alias3", "notdefined", "meta, read, update"));
+
+        /* should match the one defined above */
+        assertEquals(conf.getResourceRules("alias2", "cars"), ACLRule.of("alias2", "cars", "insert, delete"));
+        assertEquals(conf.getResourceRules("alias3", "users"), ACLRule.of("alias3", "users", "none"));
+    }
+
 
 }
