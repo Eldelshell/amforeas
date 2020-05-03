@@ -11,10 +11,10 @@
  */
 package amforeas.demo;
 
-import amforeas.SingletonFactory;
+import amforeas.SingletonFactoryImpl;
 import amforeas.config.AmforeasConfiguration;
 
-public class DemoSingletonFactory extends SingletonFactory {
+public class DemoSingletonFactory extends SingletonFactoryImpl {
 
     public synchronized AmforeasConfiguration getConfiguration () {
         if (configuration == null) {

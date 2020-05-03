@@ -35,7 +35,7 @@ public class AmforeasJetty {
 
     public static void main (String[] args) throws Exception {
         l.debug("Loading Configuration");
-        SingletonFactory factory = new SingletonFactory();
+        SingletonFactory factory = new SingletonFactoryImpl();
         final AmforeasConfiguration conf = factory.getConfiguration();
 
         l.info("Starting Amforeas in Jetty Embedded mode");

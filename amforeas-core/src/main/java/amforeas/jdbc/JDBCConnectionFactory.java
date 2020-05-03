@@ -17,11 +17,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.sql.DataSource;
-
-import amforeas.config.DatabaseConfiguration;
-import amforeas.SingletonFactory;
-import amforeas.config.AmforeasConfiguration;
-
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
@@ -30,6 +25,10 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import amforeas.SingletonFactoryImpl;
+import amforeas.SingletonFactory;
+import amforeas.config.AmforeasConfiguration;
+import amforeas.config.DatabaseConfiguration;
 
 /**
  * Class in charge of registering a pool of connections for each database 
@@ -43,7 +42,11 @@ public class JDBCConnectionFactory {
     private final Map<String, GenericObjectPool> connectionPool = new ConcurrentHashMap<String, GenericObjectPool>();
 
     public JDBCConnectionFactory() {
-        SingletonFactory factory = new SingletonFactory();
+        SingletonFactory factory = new SingletonFactoryImpl();
+        this.configuration = factory.getConfiguration();
+    }
+
+    public JDBCConnectionFactory(SingletonFactory factory) {
         this.configuration = factory.getConfiguration();
     }
 

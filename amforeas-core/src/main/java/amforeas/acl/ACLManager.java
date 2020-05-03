@@ -12,6 +12,7 @@
 
 package amforeas.acl;
 
+import amforeas.SingletonFactoryImpl;
 import amforeas.SingletonFactory;
 import amforeas.config.AmforeasConfiguration;
 
@@ -20,7 +21,7 @@ public class ACLManager {
     private final SingletonFactory factory;
 
     public ACLManager() {
-        this.factory = new SingletonFactory();
+        this.factory = new SingletonFactoryImpl();
     }
 
     public ACLManager(SingletonFactory factory) {

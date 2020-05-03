@@ -30,6 +30,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import amforeas.AmforeasUtils;
+import amforeas.SingletonFactoryImpl;
 import amforeas.SingletonFactory;
 import amforeas.config.AmforeasConfiguration;
 import amforeas.config.DatabaseConfiguration;
@@ -52,12 +53,19 @@ public class JDBCExecutor {
 
     private static final Logger l = LoggerFactory.getLogger(JDBCExecutor.class);
 
-    private final SingletonFactory factory = new SingletonFactory();
+    private final SingletonFactory factory;
 
     private final JDBCConnectionFactory connectionFactory;
     private final AmforeasConfiguration conf;
 
     public JDBCExecutor() {
+        this.factory = new SingletonFactoryImpl();
+        this.connectionFactory = factory.getJDBCConnectionFactory();
+        this.conf = factory.getConfiguration();
+    }
+
+    public JDBCExecutor(SingletonFactory factory) {
+        this.factory = factory;
         this.connectionFactory = factory.getJDBCConnectionFactory();
         this.conf = factory.getConfiguration();
     }
@@ -406,4 +414,5 @@ public class JDBCExecutor {
         }
         return outParams;
     }
+
 }
