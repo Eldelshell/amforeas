@@ -15,8 +15,6 @@ package amforeas;
 import amforeas.config.AmforeasConfiguration;
 import amforeas.jdbc.JDBCConnectionFactory;
 import amforeas.jdbc.JDBCExecutor;
-import amforeas.jdbc.JDBCConnectionFactory;
-import amforeas.jdbc.JDBCExecutor;
 
 public class SingletonFactoryImpl implements SingletonFactory {
 
