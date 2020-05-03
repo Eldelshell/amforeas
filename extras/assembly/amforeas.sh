@@ -22,6 +22,8 @@ fi
 do_start () {
     local path="../lib/*:../etc"
     local opts=""
+    
+    [ -n "${1}" ] && opts="-Damforeas.properties.file=${1}"
 
     local exit_code=10
     while [ $exit_code -eq 10 ]; do
@@ -42,7 +44,7 @@ do_status () {
 
 case ${1} in
     start)
-        do_start
+        do_start ${2}
     ;;
 
     stop)
@@ -58,7 +60,7 @@ case ${1} in
     ;;
 
     *)
-        echo "Usage: $0 start|nohup|stop|status"
+        echo "Usage: $0 start|nohup|stop|status [myproperties.properties]"
         exit 1
     ;;
 esac
