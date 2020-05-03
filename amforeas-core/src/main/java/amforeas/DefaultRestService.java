@@ -27,7 +27,19 @@ public class DefaultRestService implements RestService {
 
     private static final Usage u = Usage.getInstance();
 
-    private final ACLManager aclManager = new ACLManager();
+    private final ACLManager aclManager;
+
+    private final SingletonFactory factory;
+
+    public DefaultRestService() {
+        this.factory = new SingletonFactoryImpl();
+        this.aclManager = new ACLManager();
+    }
+
+    public DefaultRestService(SingletonFactory factory) {
+        this.factory = factory;
+        this.aclManager = new ACLManager(factory);
+    }
 
     @Override
     public Response dbMeta (String alias) {
@@ -38,7 +50,7 @@ public class DefaultRestService implements RestService {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.DBMETA);
 
         try {
-            return new RestController(alias).getDatabaseMetadata().getResponse();
+            return factory.getRESTController(alias).getDatabaseMetadata().getResponse();
         } catch (IllegalArgumentException e) {
             return new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -55,7 +67,7 @@ public class DefaultRestService implements RestService {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.RSMETA);
 
         try {
-            return new RestController(alias).getResourceMetadata(resource).getResponse();
+            return factory.getRESTController(alias).getResourceMetadata(resource).getResponse();
         } catch (IllegalArgumentException e) {
             return new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -75,7 +87,7 @@ public class DefaultRestService implements RestService {
 
         Response response = null;
         try {
-            response = new RestController(alias).getResource(resource, pk, id, limit, order).getResponse();
+            response = factory.getRESTController(alias).getResource(resource, pk, id, limit, order).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -98,7 +110,7 @@ public class DefaultRestService implements RestService {
 
         Response response = null;
         try {
-            response = new RestController(alias).getAllResources(resource, limit, order).getResponse();
+            response = factory.getRESTController(alias).getAllResources(resource, limit, order).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } catch (Exception e) {
@@ -123,7 +135,7 @@ public class DefaultRestService implements RestService {
 
         Response response = null;
         try {
-            response = new RestController(alias).findResources(resource, col, arg, limit, order).getResponse();
+            response = factory.getRESTController(alias).findResources(resource, col, arg, limit, order).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -146,7 +158,7 @@ public class DefaultRestService implements RestService {
 
         Response response = null;
         try {
-            response = new RestController(alias).findByDynamicFinder(resource, query, args, limit, order).getResponse();
+            response = factory.getRESTController(alias).findByDynamicFinder(resource, query, args, limit, order).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -167,7 +179,7 @@ public class DefaultRestService implements RestService {
 
         Response response = null;
         try {
-            response = new RestController(alias).insertResource(resource, pk, jsonRequest).getResponse();
+            response = factory.getRESTController(alias).insertResource(resource, pk, jsonRequest).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -189,7 +201,7 @@ public class DefaultRestService implements RestService {
 
         Response response = null;
         try {
-            response = new RestController(alias).insertResource(resource, pk, map).getResponse();
+            response = factory.getRESTController(alias).insertResource(resource, pk, map).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -209,7 +221,7 @@ public class DefaultRestService implements RestService {
 
         Response response = null;
         try {
-            response = new RestController(alias).updateResource(resource, pk, id, jsonRequest).getResponse();
+            response = factory.getRESTController(alias).updateResource(resource, pk, id, jsonRequest).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -229,7 +241,7 @@ public class DefaultRestService implements RestService {
 
         Response response = null;
         try {
-            response = new RestController(alias).deleteResource(resource, pk, id).getResponse();
+            response = factory.getRESTController(alias).deleteResource(resource, pk, id).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -249,7 +261,7 @@ public class DefaultRestService implements RestService {
 
         Response response = null;
         try {
-            response = new RestController(alias).executeStoredProcedure(query, jsonRequest).getResponse();
+            response = factory.getRESTController(alias).executeStoredProcedure(query, jsonRequest).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
