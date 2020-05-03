@@ -72,7 +72,7 @@
             <configuration>
               <finalName>amforeas-${project.version}</finalName>
               <descriptors>
-                <descriptor>${project.parent.basedir}/extras/assembly/jetty.xml</descriptor>
+                <descriptor>${project.parent.basedir}/extras/assembly/dist.xml</descriptor>
               </descriptors>
             </configuration>
             <executions>
