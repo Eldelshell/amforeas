@@ -66,6 +66,15 @@
           </properties>
         </configuration>
       </plugin>
+      <plugin>
+        <!--  Use mvn exec:java -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <configuration>
+          <mainClass>amforeas.demo.DemoJetty</mainClass>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
