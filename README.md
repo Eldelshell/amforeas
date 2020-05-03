@@ -2,6 +2,8 @@
 
 The Greek word for ‘amphora’, a type of container usually found on ancient ships.
 
+![Build](https://github.com/Eldelshell/amforeas/workflows/Java%20CI%20with%20Maven/badge.svg?branch=master)
+
 ## A RESTful Interface to your database
 
 Amforeas is a Java server which provides CRUD operations over any JDBC supported RDBMS using REST.
