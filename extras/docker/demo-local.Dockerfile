@@ -12,12 +12,12 @@
 
 FROM openjdk:11-jre-slim-buster
 
-ARG AMFOREAS_VERSION=1.0.0-SNAPSHOT-demo
+ARG AMFOREAS_VERSION=1.0.0-SNAPSHOT
 ARG RUN_JAVA_VERSION=1.3.7
 
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
 
-ADD amforeas-demo/target/amforeas-demo-${AMFOREAS_VERSION}.zip /
+ADD amforeas-demo/target/amforeas-${AMFOREAS_VERSION}-demo.zip /
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl unzip \
@@ -29,12 +29,9 @@ RUN apt-get update \
     && curl https://repo1.maven.org/maven2/io/fabric8/run-java-sh/${RUN_JAVA_VERSION}/run-java-sh-${RUN_JAVA_VERSION}-sh.sh -o /deployments/run-java.sh \
     && chown 1001 /deployments/run-java.sh \
     && chmod 540 /deployments/run-java.sh \
-    && unzip /amforeas-demo-${AMFOREAS_VERSION}.zip -d /deployments/ \
-    && rm /amforeas-demo-${AMFOREAS_VERSION}.zip
+    && unzip /amforeas-${AMFOREAS_VERSION}-demo.zip -d /deployments/ \
+    && rm /amforeas-${AMFOREAS_VERSION}-demo.zip
     
-#    && curl https://github.com/Eldelshell/amforeas/archive/${AMFOREAS_VERSION}.zip -o /deployments/amforeas.zip \
-#    && unzip amforeas-demo-${AMFOREAS_VERSION}.zip /deployments/amforeas.zip
-
 ENV JAVA_MAIN_CLASS="amforeas.demo.DemoJetty"
 ENV JAVA_CLASSPATH="./amforeas-demo/lib/*:./amforeas-demo/etc"
 ENV JAVA_OPTIONS=""

@@ -70,6 +70,7 @@
             <artifactId>maven-assembly-plugin</artifactId>
             <version>${assembly-plugin.version}</version>
             <configuration>
+              <finalName>amforeas-${project.version}</finalName>
               <descriptors>
                 <descriptor>${project.parent.basedir}/extras/assembly/jetty.xml</descriptor>
               </descriptors>
