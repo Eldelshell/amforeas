@@ -11,19 +11,19 @@
   <!-- Use mvn org.codehaus.cargo:cargo-maven2-plugin:run to run with tomcat -->
 
   <artifactId>amforeas-war</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>war</packaging>
   
   <dependencies>
     <dependency>
       <groupId>amforeas</groupId>
       <artifactId>amforeas-core</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>amforeas</groupId>
       <artifactId>amforeas-servlet</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
   
