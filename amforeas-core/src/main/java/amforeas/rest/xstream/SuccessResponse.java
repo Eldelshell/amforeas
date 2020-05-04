@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represent that an operation has succeeded. 
- * @author Alejandro Ayuso 
  */
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -33,6 +32,7 @@ public class SuccessResponse implements AmforeasResponse {
     private Response.Status status;
     private List<Row> rows;
     private String resource;
+    private Pagination pagination;
 
     public SuccessResponse() {
         this.status = Response.Status.OK;
@@ -59,6 +59,19 @@ public class SuccessResponse implements AmforeasResponse {
     public SuccessResponse(String resource, List<Row> results) {
         this.resource = resource;
         this.rows = results;
+        this.status = Response.Status.OK;
+    }
+
+    /**
+     * Instantiates a new success response for the given resource and results with a 200 HTTP code.
+     * @param resource the name of the resource being accessed
+     * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
+     * @param pagination - the {@link amforeas.rest.xstream.Pagination} object
+     */
+    public SuccessResponse(String resource, List<Row> results, Pagination pagination) {
+        this.resource = resource;
+        this.rows = results;
+        this.pagination = pagination;
         this.status = Response.Status.OK;
     }
 
@@ -103,4 +116,13 @@ public class SuccessResponse implements AmforeasResponse {
     public void setSuccess (boolean success) {
         this.success = success;
     }
+
+    public Pagination getPagination () {
+        return pagination;
+    }
+
+    public void setPagination (Pagination pagination) {
+        this.pagination = pagination;
+    }
+
 }
