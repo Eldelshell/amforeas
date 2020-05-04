@@ -1,19 +1,13 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.amforeas.sql.dialect;
 
@@ -90,9 +84,33 @@ public class OracleDialectTest extends SQLDialectTest {
 
     @Test
     public void testDynamicFinders () {
-        //        System.out.println(d.toStatementString(new DynamicFinder("test", "findAllBy", "Name"), l, o));
+        // System.out.println(d.toStatementString(new DynamicFinder("test", "findAllBy", "Name"), l, o));
         assertEquals(
             "SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY test.tableId ASC ) AS ROW_NUMBER, test.* FROM test WHERE  name = ? ) WHERE ROW_NUMBER BETWEEN 0 AND 25",
             d.toStatementString(new DynamicFinder("test", "findAllBy", "Name"), l, o));
+    }
+
+    @Test
+    @Override
+    public void testSelect_between () {
+        // TODO Auto-generated method stub
+    }
+
+    @Test
+    @Override
+    public void testSelect_like () {
+        // TODO Auto-generated method stub
+    }
+
+    @Test
+    @Override
+    public void testSelect_isNull () {
+        // TODO Auto-generated method stub
+    }
+
+    @Test
+    @Override
+    public void testSelect_isNotNull () {
+        // TODO Auto-generated method stub
     }
 }

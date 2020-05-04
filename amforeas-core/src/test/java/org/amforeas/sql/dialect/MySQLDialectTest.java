@@ -13,9 +13,11 @@ package org.amforeas.sql.dialect;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import amforeas.enums.Operator;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
 import amforeas.sql.Select;
+import amforeas.sql.SelectParam;
 import amforeas.sql.dialect.MySQLDialect;
 
 @Tag("dialect-tests")
@@ -59,8 +61,55 @@ public class MySQLDialectTest extends SQLDialectTest {
         doTest(sql, new Select(table).setLimitParam(new LimitParam(25, 0)));
 
         sql = "SELECT t.name,t.age FROM demo1.a_table t ORDER BY t.name DESC LIMIT 0,25";
-        doTest(sql, new Select(table).addColumn("name").addColumn("age").setLimitParam(new LimitParam(25, 0))
+        doTest(sql, new Select(table)
+            .addColumn("name")
+            .addColumn("age")
+            .setLimitParam(new LimitParam(25, 0))
             .setOrderParam(new OrderParam("name", "DESC")));
+    }
+
+    @Test
+    @Override
+    public void testSelect_between () {
+        doTest("SELECT t.age,t.name FROM demo1.a_table t WHERE t.tableId BETWEEN ? AND ? LIMIT 0,25",
+            new Select(table)
+                .addColumn("age")
+                .addColumn("name")
+                .setParameter(new SelectParam(table.getPrimaryKey(), Operator.BETWEEN, "1", "2"))
+                .setLimitParam(new LimitParam(25, 0)));
+    }
+
+    @Test
+    @Override
+    public void testSelect_like () {
+        doTest("SELECT t.age,t.name FROM demo1.a_table t WHERE t.tableId LIKE ? LIMIT 0,25",
+            new Select(table)
+                .addColumn("age")
+                .addColumn("name")
+                .setParameter(new SelectParam(table.getPrimaryKey(), Operator.LIKE, "1"))
+                .setLimitParam(new LimitParam(25, 0)));
+    }
+
+    @Test
+    @Override
+    public void testSelect_isNull () {
+        doTest("SELECT t.age,t.name FROM demo1.a_table t WHERE t.tableId IS NULL LIMIT 0,25",
+            new Select(table)
+                .addColumn("age")
+                .addColumn("name")
+                .setParameter(new SelectParam(table.getPrimaryKey(), Operator.ISNULL))
+                .setLimitParam(new LimitParam(25, 0)));
+    }
+
+    @Test
+    @Override
+    public void testSelect_isNotNull () {
+        doTest("SELECT t.age,t.name FROM demo1.a_table t WHERE t.tableId IS NOT NULL LIMIT 0,25",
+            new Select(table)
+                .addColumn("age")
+                .addColumn("name")
+                .setParameter(new SelectParam(table.getPrimaryKey(), Operator.ISNOTNULL))
+                .setLimitParam(new LimitParam(25, 0)));
     }
 
     @Test
