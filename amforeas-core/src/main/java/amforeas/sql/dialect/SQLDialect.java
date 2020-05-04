@@ -31,22 +31,21 @@ public class SQLDialect implements Dialect {
 
     private static final Logger l = LoggerFactory.getLogger(SQLDialect.class);
 
+    protected final String INSERT_FORMAT = "INSERT INTO %s (%s) VALUES (%s)";
+    protected final String UPDATE_FORMAT = "UPDATE %s SET %s WHERE %s";
+    protected final String DELETE_FORMAT = "DELETE FROM %s WHERE %s";
+
     @Override
     public String toStatementString (final Insert insert) {
         if (insert.getColumns().isEmpty())
             throw new IllegalArgumentException("An insert query can't be empty");
 
-        final StringBuilder b = new StringBuilder("INSERT INTO ");
-        b.append(insert.getTable().getName());
-        if (!insert.getColumns().isEmpty()) {
-            b.append(" (");
-            b.append(StringUtils.join(insert.getColumns().keySet(), ","));
-            b.append(") VALUES (");
-            b.append(StringUtils.removeEnd(StringUtils.repeat("?,", insert.getColumns().size()), ","));
-            b.append(")");
-        }
-        l.debug(b.toString());
-        return b.toString();
+        String cols = StringUtils.join(insert.getColumns().keySet(), ",");
+        String args = StringUtils.removeEnd(StringUtils.repeat("?,", insert.getColumns().size()), ",");
+        String sql = String.format(INSERT_FORMAT, insert.getTable().getName(), cols, args);
+
+        l.debug(sql);
+        return sql;
     }
 
     @Override
@@ -57,8 +56,7 @@ public class SQLDialect implements Dialect {
             if (select.isAllColumns()) {
                 b.append("t.*");
             } else {
-                String cols = StringUtils.join(select.getColumns(), ",");
-                b.append("t.").append(cols);
+                appendColumns(b, select, "t");
             }
             b.append(" FROM ").append(select.getTable().toString()).append(" t");
             if (!select.isAllRecords()) {
@@ -83,8 +81,7 @@ public class SQLDialect implements Dialect {
             if (select.isAllColumns()) {
                 b.append("t.*");
             } else {
-                String cols = StringUtils.join(select.getColumns(), ",");
-                b.append("t.").append(cols);
+                appendColumns(b, select, "t");
             }
             b.append(" FROM ").append(select.getTable().toString()).append(" t");
             if (!select.isAllRecords()) {
@@ -102,25 +99,21 @@ public class SQLDialect implements Dialect {
         if (update.getColumns().isEmpty())
             throw new IllegalArgumentException("An update query can't be empty");
 
-        final StringBuilder b = new StringBuilder("UPDATE ");
-        b.append(update.getTable().getName()).append(" SET ");
+        String vals = StringUtils.join(update.getColumns().keySet(), "=?,") + "=?";
+        String args = update.getTable().getPrimaryKey() + "=?";
+        String sql = String.format(UPDATE_FORMAT, update.getTable().getName(), vals, args);
 
-        for (String k : update.getColumns().keySet()) {
-            b.append(k);
-            b.append("=?,");
-        }
-
-        b.deleteCharAt(b.length() - 1);
-        b.append(" WHERE ").append(update.getTable().getPrimaryKey()).append("=?");
-        l.debug(b.toString());
-        return b.toString();
+        l.debug(sql);
+        return sql;
     }
 
     @Override
     public String toStatementString (final Delete delete) {
-        final StringBuilder b = new StringBuilder("DELETE FROM ");
-        b.append(delete.getTable().getName()).append(" WHERE ").append(delete.getTable().getPrimaryKey()).append("=?");
-        return b.toString();
+        String args = delete.getTable().getPrimaryKey() + "=?";
+        String sql = String.format(DELETE_FORMAT, delete.getTable().getName(), args);
+
+        l.debug(sql);
+        return sql;
     }
 
     @Override
@@ -148,6 +141,18 @@ public class SQLDialect implements Dialect {
     protected StringBuilder appendWhereClause (final StringBuilder b, Select select) {
         b.append(" WHERE t.").append(select.getParameter().sql());
         return b;
+    }
+
+    protected void appendColumns (final StringBuilder b, Select select, String alias) {
+        for (String col : select.getColumns()) {
+            if (StringUtils.isEmpty(alias)) {
+                b.append(col).append(",");
+            } else {
+                b.append("t.").append(col).append(",");
+            }
+        }
+
+        b.deleteCharAt(b.length() - 1);
     }
 
 }

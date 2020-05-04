@@ -13,10 +13,9 @@
 package org.amforeas.sql.dialect;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import amforeas.enums.Operator;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
@@ -35,8 +34,6 @@ import amforeas.sql.dialect.SQLDialect;
 @Tag("dialect-tests")
 public class SQLDialectTest {
 
-    private static final Logger log = LoggerFactory.getLogger(SQLDialectTest.class);
-
     Table table = new Table("demo1", "a_table", "tableId");
     Dialect d;
 
@@ -54,6 +51,9 @@ public class SQLDialectTest {
         doTest("SELECT t.* FROM demo1.a_table t WHERE t.tableId = ?",
             new Select(table).setParameter(new SelectParam(table.getPrimaryKey(), Operator.EQUALS, "1")));
 
+        doTest("SELECT t.age,t.name FROM demo1.a_table t WHERE t.tableId = ?",
+            new Select(table).addColumn("age").addColumn("name").setParameter(new SelectParam(table.getPrimaryKey(), Operator.EQUALS, "1")));
+
         doTest("SELECT t.* FROM demo1.a_table t WHERE t.name = ?",
             new Select(table).setParameter(new SelectParam("name", Operator.EQUALS, "1")));
 
@@ -65,6 +65,10 @@ public class SQLDialectTest {
             new Select(table).setParameter(new SelectParam("name", Operator.EQUALS, "1"))
                 .setLimitParam(new LimitParam()));
 
+        doTest("SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY t.tableId ) AS ROW_NUMBER, t.age,t.name FROM demo1.a_table t WHERE t.name = ?) WHERE ROW_NUMBER BETWEEN 0 AND 25",
+            new Select(table).addColumn("age").addColumn("name").setParameter(new SelectParam("name", Operator.EQUALS, "1"))
+                .setLimitParam(new LimitParam()));
+
         doTest("SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY t.name DESC ) AS ROW_NUMBER, t.* FROM demo1.a_table t WHERE t.tableId = ?) WHERE ROW_NUMBER BETWEEN 0 AND 25",
             new Select(table).setParameter(new SelectParam(table.getPrimaryKey(), Operator.EQUALS, "1"))
                 .setLimitParam(l).setOrderParam(new OrderParam("name", "DESC")));
@@ -74,24 +78,56 @@ public class SQLDialectTest {
     public void testSelect_between () {
         doTest("SELECT t.* FROM demo1.a_table t WHERE t.tableId BETWEEN ? AND ?",
             new Select(table).setParameter(new SelectParam(table.getPrimaryKey(), Operator.BETWEEN, "1", "2")));
+
+        doTest("SELECT t.* FROM demo1.a_table t WHERE t.tableId BETWEEN ? AND ? ORDER BY t.tableId ASC",
+            new Select(table).setParameter(
+                new SelectParam(table.getPrimaryKey(), Operator.BETWEEN, "1", "2")).setOrderParam(new OrderParam(table)));
+
+        doTest("SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY t.tableId ) AS ROW_NUMBER, t.* FROM demo1.a_table t WHERE t.name BETWEEN ? AND ?) WHERE ROW_NUMBER BETWEEN 0 AND 25",
+            new Select(table).setParameter(new SelectParam("name", Operator.BETWEEN, "1", "2"))
+                .setLimitParam(new LimitParam()));
     }
 
     @Test
     public void testSelect_like () {
         doTest("SELECT t.* FROM demo1.a_table t WHERE t.tableId LIKE ?",
             new Select(table).setParameter(new SelectParam(table.getPrimaryKey(), Operator.LIKE, "1")));
+
+        doTest("SELECT t.* FROM demo1.a_table t WHERE t.tableId LIKE ? ORDER BY t.tableId ASC",
+            new Select(table).setParameter(
+                new SelectParam(table.getPrimaryKey(), Operator.LIKE, "1")).setOrderParam(new OrderParam(table)));
+
+        doTest("SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY t.tableId ) AS ROW_NUMBER, t.* FROM demo1.a_table t WHERE t.name LIKE ?) WHERE ROW_NUMBER BETWEEN 0 AND 25",
+            new Select(table).setParameter(new SelectParam("name", Operator.LIKE, "1"))
+                .setLimitParam(new LimitParam()));
     }
 
     @Test
     public void testSelect_isNull () {
         doTest("SELECT t.* FROM demo1.a_table t WHERE t.tableId IS NULL",
             new Select(table).setParameter(new SelectParam(table.getPrimaryKey(), Operator.ISNULL)));
+
+        doTest("SELECT t.* FROM demo1.a_table t WHERE t.tableId IS NULL ORDER BY t.tableId ASC",
+            new Select(table).setParameter(
+                new SelectParam(table.getPrimaryKey(), Operator.ISNULL)).setOrderParam(new OrderParam(table)));
+
+        doTest("SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY t.tableId ) AS ROW_NUMBER, t.* FROM demo1.a_table t WHERE t.name IS NULL) WHERE ROW_NUMBER BETWEEN 0 AND 25",
+            new Select(table).setParameter(new SelectParam("name", Operator.ISNULL))
+                .setLimitParam(new LimitParam()));
     }
 
     @Test
     public void testSelect_isNotNull () {
         doTest("SELECT t.* FROM demo1.a_table t WHERE t.tableId IS NOT NULL",
             new Select(table).setParameter(new SelectParam(table.getPrimaryKey(), Operator.ISNOTNULL)));
+
+        doTest("SELECT t.* FROM demo1.a_table t WHERE t.tableId IS NOT NULL ORDER BY t.tableId ASC",
+            new Select(table).setParameter(
+                new SelectParam(table.getPrimaryKey(), Operator.ISNOTNULL)).setOrderParam(new OrderParam(table)));
+
+        doTest("SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY t.tableId ) AS ROW_NUMBER, t.* FROM demo1.a_table t WHERE t.name IS NOT NULL) WHERE ROW_NUMBER BETWEEN 0 AND 25",
+            new Select(table).setParameter(new SelectParam("name", Operator.ISNOTNULL))
+                .setLimitParam(new LimitParam()));
     }
 
     @Test
@@ -102,20 +138,24 @@ public class SQLDialectTest {
 
     @Test
     public void testInsert () {
-        doTest("INSERT INTO a_table (name,age) VALUES (?,?)",
-            new Insert(table).addColumn("name", "foo bar").addColumn("age", "50"));
+        assertThrows(IllegalArgumentException.class, () -> doTest("", new Insert(table)));
+        doTest("INSERT INTO a_table (name) VALUES (?)", new Insert(table).addColumn("name", "foo bar"));
+        doTest("INSERT INTO a_table (name,age) VALUES (?,?)", new Insert(table).addColumn("name", "foo bar").addColumn("age", "50"));
     }
 
     @Test
     public void testUpdate () {
-        doTest("UPDATE a_table SET name=?,age=? WHERE tableId=?",
-            new Update(table).setId("1").addColumn("name", "foo bar").addColumn("age", "50"));
-        doTest("UPDATE grrr SET name=? WHERE id=?",
-            new Update(new Table("demo1", "grrr")).setId("1").addColumn("name", "foo bar"));
+        String sql = "UPDATE a_table SET name=? WHERE tableId=?";
+        doTest(sql, new Update(table).setId("1").addColumn("name", "foo bar"));
+
+        sql = "UPDATE a_table SET name=?,age=? WHERE tableId=?";
+        doTest(sql, new Update(table).setId("1").addColumn("name", "foo bar").addColumn("age", "50"));
+
+        sql = "UPDATE a_table SET name=?,age=?,sex=? WHERE tableId=?";
+        doTest(sql, new Update(table).setId("1").addColumn("name", "foo bar").addColumn("age", "50").addColumn("sex", "male"));
     }
 
     public void doTest (String expected, Object obj) {
-        log.debug(expected);
         if (obj instanceof Select) {
             assertEquals(expected, d.toStatementString((Select) obj));
         } else if (obj instanceof Delete) {

@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import amforeas.AmforeasUtils;
 import amforeas.SingletonFactory;
-import amforeas.config.AmforeasConfiguration;
+import amforeas.SingletonFactoryImpl;
 import amforeas.config.DatabaseConfiguration;
 import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.handler.AmforeasResultSetHandler;
@@ -43,7 +43,6 @@ import amforeas.sql.Insert;
 import amforeas.sql.Select;
 import amforeas.sql.Update;
 import amforeas.sql.dialect.Dialect;
-import amforeas.sql.dialect.DialectFactory;
 
 /**
  * Class in charge of executing SQL statements against a given RDBMS.
@@ -52,14 +51,14 @@ public class JDBCExecutor {
 
     private static final Logger l = LoggerFactory.getLogger(JDBCExecutor.class);
 
-    private final SingletonFactory factory = new SingletonFactory();
-
-    private final JDBCConnectionFactory connectionFactory;
-    private final AmforeasConfiguration conf;
+    private final SingletonFactory factory;
 
     public JDBCExecutor() {
-        this.connectionFactory = factory.getJDBCConnectionFactory();
-        this.conf = factory.getConfiguration();
+        this.factory = new SingletonFactoryImpl();
+    }
+
+    public JDBCExecutor(SingletonFactory factory) {
+        this.factory = factory;
     }
 
     /**
@@ -71,9 +70,9 @@ public class JDBCExecutor {
      */
     public int delete (final Delete delete) throws SQLException {
         l.debug(delete.toString());
-        final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(delete.getTable().getDatabase());
-        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
-        final Dialect dialect = DialectFactory.getDialect(dbconf);
+        final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(delete.getTable().getDatabase());
+        final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
+        final Dialect dialect = this.factory.getDialectFactory().getDialect(dbconf);
 
         try {
             int deleted = run.update(dialect.toStatementString(delete), AmforeasUtils.parseValue(delete.getId()));
@@ -95,9 +94,9 @@ public class JDBCExecutor {
     public int insert (final Insert insert) throws SQLException {
         l.debug(insert.toString());
 
-        final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(insert.getTable().getDatabase());
-        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
-        final Dialect dialect = DialectFactory.getDialect(dbconf);
+        final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(insert.getTable().getDatabase());
+        final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
+        final Dialect dialect = this.factory.getDialectFactory().getDialect(dbconf);
 
         try {
             int inserted;
@@ -124,9 +123,9 @@ public class JDBCExecutor {
     public List<Row> update (final Update update) throws SQLException {
         l.debug(update.toString());
 
-        final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(update.getTable().getDatabase());
-        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
-        final Dialect dialect = DialectFactory.getDialect(dbconf);
+        final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(update.getTable().getDatabase());
+        final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
+        final Dialect dialect = this.factory.getDialectFactory().getDialect(dbconf);
 
         List<Row> results = new ArrayList<Row>();
         try {
@@ -156,9 +155,9 @@ public class JDBCExecutor {
         l.debug(select.toString());
         List<Row> response = null;
 
-        final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(select.getTable().getDatabase());
-        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
-        final Dialect dialect = DialectFactory.getDialect(dbconf);
+        final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(select.getTable().getDatabase());
+        final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
+        final Dialect dialect = this.factory.getDialectFactory().getDialect(dbconf);
 
         final ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(allRecords);
 
@@ -200,11 +199,11 @@ public class JDBCExecutor {
         l.debug(df.getSql());
         l.debug(AmforeasUtils.varargToString(params));
 
-        final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(database);
-        final Dialect dialect = DialectFactory.getDialect(dbconf);
+        final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(database);
+        final Dialect dialect = this.factory.getDialectFactory().getDialect(dbconf);
         final String query = dialect.toStatementString(df, limit, order);
 
-        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
+        final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
         final ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(true);
         try {
             List<Row> results = run.query(query, res, params);
@@ -230,9 +229,9 @@ public class JDBCExecutor {
 
         final ResultSetHandler<List<Row>> res = new ResultSetMetaDataHandler();
 
-        final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(select.getTable().getDatabase());
-        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
-        final Dialect dialect = DialectFactory.getDialect(dbconf);
+        final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(select.getTable().getDatabase());
+        final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
+        final Dialect dialect = this.factory.getDialectFactory().getDialect(dbconf);
 
         try {
             List<Row> results = run.query(dialect.toStatementString(select), res);
@@ -258,8 +257,8 @@ public class JDBCExecutor {
     public List<Row> executeQuery (final String database, final String queryName, final List<StoredProcedureParam> params) throws SQLException, AmforeasBadRequestException {
         l.debug("Executing stored procedure " + database + "." + queryName);
 
-        final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(database);
-        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
+        final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(database);
+        final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
         final String call = AmforeasUtils.getCallableStatementCallString(queryName, params.size());
         List<Row> rows = new ArrayList<Row>();
 
@@ -319,7 +318,7 @@ public class JDBCExecutor {
     public void shutdown () {
         l.debug("Shutting down JDBC connections");
         try {
-            connectionFactory.closeConnections();
+            this.factory.getJDBCConnectionFactory().closeConnections();
         } catch (Exception ex) {
             l.warn("Failed to close connection to database?");
             l.debug(ex.getMessage());
@@ -339,9 +338,9 @@ public class JDBCExecutor {
         // throw JongoJDBCExceptionFactory.getException(database, "Cant read database metadata. Access Denied", JongoJDBCException.ILLEGAL_READ_CODE);
         // }
         final ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(true);
-        final DatabaseConfiguration dbconf = conf.getDatabaseConfiguration(database);
-        final Dialect dialect = DialectFactory.getDialect(dbconf);
-        final QueryRunner run = connectionFactory.getQueryRunner(dbconf);
+        final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(database);
+        final Dialect dialect = this.factory.getDialectFactory().getDialect(dbconf);
+        final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
 
         try {
             List<Row> results = run.query(dialect.listOfTablesStatement(), res);
@@ -406,4 +405,5 @@ public class JDBCExecutor {
         }
         return outParams;
     }
+
 }

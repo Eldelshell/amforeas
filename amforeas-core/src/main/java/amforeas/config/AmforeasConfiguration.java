@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import amforeas.AmforeasShutdown;
+import amforeas.acl.ACLRule;
 import amforeas.enums.JDBCDriver;
 import amforeas.exceptions.StartupException;
 
@@ -236,6 +237,37 @@ public class AmforeasConfiguration {
 
     public String getJKSFilePassword () {
         return this.properties.get(AmforeasProperties.SERVER_SECURE_FILE_PASSWORD);
+    }
+
+    /**
+     * Obtains the rule for the given alias.
+     * If the rule is not found, a new rule ALL is created.
+     * @param alias - the database alias the rule applies to
+     * @return an ACLRule
+     */
+    public ACLRule getAliasRule (final String alias) {
+        return this.properties.getAliasRules(alias)
+            .stream()
+            .filter(rule -> !rule.getRules().isEmpty() && rule.getResource().isEmpty())
+            .findFirst()
+            .orElse(ACLRule.of(alias, "all"));
+    }
+
+    /**
+     * Obtains the rule for the given resource on the given alias.
+     * If the rule is not found, a new rule, inherited from the alias rule is created.
+     * This is because we don't know the tables we have access to and we don't want to force
+     * admins to setup all of them.
+     * @param alias - the database alias the resource belongs to
+     * @param resource - the table to get rules of
+     * @return an ACLRule
+     */
+    public ACLRule getResourceRules (final String alias, final String resource) {
+        return this.properties.getAliasRules(alias)
+            .stream()
+            .filter(rule -> !rule.getRules().isEmpty() && rule.getResource().isPresent() && rule.getResource().get().equals(resource))
+            .findFirst()
+            .orElse(new ACLRule(alias, resource, this.getAliasRule(alias).getRules()));
     }
 
 }

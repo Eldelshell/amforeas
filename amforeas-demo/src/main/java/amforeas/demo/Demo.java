@@ -16,12 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import amforeas.AmforeasUtils;
-import amforeas.SingletonFactory;
-import amforeas.config.DatabaseConfiguration;
-import amforeas.enums.JDBCDriver;
-
 import org.apache.commons.dbutils.QueryRunner;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -29,6 +23,11 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import amforeas.AmforeasUtils;
+import amforeas.SingletonFactoryImpl;
+import amforeas.SingletonFactory;
+import amforeas.config.DatabaseConfiguration;
+import amforeas.enums.JDBCDriver;
 
 /**
  * Create the database resources for the demo
@@ -49,7 +48,7 @@ public class Demo {
 
     private static void generateDemoDatabase (final DatabaseConfiguration dbcfg) {
         final String database = dbcfg.getDatabase();
-        SingletonFactory factory = new SingletonFactory();
+        SingletonFactory factory = new SingletonFactoryImpl();
         QueryRunner run = new QueryRunner(factory.getJDBCConnectionFactory().getDataSource(dbcfg));
 
         l.info("Generating Demo resources in database {}", database);
@@ -132,7 +131,7 @@ public class Demo {
 
     private static void destroyDemoDatabase (final DatabaseConfiguration dbcfg) {
         final String database = dbcfg.getDatabase();
-        SingletonFactory factory = new SingletonFactory();
+        SingletonFactory factory = new SingletonFactoryImpl();
         QueryRunner run = new QueryRunner(factory.getJDBCConnectionFactory().getDataSource(dbcfg));
         l.info("Destroying Demo Tables in database " + database);
         try {

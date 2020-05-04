@@ -19,7 +19,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import amforeas.config.AmforeasConfiguration;
 import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.jdbc.JDBCExecutor;
 import amforeas.jdbc.LimitParam;
@@ -49,7 +48,6 @@ public class RestController {
     private final String database;
 
     private final JDBCExecutor executor;
-    private final AmforeasConfiguration conf;
 
     /**
      * Instantiates a new controller for the given database/schema if this exists
@@ -60,12 +58,18 @@ public class RestController {
         if (StringUtils.isBlank(alias))
             throw new IllegalArgumentException("Alias name can't be blank, empty or null");
 
+        SingletonFactory factory = new SingletonFactoryImpl();
         this.alias = alias;
+        this.database = factory.getConfiguration().getDatabaseConfigurationForAlias(alias).getDatabase();
+        this.executor = factory.getJDBCExecutor();
+    }
 
+    public RestController(String alias, SingletonFactory factory) {
+        if (StringUtils.isBlank(alias))
+            throw new IllegalArgumentException("Alias name can't be blank, empty or null");
 
-        SingletonFactory factory = new SingletonFactory();
-        this.conf = factory.getConfiguration();
-        this.database = this.conf.getDatabaseConfigurationForAlias(alias).getDatabase();
+        this.alias = alias;
+        this.database = factory.getConfiguration().getDatabaseConfigurationForAlias(alias).getDatabase();
         this.executor = factory.getJDBCExecutor();
     }
 
@@ -80,7 +84,7 @@ public class RestController {
 
         List<Row> results = null;
         try {
-            results = executor.getListOfTables(database);
+            results = this.getExecutor().getListOfTables(database);
         } catch (Throwable ex) {
             response = handleException(ex, database);
         }
@@ -114,7 +118,7 @@ public class RestController {
         AmforeasResponse response = null;
         List<Row> results = null;
         try {
-            results = executor.getTableMetaData(select);
+            results = this.getExecutor().getTableMetaData(select);
         } catch (Throwable ex) {
             response = handleException(ex, table);
         }
@@ -154,7 +158,7 @@ public class RestController {
         AmforeasResponse response = null;
         List<Row> results = null;
         try {
-            results = executor.get(s, true);
+            results = this.getExecutor().get(s, true);
         } catch (Throwable ex) {
             response = handleException(ex, table);
         }
@@ -195,7 +199,7 @@ public class RestController {
         AmforeasResponse response = null;
         List<Row> results = null;
         try {
-            results = executor.get(select, false);
+            results = this.getExecutor().get(select, false);
         } catch (Throwable ex) {
             response = handleException(ex, table);
         }
@@ -239,7 +243,7 @@ public class RestController {
         AmforeasResponse response = null;
         List<Row> results = null;
         try {
-            results = executor.get(select, true);
+            results = this.getExecutor().get(select, true);
         } catch (Throwable ex) {
             response = handleException(ex, table);
         }
@@ -307,7 +311,7 @@ public class RestController {
     }
 
     /**
-     * Calls the {@link amforeas.jdbc.executor} insert method with the 
+     * Calls the {@link amforeas.jdbc.JDBCExecutor} insert method with the 
      * given {@link amforeas.sql.Insert} instance and handles errors.
      * @param insert a {@link amforeas.sql.Insert} instance
      * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
@@ -316,7 +320,7 @@ public class RestController {
         AmforeasResponse response = null;
         int result = 0;
         try {
-            result = executor.insert(insert);
+            result = this.getExecutor().insert(insert);
         } catch (Throwable ex) {
             response = handleException(ex, insert.getTable().getName());
         }
@@ -335,7 +339,7 @@ public class RestController {
 
     /**
      * Creates an instance of {@link amforeas.sql.Update}, calls 
-     * the {@link amforeas.jdbc.executor} update method and handles errors
+     * the {@link amforeas.jdbc.JDBCExecutor} update method and handles errors
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param jsonRequest JSON representation of the values we want to update. For example:
@@ -359,7 +363,7 @@ public class RestController {
         Update update = new Update(t).setId(id);
         try {
             update.setColumns(AmforeasUtils.getParamsFromJSON(jsonRequest));
-            results = executor.update(update);
+            results = this.getExecutor().update(update);
         } catch (Throwable ex) {
             response = handleException(ex, resource);
         }
@@ -377,7 +381,7 @@ public class RestController {
 
     /**
      * Creates an instance of {@link amforeas.sql.Delete}, calls 
-     * the {@link amforeas.jdbc.executor} delete method and handles errors
+     * the {@link amforeas.jdbc.JDBCExecutor} delete method and handles errors
      * @param resource the resource or view where to insert the record.
      * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param id unique pk identifier of the record to delete.
@@ -398,7 +402,7 @@ public class RestController {
         AmforeasResponse response = null;
         int result = 0;
         try {
-            result = executor.delete(delete);
+            result = this.getExecutor().delete(delete);
         } catch (Throwable ex) {
             response = handleException(ex, resource);
         }
@@ -417,7 +421,7 @@ public class RestController {
 
     /**
      * Generates a {@link org.amforeas.jdbc.DynamicFinder} from the given parameters and calls
-     * the {@link amforeas.jdbc.executor} find method and handles errors
+     * the {@link amforeas.jdbc.JDBCExecutor} find method and handles errors
      * @param resource the resource or view where to insert the record.
      * @param query a {@link org.amforeas.jdbc.DynamicFinder} query
      * @param values a list of arguments to be given to the {@link org.amforeas.jdbc.DynamicFinder}
@@ -440,14 +444,14 @@ public class RestController {
         if (values.isEmpty()) {
             try {
                 DynamicFinder df = DynamicFinder.valueOf(resource, query);
-                results = executor.find(database, df, limit, order);
+                results = this.getExecutor().find(database, df, limit, order);
             } catch (Throwable ex) {
                 response = handleException(ex, resource);
             }
         } else {
             try {
                 DynamicFinder df = DynamicFinder.valueOf(resource, query, values.toArray(new String[] {}));
-                results = executor.find(database, df, limit, order, AmforeasUtils.parseValues(values));
+                results = this.getExecutor().find(database, df, limit, order, AmforeasUtils.parseValues(values));
             } catch (Throwable ex) {
                 response = handleException(ex, resource);
             }
@@ -466,7 +470,7 @@ public class RestController {
 
     /**
      * Generates a List of {@link amforeas.jdbc.StoredProcedureParam} and executes
-     * the {@link amforeas.jdbc.executor} executeQuery method with the given JSON parameters.
+     * the {@link amforeas.jdbc.JDBCExecutor} executeQuery method with the given JSON parameters.
      * @param query name of the function or stored procedure
      * @param json IN and OUT parameters in JSON format. For example:
      * [
@@ -488,7 +492,7 @@ public class RestController {
         AmforeasResponse response = null;
         List<Row> results = null;
         try {
-            results = executor.executeQuery(database, query, params);
+            results = this.getExecutor().executeQuery(database, query, params);
         } catch (Throwable ex) {
             response = handleException(ex, query);
         }
@@ -541,4 +545,9 @@ public class RestController {
         }
         return response;
     }
+
+    public JDBCExecutor getExecutor () {
+        return executor;
+    }
+
 }

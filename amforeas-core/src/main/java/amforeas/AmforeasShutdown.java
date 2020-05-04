@@ -22,17 +22,24 @@ public class AmforeasShutdown extends Thread {
 
     private static final Logger l = LoggerFactory.getLogger(AmforeasShutdown.class);
 
+    private final SingletonFactory factory;
+
     public AmforeasShutdown() {
         super();
+        this.factory = new SingletonFactoryImpl();
+    }
+
+    public AmforeasShutdown(SingletonFactory factory) {
+        super();
+        this.factory = factory;
     }
 
     @Override
     public void run () {
         l.info("Shutting down Amforeas");
-        SingletonFactory factory = new SingletonFactory();
 
         try {
-            factory.getJDBCExecutor().shutdown();
+            this.factory.getJDBCExecutor().shutdown();
         } catch (Exception e) {
             l.warn("Failed to cleanup database connections", e.getMessage());
         }

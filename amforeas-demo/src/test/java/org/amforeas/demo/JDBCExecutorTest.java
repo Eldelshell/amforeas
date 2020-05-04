@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import amforeas.SingletonFactoryImpl;
 import amforeas.SingletonFactory;
 import amforeas.demo.Demo;
 import amforeas.demo.DemoSingletonFactory;
@@ -66,7 +67,7 @@ public class JDBCExecutorTest {
 
     @AfterAll
     public static void tearDownClass () throws Exception {
-        SingletonFactory factory = new SingletonFactory();
+        SingletonFactory factory = new SingletonFactoryImpl();
         Demo.destroyDemoDatabases(factory.getConfiguration().getDatabases());
         factory.resetConfiguration();
     }

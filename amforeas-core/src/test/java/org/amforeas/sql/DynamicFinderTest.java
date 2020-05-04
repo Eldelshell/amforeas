@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +31,7 @@ import amforeas.sql.dialect.OracleDialect;
 /**
  * Test that dynamic finders work as expected
  */
-@Tag("offline-tests")
+@Tag("dialect-tests")
 public class DynamicFinderTest {
 
     @Test
@@ -230,74 +231,47 @@ public class DynamicFinderTest {
 
     @Test
     public void test_findAllByAgeGreaterTahnEquals () {
-        assertThrows(AmforeasBadRequestException.class, () -> {
-            String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
-            doTest(dynamicQuery);
-        });
+        assertThrows(AmforeasBadRequestException.class, () -> doTest(getCurrentMethodName()));
     }
 
     @Test
     public void test_findAllByAgeGreateroThanEqualos () throws AmforeasBadRequestException {
-        assertThrows(AmforeasBadRequestException.class, () -> {
-            String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
-            doTest(dynamicQuery);
-        });
+        assertThrows(AmforeasBadRequestException.class, () -> doTest(getCurrentMethodName()));
     }
 
     @Test
     public void test_findAllByAgeGreateroThanEquals () throws AmforeasBadRequestException {
-        assertThrows(AmforeasBadRequestException.class, () -> {
-            String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
-            doTest(dynamicQuery);
-        });
+        assertThrows(AmforeasBadRequestException.class, () -> doTest(getCurrentMethodName()));
     }
 
     @Test
     public void test_findAllByCreditIsNall () throws AmforeasBadRequestException {
-        assertThrows(AmforeasBadRequestException.class, () -> {
-            String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
-            doTest(dynamicQuery);
-        });
+        assertThrows(AmforeasBadRequestException.class, () -> doTest(getCurrentMethodName()));
     }
 
     @Test
     public void test_findAllByCreditIsNatNull () throws AmforeasBadRequestException {
-        assertThrows(AmforeasBadRequestException.class, () -> {
-            String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
-            doTest(dynamicQuery);
-        });
+        assertThrows(AmforeasBadRequestException.class, () -> doTest(getCurrentMethodName()));
     }
 
     @Test
     public void test_findAllByCreditAndoAgeEquals () throws AmforeasBadRequestException {
-        assertThrows(AmforeasBadRequestException.class, () -> {
-            String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
-            doTest(dynamicQuery);
-        });
+        assertThrows(AmforeasBadRequestException.class, () -> doTest(getCurrentMethodName()));
     }
 
     @Test
     public void test_findAllByCreditEqualsAndoAgeEquals () throws AmforeasBadRequestException {
-        assertThrows(AmforeasBadRequestException.class, () -> {
-            String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
-            doTest(dynamicQuery);
-        });
+        assertThrows(AmforeasBadRequestException.class, () -> doTest(getCurrentMethodName()));
     }
 
     @Test
     public void test_findAllByCreditOxAgeEquals () throws AmforeasBadRequestException {
-        assertThrows(AmforeasBadRequestException.class, () -> {
-            String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
-            doTest(dynamicQuery);
-        });
+        assertThrows(AmforeasBadRequestException.class, () -> doTest(getCurrentMethodName()));
     }
 
     @Test
     public void test_findAllByCreditEqualsOxAgeEquals () throws AmforeasBadRequestException {
-        assertThrows(AmforeasBadRequestException.class, () -> {
-            String dynamicQuery = new Exception().getStackTrace()[0].getMethodName().split("_")[1];
-            doTest(dynamicQuery);
-        });
+        assertThrows(AmforeasBadRequestException.class, () -> doTest(getCurrentMethodName()));
     }
 
     private boolean doTest (String dynamicQuery, String query) {
@@ -351,5 +325,15 @@ public class DynamicFinderTest {
             // System.out.println(b.toString());
         }
 
+    }
+
+    private String getCurrentMethodName () {
+        return Arrays.asList(
+            new Exception().getStackTrace()).stream()
+            .filter(ste -> ste.getMethodName().startsWith("test_find"))
+            .findFirst()
+            .get()
+            .getMethodName()
+            .split("_")[1];
     }
 }

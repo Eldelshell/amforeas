@@ -1,3 +1,15 @@
+/**
+ * Copyright (C) Alejandro Ayuso
+ *
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package amforeas.config;
 
 import java.util.ArrayList;
@@ -12,6 +24,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import amforeas.acl.ACLRule;
 
 public class AmforeasProperties {
 
@@ -50,6 +63,10 @@ public class AmforeasProperties {
     public static final String DB_READONLY = "%s.jdbc.readonly";
     public static final String DB_MAX_CONNECTIONS = "%s.jdbc.max.connections";
     public static final String DB_URL = "%s.jdbc.url";
+
+    /* ACLs */
+    public static final String DB_ACL_ALLOW_RULE = "%s.acl.allow";
+    public static final String DB_ALIAS_ALLOW_RULE = "%s.acl.rules.%s.allow";
 
     /**
      * Instantiates a new instance of {@link AmforeasProperties} and loads the properties
@@ -118,7 +135,18 @@ public class AmforeasProperties {
         final String formatted = String.format(key, alias);
         final String withPrefix = AmforeasProperty.PREFIX + formatted;
         final String fromFile = javaProperties.getProperty(withPrefix);
+        l.debug("Adding property {} to alias {} with value: {}", formatted, alias, fromFile);
         this.addProperty(formatted, system.get(withPrefix).orElse(fromFile), false);
+    }
+
+    private void addResourceRule (String key, String alias, String resource, Properties javaProperties) {
+        final String formatted = String.format(key, alias, resource);
+        final String withPrefix = AmforeasProperty.PREFIX + formatted;
+        final String fromFile = javaProperties.getProperty(withPrefix);
+        final String finalValue = system.get(withPrefix).orElse(fromFile);
+
+        l.debug("Adding ACL rule {} to alias {} resource {} with value: {}", formatted, alias, resource, finalValue);
+        this.addProperty(formatted, finalValue, false);
     }
 
     /**
@@ -163,6 +191,22 @@ public class AmforeasProperties {
         return this.get(String.format(key, alias));
     }
 
+    public String rule (String key, String alias, String resource) {
+        if (!key.contains("%s")) {
+            throw new IllegalArgumentException("The provided rule key " + key + " is not formattable");
+        }
+
+        if (StringUtils.isEmpty(alias)) {
+            throw new IllegalArgumentException("The provided rule key " + key + " requires an alias");
+        }
+
+        if (StringUtils.isEmpty(resource)) {
+            throw new IllegalArgumentException("The provided rule key " + key + " requires a resource");
+        }
+
+        return this.get(String.format(key, alias, resource));
+    }
+
     private Optional<AmforeasProperty> getProperty (String key) {
         return Optional.ofNullable(this.properties.get(key));
     }
@@ -180,22 +224,44 @@ public class AmforeasProperties {
         });
 
         // load from system
-        this.properties.entrySet().forEach(entry -> {
-            this.system.get(entry.getKey()).ifPresent(val -> entry.getValue().setValue(val));
-        });
+        this.properties.entrySet().forEach(entry -> this.system.get(entry.getKey()).ifPresent(val -> entry.getValue().setValue(val)));
 
         // load db aliases
-        this.getAliases().forEach( (alias) -> {
-            this.addAliasProperty(DB_DRIVER, alias, javaProperties);
-            this.addAliasProperty(DB_USERNAME, alias, javaProperties);
-            this.addAliasProperty(DB_PASSWORD, alias, javaProperties);
-            this.addAliasProperty(DB_DATABASE, alias, javaProperties);
-            this.addAliasProperty(DB_HOST, alias, javaProperties);
-            this.addAliasProperty(DB_PORT, alias, javaProperties);
-            this.addAliasProperty(DB_READONLY, alias, javaProperties);
-            this.addAliasProperty(DB_MAX_CONNECTIONS, alias, javaProperties);
-            this.addAliasProperty(DB_URL, alias, javaProperties);
-        });
+        this.getAliases().forEach(alias -> this.loadAliases(alias, javaProperties));
+    }
+
+    private void loadAliases (final String alias, final Properties javaProperties) {
+        this.addAliasProperty(DB_DRIVER, alias, javaProperties);
+        this.addAliasProperty(DB_USERNAME, alias, javaProperties);
+        this.addAliasProperty(DB_PASSWORD, alias, javaProperties);
+        this.addAliasProperty(DB_DATABASE, alias, javaProperties);
+        this.addAliasProperty(DB_HOST, alias, javaProperties);
+        this.addAliasProperty(DB_PORT, alias, javaProperties);
+        this.addAliasProperty(DB_READONLY, alias, javaProperties);
+        this.addAliasProperty(DB_MAX_CONNECTIONS, alias, javaProperties);
+        this.addAliasProperty(DB_URL, alias, javaProperties);
+        this.addAliasProperty(DB_ACL_ALLOW_RULE, alias, javaProperties);
+        this.loadRules(alias, javaProperties);
+    }
+
+    private void loadRules (final String alias, final Properties javaProperties) {
+        final String prefix = AmforeasProperty.PREFIX + alias + ".acl.rules";
+
+        for (Entry<Object, Object> entry : javaProperties.entrySet()) {
+            final String key = (String) entry.getKey();
+
+            if (!key.startsWith(prefix)) {
+                continue;
+            }
+
+            final String[] split = key.split("\\.");
+            try {
+                String resource = split[4];
+                this.addResourceRule(DB_ALIAS_ALLOW_RULE, alias, resource, javaProperties);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                l.warn("Invalid ACL rule {}", key);
+            }
+        }
     }
 
     public List<String> getAliases () {
@@ -206,6 +272,29 @@ public class AmforeasProperties {
         }
 
         return Arrays.asList(aliases.split(",")).stream().map(alias -> alias.trim()).collect(Collectors.toList());
+    }
+
+    public List<ACLRule> getAliasRules (final String alias) {
+        final String aliasPrefix = AmforeasProperty.PREFIX + alias + ".acl.allow";
+        final String resourcePrefix = AmforeasProperty.PREFIX + alias + ".acl.rules";
+
+        final List<ACLRule> rules = new ArrayList<>();
+        for (Entry<String, AmforeasProperty> entry : this.properties.entrySet()) {
+            final String key = entry.getKey();
+
+            if (key.startsWith(aliasPrefix)) {
+                rules.add(ACLRule.of(alias, entry.getValue().getValue()));
+                continue;
+            }
+
+            if (key.startsWith(resourcePrefix)) {
+                final String[] split = key.split("\\.");
+                final String resource = split[4];
+                rules.add(ACLRule.of(alias, resource, entry.getValue().getValue()));
+            }
+        }
+
+        return rules;
     }
 
     /**

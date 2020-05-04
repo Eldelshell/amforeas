@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
  * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -11,15 +11,12 @@
  */
 package amforeas.sql.dialect;
 
-import amforeas.sql.Select;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import amforeas.sql.Select;
 
 /**
  * Dialect for HSQLDB, Hypersonic or whatever is called today.
- * @author Alejandro Ayuso <alejandroayuso@gmail.com>
  */
 public class HSQLDialect extends SQLDialect {
 
@@ -31,8 +28,7 @@ public class HSQLDialect extends SQLDialect {
         if (select.isAllColumns()) {
             b.append("*");
         } else {
-            String cols = StringUtils.join(select.getColumns(), ",");
-            b.append(cols);
+            appendColumns(b, select, null);
         }
         b.append(" FROM ").append(select.getTable().getName());
         if (!select.isAllRecords()) {
