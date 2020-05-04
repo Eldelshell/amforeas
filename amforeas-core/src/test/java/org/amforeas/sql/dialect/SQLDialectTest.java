@@ -155,6 +155,12 @@ public class SQLDialectTest {
         doTest(sql, new Update(table).setId("1").addColumn("name", "foo bar").addColumn("age", "50").addColumn("sex", "male"));
     }
 
+    @Test
+    public void test_rowCountStatement () {
+        String sql = "SELECT COUNT(*) AS total FROM a_table";
+        assertEquals(sql, d.rowCountStatement(table));
+    }
+
     public void doTest (String expected, Object obj) {
         if (obj instanceof Select) {
             assertEquals(expected, d.toStatementString((Select) obj));
