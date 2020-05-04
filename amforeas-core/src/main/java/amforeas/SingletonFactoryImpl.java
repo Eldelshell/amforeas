@@ -15,12 +15,14 @@ package amforeas;
 import amforeas.config.AmforeasConfiguration;
 import amforeas.jdbc.JDBCConnectionFactory;
 import amforeas.jdbc.JDBCExecutor;
+import amforeas.sql.dialect.DialectFactory;
 
 public class SingletonFactoryImpl implements SingletonFactory {
 
     protected static JDBCExecutor jdbcExecutor;
     protected static AmforeasConfiguration configuration;
     protected static JDBCConnectionFactory jdbcConnectionFactory;
+    protected static DialectFactory dialectFactory;
 
     public synchronized JDBCExecutor getJDBCExecutor () {
         if (jdbcExecutor == null) {
@@ -52,6 +54,13 @@ public class SingletonFactoryImpl implements SingletonFactory {
 
     public synchronized RestController getRESTController (String alias) {
         return new RestController(alias);
+    }
+
+    public DialectFactory getDialectFactory () {
+        if (dialectFactory == null) {
+            dialectFactory = new DialectFactory();
+        }
+        return dialectFactory;
     }
 
 }

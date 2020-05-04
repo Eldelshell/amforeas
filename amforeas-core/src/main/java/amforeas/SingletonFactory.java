@@ -15,6 +15,7 @@ package amforeas;
 import amforeas.config.AmforeasConfiguration;
 import amforeas.jdbc.JDBCConnectionFactory;
 import amforeas.jdbc.JDBCExecutor;
+import amforeas.sql.dialect.DialectFactory;
 
 public interface SingletonFactory {
 
@@ -27,5 +28,7 @@ public interface SingletonFactory {
     public JDBCConnectionFactory getJDBCConnectionFactory ();
 
     public RestController getRESTController (String alias);
+
+    public DialectFactory getDialectFactory ();
 
 }
