@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
  * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -92,8 +92,7 @@ public class H2Dialect extends SQLDialect {
         if (select.isAllColumns()) {
             b.append("*");
         } else {
-            String cols = StringUtils.join(select.getColumns(), ",");
-            b.append(cols);
+            appendColumns(b, select);
         }
         b.append(" FROM ").append(select.getTable().getName());
         if (!select.isAllRecords()) {
