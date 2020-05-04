@@ -13,10 +13,9 @@
 package org.amforeas.sql.dialect;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import amforeas.enums.Operator;
 import amforeas.jdbc.LimitParam;
 import amforeas.jdbc.OrderParam;
@@ -34,8 +33,6 @@ import amforeas.sql.dialect.SQLDialect;
  */
 @Tag("dialect-tests")
 public class SQLDialectTest {
-
-    private static final Logger log = LoggerFactory.getLogger(SQLDialectTest.class);
 
     Table table = new Table("demo1", "a_table", "tableId");
     Dialect d;
@@ -141,20 +138,24 @@ public class SQLDialectTest {
 
     @Test
     public void testInsert () {
-        doTest("INSERT INTO a_table (name,age) VALUES (?,?)",
-            new Insert(table).addColumn("name", "foo bar").addColumn("age", "50"));
+        assertThrows(IllegalArgumentException.class, () -> doTest("", new Insert(table)));
+        doTest("INSERT INTO a_table (name) VALUES (?)", new Insert(table).addColumn("name", "foo bar"));
+        doTest("INSERT INTO a_table (name,age) VALUES (?,?)", new Insert(table).addColumn("name", "foo bar").addColumn("age", "50"));
     }
 
     @Test
     public void testUpdate () {
-        doTest("UPDATE a_table SET name=?,age=? WHERE tableId=?",
-            new Update(table).setId("1").addColumn("name", "foo bar").addColumn("age", "50"));
-        doTest("UPDATE grrr SET name=? WHERE id=?",
-            new Update(new Table("demo1", "grrr")).setId("1").addColumn("name", "foo bar"));
+        String sql = "UPDATE a_table SET name=? WHERE tableId=?";
+        doTest(sql, new Update(table).setId("1").addColumn("name", "foo bar"));
+
+        sql = "UPDATE a_table SET name=?,age=? WHERE tableId=?";
+        doTest(sql, new Update(table).setId("1").addColumn("name", "foo bar").addColumn("age", "50"));
+
+        sql = "UPDATE a_table SET name=?,age=?,sex=? WHERE tableId=?";
+        doTest(sql, new Update(table).setId("1").addColumn("name", "foo bar").addColumn("age", "50").addColumn("sex", "male"));
     }
 
     public void doTest (String expected, Object obj) {
-        log.debug(expected);
         if (obj instanceof Select) {
             assertEquals(expected, d.toStatementString((Select) obj));
         } else if (obj instanceof Delete) {
