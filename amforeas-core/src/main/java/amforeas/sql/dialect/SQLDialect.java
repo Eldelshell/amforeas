@@ -56,7 +56,7 @@ public class SQLDialect implements Dialect {
             if (select.isAllColumns()) {
                 b.append("t.*");
             } else {
-                appendColumns(b, select);
+                appendColumns(b, select, "t");
             }
             b.append(" FROM ").append(select.getTable().toString()).append(" t");
             if (!select.isAllRecords()) {
@@ -81,7 +81,7 @@ public class SQLDialect implements Dialect {
             if (select.isAllColumns()) {
                 b.append("t.*");
             } else {
-                appendColumns(b, select);
+                appendColumns(b, select, "t");
             }
             b.append(" FROM ").append(select.getTable().toString()).append(" t");
             if (!select.isAllRecords()) {
@@ -143,9 +143,15 @@ public class SQLDialect implements Dialect {
         return b;
     }
 
-    protected void appendColumns (final StringBuilder b, Select select) {
-        for (String col : select.getColumns())
-            b.append("t.").append(col).append(",");
+    protected void appendColumns (final StringBuilder b, Select select, String alias) {
+        for (String col : select.getColumns()) {
+            if (StringUtils.isEmpty(alias)) {
+                b.append(col).append(",");
+            } else {
+                b.append("t.").append(col).append(",");
+            }
+        }
+
         b.deleteCharAt(b.length() - 1);
     }
 

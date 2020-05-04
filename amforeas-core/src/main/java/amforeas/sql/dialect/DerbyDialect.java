@@ -33,7 +33,7 @@ public class DerbyDialect extends SQLDialect {
             if (select.isAllColumns()) {
                 b.append("t.*");
             } else {
-                appendColumns(b, select);
+                appendColumns(b, select, "t");
             }
 
             b.append(" FROM ").append(select.getTable().toString()).append(" t");

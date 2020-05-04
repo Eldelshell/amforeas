@@ -28,7 +28,7 @@ public class HSQLDialect extends SQLDialect {
         if (select.isAllColumns()) {
             b.append("*");
         } else {
-            appendColumns(b, select);
+            appendColumns(b, select, null);
         }
         b.append(" FROM ").append(select.getTable().getName());
         if (!select.isAllRecords()) {
