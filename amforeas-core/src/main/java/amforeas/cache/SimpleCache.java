@@ -61,7 +61,11 @@ public class SimpleCache<K extends Comparable<K>, J> {
         }
 
         return Optional.of(i.getValue());
+    }
 
+    public J remove (K key) {
+        Item<J> i = this.cache.remove(key);
+        return i != null ? i.getValue() : null;
     }
 
     private class Item<V> {
