@@ -27,6 +27,7 @@ import amforeas.jdbc.StoredProcedureParam;
 import amforeas.rest.xstream.AmforeasResponse;
 import amforeas.rest.xstream.ErrorResponse;
 import amforeas.rest.xstream.HeadResponse;
+import amforeas.rest.xstream.Pagination;
 import amforeas.rest.xstream.Row;
 import amforeas.rest.xstream.SuccessResponse;
 import amforeas.sql.Delete;
@@ -168,7 +169,8 @@ public class RestController {
         }
 
         if (response == null) {
-            response = new SuccessResponse(table, results);
+            Pagination page = Pagination.of(limit, this.executor.count(t));
+            response = new SuccessResponse(table, results, page);
         }
 
         return response;
@@ -184,7 +186,7 @@ public class RestController {
      * @return Returns a AmforeasResponse with the values of the resource. If the resource is not available an error is returned.
      */
     public AmforeasResponse getResource (final String table, final String col, final String arg, final LimitParam limit, final OrderParam order) {
-        l.debug("Geting resource from " + alias + "." + table + " with id " + arg);
+        l.debug("Geting resource from {}.{}  with id {}", alias, table, arg);
 
         Table t;
         try {
@@ -209,7 +211,8 @@ public class RestController {
         }
 
         if (response == null) {
-            response = new SuccessResponse(table, results);
+            Pagination page = Pagination.of(limit, this.executor.count(t));
+            response = new SuccessResponse(table, results, page);
         }
 
         return response;
@@ -253,7 +256,8 @@ public class RestController {
         }
 
         if (response == null) {
-            response = new SuccessResponse(table, results);
+            Pagination page = Pagination.of(limit, this.executor.count(t));
+            response = new SuccessResponse(table, results, page);
         }
 
         return response;
@@ -462,7 +466,16 @@ public class RestController {
         }
 
         if (response == null) {
-            response = new SuccessResponse(resource, results);
+
+            Integer count = -1;
+            try {
+                count = this.executor.count(new Table(database, resource));
+            } catch (IllegalArgumentException e) {
+                l.warn("Failed to obtain count because the Table {}.{} couldn\'t be instantiated", database, resource);
+            }
+
+            Pagination page = Pagination.of(limit, count);
+            response = new SuccessResponse(resource, results, page);
         }
 
         return response;
