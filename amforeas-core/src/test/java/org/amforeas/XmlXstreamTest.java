@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
@@ -88,33 +89,33 @@ public class XmlXstreamTest {
     }
 
     @Test
-    public void assertJSONResponse () {
-        assertSuccessJSONResponse(printJSONObject(new SuccessResponse()));
-        assertSuccessJSONResponse(printJSONObject(new SuccessResponse("test", new ArrayList<Row>())));
-        assertSuccessJSONResponse(printJSONObject(new SuccessResponse("test", getBasicRows())));
-        assertSuccessJSONResponse(printJSONObject(new SuccessResponse("test", getBasicRows(), Status.OK)));
+    public void assertJSONResponse () throws JsonProcessingException {
+        assertSuccessJSONResponse(AmforeasUtils.writeAsJSON(new SuccessResponse()));
+        assertSuccessJSONResponse(AmforeasUtils.writeAsJSON(new SuccessResponse("test", new ArrayList<Row>())));
+        assertSuccessJSONResponse(AmforeasUtils.writeAsJSON(new SuccessResponse("test", getBasicRows())));
+        assertSuccessJSONResponse(AmforeasUtils.writeAsJSON(new SuccessResponse("test", getBasicRows(), Status.OK)));
     }
 
     @Test
-    public void testErrorToJSON () {
-        assertErrorJSONResponse(printJSONObject(new ErrorResponse()));
-        assertErrorJSONResponse(printJSONObject(new ErrorResponse("test", Status.BAD_REQUEST)));
-        assertErrorJSONResponse(printJSONObject(new ErrorResponse("test", Status.BAD_REQUEST, "my message")));
-        assertErrorJSONResponse(printJSONObject(new ErrorResponse("testsql", new SQLException("reason", "SQLState", 1))));
+    public void testErrorToJSON () throws JsonProcessingException {
+        assertErrorJSONResponse(AmforeasUtils.writeAsJSON(new ErrorResponse()));
+        assertErrorJSONResponse(AmforeasUtils.writeAsJSON(new ErrorResponse("test", Status.BAD_REQUEST)));
+        assertErrorJSONResponse(AmforeasUtils.writeAsJSON(new ErrorResponse("test", Status.BAD_REQUEST, "my message")));
+        assertErrorJSONResponse(AmforeasUtils.writeAsJSON(new ErrorResponse("testsql", new SQLException("reason", "SQLState", 1))));
     }
 
     @Test
-    public void testHeadToJSON () {
-        assertHeadJSONResponse(printJSONObject(new HeadResponse()));
-        assertHeadJSONResponse(printJSONObject(new HeadResponse("test", new ArrayList<Row>())));
-        assertHeadJSONResponse(printJSONObject(new HeadResponse("test", getBasicRows())));
-        assertHeadJSONResponse(printJSONObject(new HeadResponse("test", getBasicRows(), Status.OK)));
+    public void testHeadToJSON () throws JsonProcessingException {
+        assertHeadJSONResponse(AmforeasUtils.writeAsJSON(new HeadResponse()));
+        assertHeadJSONResponse(AmforeasUtils.writeAsJSON(new HeadResponse("test", new ArrayList<Row>())));
+        assertHeadJSONResponse(AmforeasUtils.writeAsJSON(new HeadResponse("test", getBasicRows())));
+        assertHeadJSONResponse(AmforeasUtils.writeAsJSON(new HeadResponse("test", getBasicRows(), Status.OK)));
     }
 
     @Test
     public void testStoredProcedureParam () throws Exception {
         StoredProcedureParam p = new StoredProcedureParam("car_id", "1", false, 1, "INTEGER");
-        String pJson = printJSONObject(p);
+        String pJson = AmforeasUtils.writeAsJSON(p);
         assertEquals(pJson, "{\"value\":\"1\",\"name\":\"car_id\",\"outParameter\":false,\"type\":\"INTEGER\",\"index\":1}");
         StoredProcedureParam p2 = new ObjectMapper().readValue(pJson, StoredProcedureParam.class);
         assertEquals(p2, p);
@@ -131,12 +132,12 @@ public class XmlXstreamTest {
     }
 
     private void assertXMLResponse (final String xml) {
-        // l.debug(json);
+        l.debug(xml);
         assertTrue(xml.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response>") && xml.endsWith("</response>"));
     }
 
     private void assertJSONResponse (final String json) {
-        // l.debug(json);
+        l.debug(json);
         assertTrue(json.startsWith("{") && json.endsWith("}"));
     }
 
@@ -242,16 +243,6 @@ public class XmlXstreamTest {
         xStreamInstance.registerConverter(new AmforeasMapConverter());
         xStreamInstance.addImplicitCollection(HeadResponse.class, "rows", Row.class);
         return (HeadResponse) xStreamInstance.fromXML(xml);
-    }
-
-    public String printJSONObject (final Object obj) {
-        try {
-            final ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(obj);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
     }
 
     public String prettyPrintJSONObject (final Object obj) {
