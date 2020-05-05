@@ -139,6 +139,7 @@
     <module>amforeas-jetty</module>
     <module>amforeas-war</module>
     <module>amforeas-demo</module>
+    <module>amforeas-client</module>
   </modules>
 
 </project>
