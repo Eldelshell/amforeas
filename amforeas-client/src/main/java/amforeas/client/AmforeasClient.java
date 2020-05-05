@@ -64,29 +64,32 @@ public class AmforeasClient {
     private final String host;
     private final Integer port;
     private final String root;
+    private final String alias;
     private final Header accept;
 
-    public AmforeasClient(String protocol, String host, Integer port, String root) {
-        validateInput(protocol, host, port, root);
+    public AmforeasClient(String protocol, String host, Integer port, String root, String alias) {
+        validateInput(protocol, host, port, root, alias);
 
         this.protocol = protocol;
         this.host = host;
         this.port = port;
         this.root = root;
+        this.alias = alias;
         this.accept = new BasicHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
     }
 
-    public AmforeasClient(String protocol, String host, Integer port, String root, String format) {
-        validateInput(protocol, host, port, root);
+    public AmforeasClient(String protocol, String host, Integer port, String root, String alias, String format) {
+        validateInput(protocol, host, port, root, alias);
 
         this.protocol = protocol;
         this.host = host;
         this.port = port;
         this.root = root;
+        this.alias = alias;
         this.accept = new BasicHeader(HttpHeaders.ACCEPT, format);
     }
 
-    private void validateInput (String protocol, String host, Integer port, String root) {
+    private void validateInput (String protocol, String host, Integer port, String root, String alias) {
         if (StringUtils.isEmpty(protocol) || !(protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("https"))) {
             throw new IllegalArgumentException("Invalid protocol value: " + protocol);
         }
@@ -98,18 +101,22 @@ public class AmforeasClient {
         if (StringUtils.isEmpty(root)) {
             throw new IllegalArgumentException("Invalid root value: " + root);
         }
+
+        if (StringUtils.isEmpty(alias)) {
+            throw new IllegalArgumentException("Invalid alias value: " + alias);
+        }
     }
 
     /* Meta */
 
-    public Optional<AmforeasResponse> meta (String alias) {
+    public Optional<AmforeasResponse> meta () {
         final URI url = this.build(String.format(alias_path, root, alias)).orElseThrow();
         final HttpGet req = new HttpGet(url);
         req.addHeader(this.accept);
         return this.execute(req);
     }
 
-    public Integer meta (String alias, String resource) {
+    public Integer meta (String resource) {
         final URI url = this.build(String.format(resource_path, root, alias, resource)).orElseThrow();
         final HttpHead req = new HttpHead(url);
         req.addHeader(this.accept);
@@ -118,18 +125,18 @@ public class AmforeasClient {
 
     /* READ */
 
-    public Optional<AmforeasResponse> getAll (String alias, String resource) {
+    public Optional<AmforeasResponse> getAll (String resource) {
         final URI url = this.build(String.format(resource_path, root, alias, resource)).orElseThrow();
         final HttpGet req = new HttpGet(url);
         req.addHeader(this.accept);
         return this.execute(req);
     }
 
-    public Optional<AmforeasResponse> get (String alias, String resource, String id) {
-        return this.get(alias, resource, "id", id);
+    public Optional<AmforeasResponse> get (String resource, String id) {
+        return this.get(resource, "id", id);
     }
 
-    public Optional<AmforeasResponse> get (String alias, String resource, String pk, String id) {
+    public Optional<AmforeasResponse> get (String resource, String pk, String id) {
         final URI url = this.build(String.format(item_path, root, alias, resource, id)).orElseThrow();
         final HttpGet req = new HttpGet(url);
         req.addHeader(this.accept);
@@ -137,14 +144,14 @@ public class AmforeasClient {
         return this.execute(req);
     }
 
-    public Optional<AmforeasResponse> find (String alias, String resource, String col, String arg) {
+    public Optional<AmforeasResponse> find (String resource, String col, String arg) {
         final URI url = this.build(String.format(find_path, root, alias, resource, col, arg)).orElseThrow();
         final HttpGet req = new HttpGet(url);
         req.addHeader(this.accept);
         return this.execute(req);
     }
 
-    public Optional<AmforeasResponse> query (String alias, String resource, String query, String... args) {
+    public Optional<AmforeasResponse> query (String resource, String query, String... args) {
         final NameValuePair[] nvps = Arrays.asList(args)
             .stream()
             .map(obj -> new BasicNameValuePair("args", obj))
@@ -158,11 +165,11 @@ public class AmforeasClient {
 
     /* CREATE */
 
-    public Optional<AmforeasResponse> add (String alias, String resource, String json) {
-        return this.add(alias, resource, "id", json);
+    public Optional<AmforeasResponse> add (String resource, String json) {
+        return this.add(resource, "id", json);
     }
 
-    public Optional<AmforeasResponse> add (String alias, String resource, String pk, String json) {
+    public Optional<AmforeasResponse> add (String resource, String pk, String json) {
         final URI url = this.build(String.format(resource_path, root, alias, resource)).orElseThrow();
         final HttpPost req = new HttpPost(url);
         req.addHeader(this.accept);
@@ -180,11 +187,11 @@ public class AmforeasClient {
         return this.execute(req);
     }
 
-    public Optional<AmforeasResponse> add (String alias, String resource, List<NameValuePair> params) {
-        return this.add(alias, resource, "id", params);
+    public Optional<AmforeasResponse> add (String resource, List<NameValuePair> params) {
+        return this.add(resource, "id", params);
     }
 
-    public Optional<AmforeasResponse> add (String alias, String resource, String pk, List<NameValuePair> params) {
+    public Optional<AmforeasResponse> add (String resource, String pk, List<NameValuePair> params) {
         final URI url = this.build(String.format(resource_path, root, alias, resource)).orElseThrow();
         final HttpPost req = new HttpPost(url);
         req.addHeader(this.accept);
@@ -204,11 +211,11 @@ public class AmforeasClient {
 
     /* UPDATE */
 
-    public Optional<AmforeasResponse> update (String alias, String resource, String id, String json) {
-        return this.update(alias, resource, "id", id, json);
+    public Optional<AmforeasResponse> update (String resource, String id, String json) {
+        return this.update(resource, "id", id, json);
     }
 
-    public Optional<AmforeasResponse> update (String alias, String resource, String pk, String id, String json) {
+    public Optional<AmforeasResponse> update (String resource, String pk, String id, String json) {
         final URI url = this.build(String.format(item_path, root, alias, resource, id)).orElseThrow();
         final HttpPut req = new HttpPut(url);
         req.addHeader(this.accept);
@@ -228,11 +235,11 @@ public class AmforeasClient {
 
     /* DELETE */
 
-    public Optional<AmforeasResponse> delete (String alias, String resource, String id) {
-        return this.delete(alias, resource, "id", id);
+    public Optional<AmforeasResponse> delete (String resource, String id) {
+        return this.delete(resource, "id", id);
     }
 
-    public Optional<AmforeasResponse> delete (String alias, String resource, String pk, String id) {
+    public Optional<AmforeasResponse> delete (String resource, String pk, String id) {
         final URI url = this.build(String.format(item_path, root, alias, resource, id)).orElseThrow();
         final HttpDelete req = new HttpDelete(url);
         req.addHeader(this.accept);
@@ -242,7 +249,7 @@ public class AmforeasClient {
 
     /* Functions and Stored Procedure */
 
-    public Optional<AmforeasResponse> call (String alias, String function, StoredProcedureParam... params) {
+    public Optional<AmforeasResponse> call (String function, StoredProcedureParam... params) {
         final URI url = this.build(String.format(call_path, root, alias, function)).orElseThrow();
         final HttpPost req = new HttpPost(url);
         req.addHeader(this.accept);

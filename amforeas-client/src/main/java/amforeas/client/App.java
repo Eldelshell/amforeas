@@ -29,69 +29,68 @@ public class App {
 
     private static final Logger l = LoggerFactory.getLogger(App.class);
 
-    private final static String alias = "demo1";
     private final static String table = "users";
 
     public static void main (String[] args) {
 
         l.info("Running Amforeas Application on http://localhost:8080/amforeas/demo1");
 
-        AmforeasClient demo = new AmforeasClient("http", "localhost", 8080, "amforeas");
-        demo.meta(alias);
-        demo.meta(alias, table);
-        demo.getAll(alias, table);
-        demo.get(alias, table, "1");
+        AmforeasClient demo = new AmforeasClient("http", "localhost", 8080, "amforeas", "demo1");
+        demo.meta();
+        demo.meta(table);
+        demo.getAll(table);
+        demo.get(table, "1");
 
-        Optional<AmforeasResponse> r1 = demo.find(alias, table, "name", "waka waka");
+        Optional<AmforeasResponse> r1 = demo.find(table, "name", "waka waka");
 
         if (r1.isPresent() && r1.get().isSuccess()) {
             SuccessResponse sr = (SuccessResponse) r1.get();
             String id = sr.getRows().get(0).getCells().get("id");
-            demo.update(alias, table, id, getUserAsJSON("waka waka"));
+            demo.update(table, id, getUserAsJSON("waka waka"));
         } else {
-            demo.add(alias, table, getUserAsForm("waka waka"));
+            demo.add(table, getUserAsForm("waka waka"));
         }
 
-        r1 = demo.find(alias, table, "name", "hehe");
+        r1 = demo.find(table, "name", "hehe");
         if (r1.isPresent() && r1.get().isSuccess()) {
             throw new IllegalStateException("Shouldn't find this user");
         }
 
         String name = RandomStringUtils.random(10, "abcdefghijklmn");
-        demo.add(alias, table, getUserAsJSON(name));
+        demo.add(table, getUserAsJSON(name));
 
-        r1 = demo.find(alias, table, "name", name);
+        r1 = demo.find(table, "name", name);
         if (r1.isPresent() && !r1.get().isSuccess()) {
             throw new IllegalStateException("Should find this user");
         } else {
             SuccessResponse sr = (SuccessResponse) r1.get();
             String id = sr.getRows().get(0).getCells().get("id");
-            demo.delete(alias, table, id);
+            demo.delete(table, id);
         }
 
-        r1 = demo.find(alias, table, "name", name);
+        r1 = demo.find(table, "name", name);
         if (r1.isPresent() && r1.get().isSuccess()) {
             throw new IllegalStateException("Shouldn't find this user");
         }
 
         // Dynamic Query
-        r1 = demo.query(alias, table, "findByAgeEquals", "30");
+        r1 = demo.query(table, "findByAgeEquals", "30");
         if (r1.isPresent() && !r1.get().isSuccess()) {
             throw new IllegalStateException("Should find this user");
         }
 
-        r1 = demo.query(alias, table, "findAllByAgeBetween", "30", "40");
+        r1 = demo.query(table, "findAllByAgeBetween", "30", "40");
         if (r1.isPresent() && !r1.get().isSuccess()) {
             throw new IllegalStateException("Should find this user");
         }
 
         /* SPs */
-        r1 = demo.call(alias, "simpleStoredProcedure");
+        r1 = demo.call("simpleStoredProcedure");
         if (r1.isPresent() && !r1.get().isSuccess()) {
             throw new IllegalStateException("Should return 1");
         }
 
-        r1 = demo.call(alias, "insert_comment",
+        r1 = demo.call("insert_comment",
             new StoredProcedureParam("car_id", "1", false, 1, "INTEGER"),
             new StoredProcedureParam("car_comment", "JUst a comment from Java Client", false, 2, "VARCHAR"));
 
@@ -99,9 +98,9 @@ public class App {
             throw new IllegalStateException("Should work");
         }
 
-        demo.getAll(alias, "comments");
+        demo.getAll("comments");
 
-        r1 = demo.call(alias, "get_year_sales",
+        r1 = demo.call("get_year_sales",
             new StoredProcedureParam("in_year", "2001", false, 1, "INTEGER"),
             new StoredProcedureParam("out_total", null, true, 2, "INTEGER"));
 
