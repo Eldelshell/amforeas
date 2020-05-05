@@ -12,6 +12,8 @@
 
 package amforeas.rest.xstream;
 
+import java.util.List;
+import java.util.Objects;
 import amforeas.jdbc.LimitParam;
 
 public class Pagination {
@@ -25,22 +27,42 @@ public class Pagination {
         super();
     }
 
+    public Pagination(Integer page, Integer size, Integer pages, Integer total) {
+        super();
+        this.page = page;
+        this.size = size;
+        this.pages = pages;
+        this.total = total;
+    }
+
     public static Pagination of (LimitParam limitParam) {
         Pagination p = new Pagination();
         Integer diff = limitParam.getLimit() - limitParam.getStart();
         return p.setPage(limitParam.getLimit() / diff).setSize(diff);
     }
 
-    public static Pagination of (LimitParam limitParam, Integer total) {
-        if (total == null || total <= 0) {
-            return of(limitParam);
+    public static Pagination of (LimitParam limitParam, List<?> results, Integer total) {
+        return results != null ? Pagination.of(limitParam, results.size(), total) : Pagination.of(limitParam, 0, total);
+    }
+
+    public static Pagination of (LimitParam limitParam, Integer results, Integer total) {
+        final Pagination p = new Pagination();
+
+        if (total == null || total == 0) {
+            return p.setPage(0).setSize(results).setTotal(0).setPages(0);
         }
 
-        Pagination p = new Pagination();
-        Integer diff = limitParam.getLimit() - limitParam.getStart();
-        Double k = Double.valueOf(Math.ceil(total.doubleValue() / diff.doubleValue()));
-        Integer pages = total >= diff ? k.intValue() : total;
-        return p.setPage(limitParam.getLimit() / diff).setSize(diff).setTotal(total).setPages(pages);
+        Integer pageSize = limitParam.getLimit();
+        int currentPage = (limitParam.getStart() + pageSize) / pageSize;
+
+        if (total < 0) {
+            // We failed to obtain total
+            return p.setPage(currentPage).setSize(results).setTotal(null).setPages(null);
+        }
+
+
+        Double pages = Double.valueOf(Math.ceil(total.doubleValue() / pageSize.doubleValue()));
+        return p.setPage(currentPage).setSize(results).setTotal(total).setPages(pages.intValue());
     }
 
     public Integer getPage () {
@@ -77,6 +99,31 @@ public class Pagination {
     public Pagination setTotal (Integer total) {
         this.total = total;
         return this;
+    }
+
+    @Override
+    public String toString () {
+        return "Pagination [page=" + page + ", size=" + size + ", pages=" + pages + ", total=" + total + "]";
+    }
+
+    @Override
+    public int hashCode () {
+        return Objects.hash(page, pages, size, total);
+    }
+
+    @Override
+    public boolean equals (Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return this.hashCode() == obj.hashCode();
     }
 
 

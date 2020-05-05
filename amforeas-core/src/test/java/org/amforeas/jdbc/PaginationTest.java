@@ -39,11 +39,26 @@ public class PaginationTest {
     public void test_ofLimitWithTotal100 () {
         LimitParam limit = new LimitParam(25, 0);
         Integer total = 100;
-        Pagination p = Pagination.of(limit, total);
+        Pagination p = Pagination.of(limit, 25, total);
 
         assertEquals(p.getSize(), 25);
         assertEquals(p.getPage(), 1);
         assertEquals(p.getTotal(), total);
+        assertEquals(p.getPages(), 4);
+
+        limit = new LimitParam(25, 25);
+        p = Pagination.of(limit, 25, total);
+        assertEquals(p.getPage(), 2);
+        assertEquals(p.getPages(), 4);
+
+        limit = new LimitParam(25, 50);
+        p = Pagination.of(limit, 25, total);
+        assertEquals(p.getPage(), 3);
+        assertEquals(p.getPages(), 4);
+
+        limit = new LimitParam(25, 75);
+        p = Pagination.of(limit, 25, total);
+        assertEquals(p.getPage(), 4);
         assertEquals(p.getPages(), 4);
     }
 
@@ -51,7 +66,7 @@ public class PaginationTest {
     public void test_ofLimitWithTotal1 () {
         LimitParam limit = new LimitParam(25, 0);
         Integer total = 1;
-        Pagination p = Pagination.of(limit, total);
+        Pagination p = Pagination.of(limit, 25, total);
 
         assertEquals(p.getSize(), 25);
         assertEquals(p.getPage(), 1);
@@ -60,10 +75,22 @@ public class PaginationTest {
     }
 
     @Test
-    public void test_ofLimitWithEmpty () {
+    public void test_ofEmpty () {
         LimitParam limit = new LimitParam(25, 0);
         Integer total = 0;
-        Pagination p = Pagination.of(limit, total);
+        Pagination p = Pagination.of(limit, 0, total);
+
+        assertEquals(p.getSize(), 0);
+        assertEquals(p.getPage(), 0);
+        assertEquals(p.getTotal(), 0);
+        assertEquals(p.getPages(), 0);
+    }
+
+    @Test
+    public void test_ofFailedTotal () {
+        LimitParam limit = new LimitParam(25, 0);
+        Integer total = -1; // Failed to get total
+        Pagination p = Pagination.of(limit, 25, total);
 
         assertEquals(p.getSize(), 25);
         assertEquals(p.getPage(), 1);
@@ -75,7 +102,7 @@ public class PaginationTest {
     public void test_ofLimitWithTotalEqualsSize () {
         LimitParam limit = new LimitParam(25, 0);
         Integer total = 25;
-        Pagination p = Pagination.of(limit, total);
+        Pagination p = Pagination.of(limit, 25, total);
 
         assertEquals(p.getSize(), 25);
         assertEquals(p.getPage(), 1);
@@ -87,7 +114,7 @@ public class PaginationTest {
     public void test_ofLimitWithTotal26 () {
         LimitParam limit = new LimitParam(25, 0);
         Integer total = 26;
-        Pagination p = Pagination.of(limit, total);
+        Pagination p = Pagination.of(limit, 25, total);
 
         assertEquals(p.getSize(), 25);
         assertEquals(p.getPage(), 1);

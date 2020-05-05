@@ -80,7 +80,7 @@ public class RestController {
      * @return  a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse getDatabaseMetadata () {
-        l.debug("Obtaining metadata for " + database);
+        l.debug("Obtaining metadata for {}", database);
         AmforeasResponse response = null;
 
         List<Row> results = null;
@@ -104,7 +104,7 @@ public class RestController {
      * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse getResourceMetadata (final String table) {
-        l.debug("Obtaining metadata for " + table);
+        l.debug("Obtaining metadata for {}", table);
 
         Table t;
         try {
@@ -169,7 +169,7 @@ public class RestController {
         }
 
         if (response == null) {
-            Pagination page = Pagination.of(limit, this.executor.count(t));
+            Pagination page = Pagination.of(limit, results, this.executor.count(t));
             response = new SuccessResponse(table, results, page);
         }
 
@@ -196,11 +196,10 @@ public class RestController {
             return new ErrorResponse(table, Response.Status.BAD_REQUEST, e.getMessage());
         }
 
-        Select select = new Select(t).setParameter(new SelectParam(col, arg)).setLimitParam(limit).setOrderParam(order);
-
         AmforeasResponse response = null;
         List<Row> results = null;
         try {
+            Select select = new Select(t).setParameter(new SelectParam(col, arg)).setLimitParam(limit).setOrderParam(order);
             results = this.getExecutor().get(select, false);
         } catch (Throwable ex) {
             response = handleException(ex, table);
@@ -211,8 +210,8 @@ public class RestController {
         }
 
         if (response == null) {
-            Pagination page = Pagination.of(limit, this.executor.count(t));
-            response = new SuccessResponse(table, results, page);
+            this.executor.count(t);
+            response = new SuccessResponse(table, results);
         }
 
         return response;
@@ -228,7 +227,7 @@ public class RestController {
      * @return Returns a AmforeasResponse with the values of the resources. If the resources are not available an error is returned.
      */
     public AmforeasResponse findResources (final String table, final String col, final String arg, final LimitParam limit, final OrderParam order) {
-        l.debug("Geting resource from " + alias + "." + table + " with id " + arg);
+        l.debug("Geting resource from {}.{} with id {}", alias, table, arg);
 
         if (StringUtils.isEmpty(arg) || StringUtils.isEmpty(col))
             return new ErrorResponse(table, Response.Status.BAD_REQUEST, "Invalid argument");
@@ -256,7 +255,7 @@ public class RestController {
         }
 
         if (response == null) {
-            Pagination page = Pagination.of(limit, this.executor.count(t));
+            Pagination page = Pagination.of(limit, results, this.executor.count(t));
             response = new SuccessResponse(table, results, page);
         }
 
@@ -273,7 +272,7 @@ public class RestController {
      * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse insertResource (final String resource, final String pk, final String jsonRequest) {
-        l.debug("Insert new " + alias + "." + resource + " with JSON values: " + jsonRequest);
+        l.debug("Insert new {}.{} with JSON values: {}", alias, resource, jsonRequest);
 
         AmforeasResponse response;
 
@@ -297,7 +296,7 @@ public class RestController {
      * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse insertResource (final String resource, final String pk, final Map<String, String> formParams) {
-        l.debug("Insert new " + alias + "." + resource + " with values: " + formParams);
+        l.debug("Insert new {}.{} with values: {}", alias, resource, formParams);
 
         AmforeasResponse response;
         Table t;
@@ -351,7 +350,7 @@ public class RestController {
      * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse updateResource (final String resource, final String pk, final String id, final String jsonRequest) {
-        l.debug("Update record " + id + " in table " + alias + "." + resource + " with values: " + jsonRequest);
+        l.debug("Update record {} in table {}.{} with values: {}", id, alias, resource, jsonRequest);
         AmforeasResponse response = null;
 
         List<Row> results = null;
@@ -392,13 +391,13 @@ public class RestController {
      * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse deleteResource (final String resource, final String pk, final String id) {
-        l.debug("Delete record " + id + " from table " + alias + "." + resource);
+        l.debug("Delete record {} from table {}.{}", id, alias, resource);
 
         Table t;
         try {
             t = new Table(database, resource, pk);
         } catch (IllegalArgumentException e) {
-            l.debug("Failed to generate delete " + e.getMessage());
+            l.debug("Failed to generate delete {}", e.getMessage());
             return new ErrorResponse(resource, Response.Status.BAD_REQUEST, e.getMessage());
         }
 
@@ -434,7 +433,7 @@ public class RestController {
      * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse findByDynamicFinder (final String resource, final String query, final List<String> values, final LimitParam limit, final OrderParam order) {
-        l.debug("Find resource from " + alias + "." + resource + " with " + query);
+        l.debug("Find resource from table {}.{} with {}", alias, resource, query);
 
         if (values == null)
             throw new IllegalArgumentException("Invalid null argument");
@@ -474,7 +473,7 @@ public class RestController {
                 l.warn("Failed to obtain count because the Table {}.{} couldn\'t be instantiated", database, resource);
             }
 
-            Pagination page = Pagination.of(limit, count);
+            Pagination page = Pagination.of(limit, results, count);
             response = new SuccessResponse(resource, results, page);
         }
 
@@ -493,7 +492,7 @@ public class RestController {
      * @return a {@link amforeas.rest.xstream.SuccessResponse} or a {@link amforeas.rest.xstream.ErrorResponse}
      */
     public AmforeasResponse executeStoredProcedure (final String query, final String json) {
-        l.debug("Executing Stored Procedure " + query);
+        l.debug("Executing Stored Procedure {}", query);
 
         List<StoredProcedureParam> params;
         try {

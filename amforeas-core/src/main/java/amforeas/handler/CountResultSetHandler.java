@@ -20,6 +20,7 @@ public class CountResultSetHandler implements ResultSetHandler<Integer> {
 
     @Override
     public Integer handle (ResultSet rs) throws SQLException {
+        rs.next();
         return rs.getInt("total");
     }
 
