@@ -36,7 +36,7 @@ public class App {
 
         l.info("Running Amforeas Application on http://localhost:8080/amforeas/demo1");
 
-        AmforeasClient demo = new AmforeasClient("http", "localhost", 8080, "amforeas", "demo1");
+        AmforeasClient demo = new AmforeasRestClient("http", "localhost", 8080, "amforeas", "demo1");
         demo.meta();
         demo.meta(table);
 

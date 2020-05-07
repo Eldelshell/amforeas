@@ -49,9 +49,9 @@ import amforeas.jdbc.StoredProcedureParam;
 import amforeas.rest.xstream.AmforeasResponse;
 import amforeas.rest.xstream.ErrorResponse;
 
-public class AmforeasClient {
+public class AmforeasRestClient implements AmforeasClient {
 
-    private static final Logger l = LoggerFactory.getLogger(AmforeasClient.class);
+    private static final Logger l = LoggerFactory.getLogger(AmforeasRestClient.class);
 
     private static final String alias_path = "%s/%s";
     private static final String resource_path = "%s/%s/%s";
@@ -67,7 +67,7 @@ public class AmforeasClient {
     private final String alias;
     private final Header accept;
 
-    public AmforeasClient(String protocol, String host, Integer port, String root, String alias) {
+    public AmforeasRestClient(String protocol, String host, Integer port, String root, String alias) {
         validateInput(protocol, host, port, root, alias);
 
         this.protocol = protocol;
@@ -78,7 +78,7 @@ public class AmforeasClient {
         this.accept = new BasicHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
     }
 
-    public AmforeasClient(String protocol, String host, Integer port, String root, String alias, String format) {
+    public AmforeasRestClient(String protocol, String host, Integer port, String root, String alias, String format) {
         validateInput(protocol, host, port, root, alias);
 
         this.protocol = protocol;
