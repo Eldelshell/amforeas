@@ -51,23 +51,27 @@ public class LimitParamTest {
         params.add("limit", "-1");
         assertDefault(LimitParam.valueOf(params));
 
+        params.remove("limit");
         params.add("limit", "foo");
         assertDefault(LimitParam.valueOf(params));
 
         params.add("offset", "-1");
         assertDefault(LimitParam.valueOf(params));
 
+        params.remove("offset");
         params.add("offset", "foo");
         assertDefault(LimitParam.valueOf(params));
 
         /* with an invalid limit, the offset is still the default */
+        params.remove("offset");
         params.add("offset", "10");
         assertDefault(LimitParam.valueOf(params));
 
         /* with an invalid offset, limit works and offset is default */
+        params = new MultivaluedHashMap<>();
         params.add("limit", "10");
         params.add("offset", "foo");
-        assertEquals(LimitParam.valueOf(params).getLimit(), 25);
+        assertEquals(LimitParam.valueOf(params).getLimit(), 10);
         assertEquals(LimitParam.valueOf(params).getStart(), 0);
 
         /* if the limit is too big */
@@ -80,6 +84,29 @@ public class LimitParamTest {
         assertNotNull(lp);
         assertTrue(lp.getLimit().equals(25));
         assertTrue(lp.getStart().equals(0));
+    }
+
+    @Test
+    public void testPage () {
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.add("page", "1");
+        assertEquals(LimitParam.valueOf(params, 25).getLimit(), 25);
+        assertEquals(LimitParam.valueOf(params, 25).getStart(), 0);
+
+        params.remove("page");
+        params.add("page", "2");
+        assertEquals(LimitParam.valueOf(params, 25).getLimit(), 25);
+        assertEquals(LimitParam.valueOf(params, 25).getStart(), 25);
+
+        params.remove("page");
+        params.add("page", "foo");
+        assertEquals(LimitParam.valueOf(params, 25).getLimit(), 25);
+        assertEquals(LimitParam.valueOf(params, 25).getStart(), 0);
+
+        params.remove("page");
+        params.add("page", "4");
+        assertEquals(LimitParam.valueOf(params, 100).getLimit(), 100);
+        assertEquals(LimitParam.valueOf(params, 100).getStart(), 300);
     }
 
 }
