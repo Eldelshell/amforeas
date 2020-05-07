@@ -47,7 +47,7 @@ public class RequestParamsTest {
             .build();
 
         assertEquals(rp.getPath(root, alias), "a/b/c/dynamic/findAllByNameAndAge");
-        assertEquals(rp.getParametersAsQueryParams(), "page=2&sort=age&dir=ASC&name=bar&age=2");
+        assertEquals(rp.getParametersAsQueryParams(), "page=2&sort=age&dir=ASC&args=bar&args=2");
     }
 
     @Test
