@@ -49,7 +49,7 @@ import amforeas.jdbc.StoredProcedureParam;
 import amforeas.rest.xstream.AmforeasResponse;
 import amforeas.rest.xstream.ErrorResponse;
 
-public class AmforeasRestClient implements AmforeasClient {
+public class AmforeasRestClient implements AmforeasClient<AmforeasResponse> {
 
     private static final Logger l = LoggerFactory.getLogger(AmforeasRestClient.class);
 
@@ -166,15 +166,10 @@ public class AmforeasRestClient implements AmforeasClient {
     /* CREATE */
 
     public Optional<AmforeasResponse> add (String resource, String json) {
-        return this.add(resource, "id", json);
-    }
-
-    public Optional<AmforeasResponse> add (String resource, String pk, String json) {
         final URI url = this.build(String.format(resource_path, root, alias, resource)).orElseThrow();
         final HttpPost req = new HttpPost(url);
         req.addHeader(this.accept);
         req.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        req.addHeader("Primary-Key", pk);
 
         try {
             req.setEntity(new StringEntity(json));
@@ -188,15 +183,10 @@ public class AmforeasRestClient implements AmforeasClient {
     }
 
     public Optional<AmforeasResponse> add (String resource, List<NameValuePair> params) {
-        return this.add(resource, "id", params);
-    }
-
-    public Optional<AmforeasResponse> add (String resource, String pk, List<NameValuePair> params) {
         final URI url = this.build(String.format(resource_path, root, alias, resource)).orElseThrow();
         final HttpPost req = new HttpPost(url);
         req.addHeader(this.accept);
         req.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
-        req.addHeader("Primary-Key", pk);
 
         try {
             req.setEntity(new UrlEncodedFormEntity(params));
