@@ -15,6 +15,7 @@ package amforeas.client;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.http.NameValuePair;
@@ -38,65 +39,69 @@ public class App {
         AmforeasClient demo = new AmforeasClient("http", "localhost", 8080, "amforeas", "demo1");
         demo.meta();
         demo.meta(table);
-        demo.getAll(table);
-        demo.get(table, "1");
 
-        Optional<AmforeasResponse> r1 = demo.find(table, "name", "waka waka");
+        demo.getAll(table);
+        demo.get(RequestParams.builder(table).page(1).sortBy("name", "desc").build());
+
+        demo.get(table, "1");
+        demo.get(RequestParams.builder(table).id("1").build());
+
+        // Optional<AmforeasResponse> r1 = demo.find(table, "name", "waka waka");
+        Optional<AmforeasResponse> r1 = demo.get(RequestParams.builder(table).column("name").value("waka waka").build());
 
         if (r1.isPresent() && r1.get().isSuccess()) {
             SuccessResponse sr = (SuccessResponse) r1.get();
             String id = sr.getRows().get(0).getCells().get("id");
-            demo.update(table, id, getUserAsJSON("waka waka"));
+            // demo.update(table, id, getUserAsJSON("waka waka"));
+            r1 = demo.put(RequestParams.builder(table).id(id).update(getUserAsForm("waka waka")).build(), MediaType.APPLICATION_JSON);
+            assertIsSuccess(r1, "Should update");
         } else {
-            demo.add(table, getUserAsForm("waka waka"));
+            // demo.add(table, getUserAsForm("waka waka"));
+            r1 = demo.post(RequestParams.builder(table).insert(getUserAsForm("waka waka")).build(), MediaType.APPLICATION_JSON);
+            assertIsSuccess(r1, "Should insert");
         }
 
         r1 = demo.find(table, "name", "hehe");
-        if (r1.isPresent() && r1.get().isSuccess()) {
-            throw new IllegalStateException("Shouldn't find this user");
-        }
+        assertIsError(r1, "Shouldn't find this user");
 
         String name = RandomStringUtils.random(10, "abcdefghijklmn");
         demo.add(table, getUserAsJSON(name));
 
         r1 = demo.find(table, "name", name);
-        if (r1.isPresent() && !r1.get().isSuccess()) {
-            throw new IllegalStateException("Should find this user");
-        } else {
-            SuccessResponse sr = (SuccessResponse) r1.get();
-            String id = sr.getRows().get(0).getCells().get("id");
-            demo.delete(table, id);
-        }
+        assertIsSuccess(r1, "Shouldn find this user");
+
+        SuccessResponse sr = (SuccessResponse) r1.get();
+        String id = sr.getRows().get(0).getCells().get("id");
+        // demo.delete(table, id);
+        r1 = demo.delete(RequestParams.builder(table).id(id).build());
+        assertIsSuccess(r1, "Should delete");
 
         r1 = demo.find(table, "name", name);
-        if (r1.isPresent() && r1.get().isSuccess()) {
-            throw new IllegalStateException("Shouldn't find this user");
-        }
+        assertIsError(r1, "Shouldn't find this user");
 
         // Dynamic Query
         r1 = demo.query(table, "findByAgeEquals", "30");
-        if (r1.isPresent() && !r1.get().isSuccess()) {
-            throw new IllegalStateException("Should find this user");
-        }
+        assertIsSuccess(r1, "Should find this user");
+
+        r1 = demo.get(RequestParams.builder(table).dynamicQuery("findByAgeEquals").addQueryParam("30").build());
+        assertIsSuccess(r1, "Should find this user");
 
         r1 = demo.query(table, "findAllByAgeBetween", "30", "40");
-        if (r1.isPresent() && !r1.get().isSuccess()) {
-            throw new IllegalStateException("Should find this user");
-        }
+        assertIsSuccess(r1, "Should find this user");
+
+        // SELECT * FROM users WHERE age BETWEEN ? AND ? ORDER BY age DESC LIMIT 1 OFFSET 0
+        r1 = demo.get(RequestParams.builder(table).dynamicQuery("findAllByAgeBetween").addQueryParam("30").addQueryParam("40").from(0).to(1).sortBy("age", "desc").build());
+        assertIsSuccess(r1, "Should find this user");
 
         /* SPs */
         r1 = demo.call("simpleStoredProcedure");
-        if (r1.isPresent() && !r1.get().isSuccess()) {
-            throw new IllegalStateException("Should return 1");
-        }
+        assertIsSuccess(r1, "Should return 1");
 
         r1 = demo.call("insert_comment",
             new StoredProcedureParam("car_id", "1", false, 1, "INTEGER"),
             new StoredProcedureParam("car_comment", "JUst a comment from Java Client", false, 2, "VARCHAR"));
 
-        if (r1.isPresent() && !r1.get().isSuccess()) {
-            throw new IllegalStateException("Should work");
-        }
+        assertIsSuccess(r1, "Should work");
 
         demo.getAll("comments");
 
@@ -104,9 +109,7 @@ public class App {
             new StoredProcedureParam("in_year", "2001", false, 1, "INTEGER"),
             new StoredProcedureParam("out_total", null, true, 2, "INTEGER"));
 
-        if (r1.isPresent() && !r1.get().isSuccess()) {
-            throw new IllegalStateException("Should be 12");
-        }
+        assertIsSuccess(r1, "Should be 12");
     }
 
     private static List<NameValuePair> getUserAsForm (String name) {
@@ -123,6 +126,18 @@ public class App {
         int age = RandomUtils.nextInt(30, 90);
         String json = "{\"name\":\"%s\",\"birthday\":\"%s\",\"credit\":\"%s\",\"age\":\"%s\"}";
         return String.format(json, name, birthday, credit, age);
+    }
+
+    private static void assertIsSuccess (Optional<AmforeasResponse> r1, String fail) {
+        if (r1.isPresent() && !r1.get().isSuccess()) {
+            throw new IllegalStateException(fail);
+        }
+    }
+
+    private static void assertIsError (Optional<AmforeasResponse> r1, String fail) {
+        if (r1.isPresent() && r1.get().isSuccess()) {
+            throw new IllegalStateException(fail);
+        }
     }
 
     /* Do some of this tests here */

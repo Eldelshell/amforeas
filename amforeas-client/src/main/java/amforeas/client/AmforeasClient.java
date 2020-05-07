@@ -266,6 +266,63 @@ public class AmforeasClient {
         return this.execute(req);
     }
 
+    /* With Request Params */
+
+    public Optional<AmforeasResponse> get (final RequestParams request) {
+        final URI url = this.build(request).orElseThrow();
+        final HttpGet req = new HttpGet(url);
+        req.addHeader(this.accept);
+
+        if (StringUtils.isNotEmpty(request.getPrimaryKey())) {
+            req.addHeader("Primary-Key", request.getPrimaryKey());
+        }
+
+        return this.execute(req);
+    }
+
+    public Optional<AmforeasResponse> post (final RequestParams request, String contentType) {
+        final URI url = this.build(request).orElseThrow();
+        final HttpPost req = new HttpPost(url);
+        req.addHeader(this.accept);
+        req.addHeader(HttpHeaders.CONTENT_TYPE, contentType);
+
+        try {
+            req.setEntity(contentType == MediaType.APPLICATION_JSON ? request.getJSONBody() : request.getFormBody());
+        } catch (Exception e) {
+            final String msg = "Failed to encode body " + e.getMessage();
+            l.error(msg);
+            return Optional.of(new ErrorResponse(request.getResource(), Response.Status.BAD_REQUEST, msg));
+        }
+
+        return this.execute(req);
+    }
+
+    public Optional<AmforeasResponse> put (final RequestParams request, String contentType) {
+        final URI url = this.build(request).orElseThrow();
+        final HttpPut req = new HttpPut(url);
+        req.addHeader(this.accept);
+        req.addHeader(HttpHeaders.CONTENT_TYPE, contentType);
+        req.addHeader("Primary-Key", request.getPrimaryKey());
+
+        try {
+            req.setEntity(contentType == MediaType.APPLICATION_JSON ? request.getJSONBody() : request.getFormBody());
+        } catch (Exception e) {
+            final String msg = "Failed to encode body " + e.getMessage();
+            l.error(msg);
+            return Optional.of(new ErrorResponse(request.getResource(), Response.Status.BAD_REQUEST, msg));
+        }
+
+        return this.execute(req);
+    }
+
+    public Optional<AmforeasResponse> delete (final RequestParams request) {
+        final URI url = this.build(request).orElseThrow();
+        final HttpDelete req = new HttpDelete(url);
+        req.addHeader(this.accept);
+        req.addHeader("Primary-Key", request.getPrimaryKey());
+        return this.execute(req);
+    }
+
     private Optional<URI> build (String path, NameValuePair... nvps) {
         URI url = null;
         try {
@@ -275,6 +332,24 @@ public class AmforeasClient {
                 .setPort(this.port)
                 .setPath(path)
                 .setParameters(nvps)
+                .build();
+        } catch (URISyntaxException e) {
+            l.error("Failed to build URL: {}", e.getMessage());
+        }
+
+        this.logRequest(url);
+        return Optional.ofNullable(url);
+    }
+
+    private Optional<URI> build (final RequestParams request) {
+        URI url = null;
+        try {
+            url = new URIBuilder()
+                .setScheme(this.protocol)
+                .setHost(this.host)
+                .setPort(this.port)
+                .setPath(request.getPath(this.root, this.alias))
+                .setParameters(request.getParameters())
                 .build();
         } catch (URISyntaxException e) {
             l.error("Failed to build URL: {}", e.getMessage());
