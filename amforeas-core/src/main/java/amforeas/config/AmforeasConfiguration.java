@@ -222,7 +222,7 @@ public class AmforeasConfiguration {
     }
 
     public Integer getSecurePort () {
-        return getPropertyInt(AmforeasProperties.SERVER_SECURE_PORT).orElse(8443);
+        return getPropertyInt(AmforeasProperties.SERVER_SECURE_PORT).orElse(null);
     }
 
     public String getJKSFile () {
