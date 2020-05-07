@@ -202,7 +202,7 @@ public class AmforeasConfiguration {
     }
 
     public Integer getServerPort () {
-        return Integer.parseInt(this.properties.get(AmforeasProperties.SERVER_PORT));
+        return getPropertyInt(AmforeasProperties.SERVER_PORT).orElse(8080);
     }
 
     public String getServerRoot () {
@@ -214,21 +214,15 @@ public class AmforeasConfiguration {
     }
 
     public Integer getServerThreadsMin () {
-        return Integer.parseInt(this.properties.get(AmforeasProperties.SERVER_THREADS_MIN));
+        return getPropertyInt(AmforeasProperties.SERVER_THREADS_MIN).orElse(5);
     }
 
     public Integer getServerThreadsMax () {
-        return Integer.parseInt(this.properties.get(AmforeasProperties.SERVER_THREADS_MAX));
+        return getPropertyInt(AmforeasProperties.SERVER_THREADS_MAX).orElse(25);
     }
 
     public Integer getSecurePort () {
-        final String port = this.properties.get(AmforeasProperties.SERVER_SECURE_PORT);
-
-        if (StringUtils.isEmpty(port) || !StringUtils.isNumeric(port)) {
-            return null;
-        }
-
-        return Integer.parseInt(port);
+        return getPropertyInt(AmforeasProperties.SERVER_SECURE_PORT).orElse(null);
     }
 
     public String getJKSFile () {
@@ -237,6 +231,14 @@ public class AmforeasConfiguration {
 
     public String getJKSFilePassword () {
         return this.properties.get(AmforeasProperties.SERVER_SECURE_FILE_PASSWORD);
+    }
+
+    public Integer getPageSize () {
+        return getPropertyInt(AmforeasProperties.SERVER_PAGE_SIZE).orElse(25);
+    }
+
+    public Integer getMaxPageSize () {
+        return getPropertyInt(AmforeasProperties.SERVER_PAGE_SIZE_MAX).orElse(500);
     }
 
     /**
@@ -268,6 +270,20 @@ public class AmforeasConfiguration {
             .filter(rule -> !rule.getRules().isEmpty() && rule.getResource().isPresent() && rule.getResource().get().equals(resource))
             .findFirst()
             .orElse(new ACLRule(alias, resource, this.getAliasRule(alias).getRules()));
+    }
+
+    private Optional<Integer> getPropertyInt (String property) {
+        final String size = this.properties.get(property);
+
+        if (StringUtils.isEmpty(size) || !StringUtils.isNumeric(size)) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(Integer.parseInt(size));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 
 }

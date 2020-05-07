@@ -46,6 +46,8 @@ public class AmforeasProperties {
     public static final String SERVER_PORT = "server.http.port";
     public static final String SERVER_THREADS_MIN = "server.threads.min";
     public static final String SERVER_THREADS_MAX = "server.threads.max";
+    public static final String SERVER_PAGE_SIZE = "server.page.size";
+    public static final String SERVER_PAGE_SIZE_MAX = "server.page.size.max";
 
     /* SSL */
     public static final String SERVER_SECURE_PORT = "server.https.port";
@@ -88,6 +90,8 @@ public class AmforeasProperties {
         this.addProperty(SERVER_THREADS_MIN, "5", true);
         this.addProperty(SERVER_THREADS_MAX, "10", true);
         this.addProperty(ALIAS_LIST, true);
+        this.addProperty(SERVER_PAGE_SIZE, "25", true);
+        this.addProperty(SERVER_PAGE_SIZE_MAX, "500", true);
 
         /* Optionals */
         this.addProperty(SERVER_SECURE_PORT, false);

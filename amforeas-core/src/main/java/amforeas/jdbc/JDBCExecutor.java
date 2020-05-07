@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.slf4j.Logger;
@@ -32,15 +33,18 @@ import org.slf4j.LoggerFactory;
 import amforeas.AmforeasUtils;
 import amforeas.SingletonFactory;
 import amforeas.SingletonFactoryImpl;
+import amforeas.cache.SimpleCache;
 import amforeas.config.DatabaseConfiguration;
 import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.handler.AmforeasResultSetHandler;
+import amforeas.handler.CountResultSetHandler;
 import amforeas.handler.ResultSetMetaDataHandler;
 import amforeas.rest.xstream.Row;
 import amforeas.sql.Delete;
 import amforeas.sql.DynamicFinder;
 import amforeas.sql.Insert;
 import amforeas.sql.Select;
+import amforeas.sql.Table;
 import amforeas.sql.Update;
 import amforeas.sql.dialect.Dialect;
 
@@ -50,6 +54,8 @@ import amforeas.sql.dialect.Dialect;
 public class JDBCExecutor {
 
     private static final Logger l = LoggerFactory.getLogger(JDBCExecutor.class);
+
+    private static final SimpleCache<String, Integer> COUNT_CACHE = new SimpleCache<>();
 
     private final SingletonFactory factory;
 
@@ -76,7 +82,10 @@ public class JDBCExecutor {
 
         try {
             int deleted = run.update(dialect.toStatementString(delete), AmforeasUtils.parseValue(delete.getId()));
-            l.debug("Deleted " + deleted + " records.");
+
+            COUNT_CACHE.remove(delete.getTable().getName());
+
+            l.debug("Deleted {} records.", deleted);
             return deleted;
         } catch (SQLException ex) {
             l.debug(ex.getMessage());
@@ -105,7 +114,9 @@ public class JDBCExecutor {
             else
                 inserted = run.update(dialect.toStatementString(insert), AmforeasUtils.parseValues(insert.getValues()));
 
-            l.debug("Inserted " + inserted + " records.");
+            COUNT_CACHE.remove(insert.getTable().getName());
+
+            l.debug("Inserted {} records.", inserted);
             return inserted;
         } catch (SQLException ex) {
             l.debug(ex.getMessage());
@@ -137,7 +148,7 @@ public class JDBCExecutor {
             l.error(ex.getMessage());
             throw ex;
         }
-        l.debug("Updated " + results.size() + " records.");
+        l.debug("Updated {} records.", results.size());
         return results;
     }
 
@@ -207,7 +218,7 @@ public class JDBCExecutor {
         final ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(true);
         try {
             List<Row> results = run.query(query, res, params);
-            l.debug("Received " + results.size() + " results.");
+            l.debug("Received {} results.", results.size());
             return results;
         } catch (SQLException ex) {
             l.debug(ex.getMessage());
@@ -235,7 +246,7 @@ public class JDBCExecutor {
 
         try {
             List<Row> results = run.query(dialect.toStatementString(select), res);
-            l.debug("Received " + results.size() + " results.");
+            l.debug("Received {} results.", results.size());
             return results;
         } catch (SQLException ex) {
             l.debug(ex.getMessage());
@@ -255,7 +266,7 @@ public class JDBCExecutor {
      * @throws AmforeasBadRequestException 
      */
     public List<Row> executeQuery (final String database, final String queryName, final List<StoredProcedureParam> params) throws SQLException, AmforeasBadRequestException {
-        l.debug("Executing stored procedure " + database + "." + queryName);
+        l.debug("Executing stored procedure {}.{}", database, queryName);
 
         final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(database);
         final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
@@ -268,7 +279,7 @@ public class JDBCExecutor {
             l.debug("Obtain connection from datasource");
             conn = run.getDataSource().getConnection();
 
-            l.debug("Create callable statement for " + call);
+            l.debug("Create callable statement for {}", call);
             cs = conn.prepareCall(call);
 
             l.debug("Add parameters to callable statement");
@@ -281,7 +292,7 @@ public class JDBCExecutor {
                 AmforeasResultSetHandler handler = new AmforeasResultSetHandler(true);
                 rows = handler.handle(rs);
             } else if (!outParams.isEmpty()) {
-                l.debug("No result set, but we are expecting OUT values from " + queryName);
+                l.debug("No result set, but we are expecting OUT values from {}", queryName);
                 Map<String, String> results = new HashMap<String, String>();
                 for (StoredProcedureParam p : outParams) {
                     results.put(p.getName(), cs.getString(p.getIndex())); // thank $deity we only return strings
@@ -308,7 +319,7 @@ public class JDBCExecutor {
                 l.debug(ex.getMessage());
             }
         }
-        l.debug("Received " + rows.size() + " results.");
+        l.debug("Received {} results.", rows.size());
         return rows;
     }
 
@@ -333,10 +344,8 @@ public class JDBCExecutor {
      * @throws SQLException 
      */
     public List<Row> getListOfTables (final String database) throws SQLException {
-        l.debug("Obtaining the list of tables for the database " + database);
-        // if(!conf.allowListTables()){
-        // throw JongoJDBCExceptionFactory.getException(database, "Cant read database metadata. Access Denied", JongoJDBCException.ILLEGAL_READ_CODE);
-        // }
+        l.debug("Obtaining the list of tables for the database {}", database);
+
         final ResultSetHandler<List<Row>> res = new AmforeasResultSetHandler(true);
         final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(database);
         final Dialect dialect = this.factory.getDialectFactory().getDialect(dbconf);
@@ -344,11 +353,42 @@ public class JDBCExecutor {
 
         try {
             List<Row> results = run.query(dialect.listOfTablesStatement(), res);
-            l.debug("Received " + results.size() + " results.");
+            l.debug("Received {} results.", results.size());
             return results;
         } catch (SQLException ex) {
             throw ex;
         }
+    }
+
+    /**
+     * Get the total number of rows a table has.
+     * @param table - the table
+     * @return number of rows on a table. -1 if it fails.
+     */
+    public Integer count (final Table table) {
+        l.debug("Obtaining count for table {}", table.getName());
+
+        Optional<Integer> hit = COUNT_CACHE.get(table.getName());
+        if (hit.isPresent()) {
+            return hit.get();
+        }
+
+        final DatabaseConfiguration dbconf = this.factory.getConfiguration().getDatabaseConfiguration(table.getDatabase());
+        final Dialect dialect = this.factory.getDialectFactory().getDialect(dbconf);
+        final QueryRunner run = this.factory.getJDBCConnectionFactory().getQueryRunner(dbconf);
+
+
+        Integer count = -1;
+        try {
+            count = run.query(dialect.rowCountStatement(table), new CountResultSetHandler());
+        } catch (SQLException ex) {
+            l.warn("Failed to get rows count from table {}: {}", table.getName(), ex.getMessage());
+        }
+
+        // We want to invalidate the cache so we don't keep failing for this query
+        COUNT_CACHE.put(table.getName(), count);
+
+        return count;
     }
 
     /**

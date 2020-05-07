@@ -113,4 +113,10 @@ public class OracleDialectTest extends SQLDialectTest {
     public void testSelect_isNotNull () {
         // TODO Auto-generated method stub
     }
+
+    @Test
+    public void test_rowCountStatement () {
+        String sql = "SELECT COUNT(*) AS total FROM demo1.a_table";
+        assertEquals(sql, d.rowCountStatement(table));
+    }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
 import amforeas.acl.ACLFilter;
 import amforeas.acl.ACLManager;
 import amforeas.jdbc.LimitParam;
@@ -82,7 +83,7 @@ public class DefaultRestService implements RestService {
 
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
 
-        LimitParam limit = LimitParam.valueOf(queryParams);
+        LimitParam limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
         OrderParam order = OrderParam.valueOf(queryParams, pk);
 
         Response response = null;
@@ -105,7 +106,7 @@ public class DefaultRestService implements RestService {
 
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READALL);
 
-        LimitParam limit = LimitParam.valueOf(queryParams);
+        LimitParam limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
         OrderParam order = OrderParam.valueOf(queryParams, pk);
 
         Response response = null;
@@ -130,7 +131,7 @@ public class DefaultRestService implements RestService {
 
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
 
-        LimitParam limit = LimitParam.valueOf(queryParams);
+        LimitParam limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
         OrderParam order = OrderParam.valueOf(queryParams);
 
         Response response = null;
@@ -153,7 +154,7 @@ public class DefaultRestService implements RestService {
 
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
 
-        LimitParam limit = LimitParam.valueOf(queryParams);
+        LimitParam limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
         OrderParam order = OrderParam.valueOf(queryParams);
 
         Response response = null;
@@ -274,6 +275,20 @@ public class DefaultRestService implements RestService {
 
     public Response getStatistics () {
         return u.getUsageData().getResponse();
+    }
+
+    private Integer getPageSize (MultivaluedMap<String, String> params) {
+        if (!StringUtils.isNumeric(params.getFirst("pageSize"))) {
+            return this.factory.getConfiguration().getPageSize();
+        }
+
+        Integer size = Integer.valueOf(params.getFirst("pageSize"));
+        if (size > this.factory.getConfiguration().getMaxPageSize()) {
+            return this.factory.getConfiguration().getPageSize();
+        }
+        return size;
+
+
     }
 
 }

@@ -284,4 +284,10 @@ public class JDBCExecutorTest {
         assertEquals(9, rs.size());
 
     }
+
+    @Test
+    public void testCount () {
+        Table t = new Table("my_demo_db", "car");
+        assertEquals(3, executor.count(t));
+    }
 }

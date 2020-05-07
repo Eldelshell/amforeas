@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
 
-  <property name="amforeas.logs.level" value="DEBUG" />
-  <property name="amforeas.logs.folder" value="logs" />
+  <property name="amforeas.logs.level" value="OFF" />
   <property name="amforeas.logs.pattern" value="[%d{yyyy-MM-dd HH:mm:ss}] [%thread] [%c{1}:%L] [%p] %m%n" />
 
   <appender name="STDIN" class="ch.qos.logback.core.ConsoleAppender">

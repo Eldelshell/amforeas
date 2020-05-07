@@ -59,6 +59,15 @@ public class LimitParam {
         return limit;
     }
 
+    public static LimitParam valueOf (final MultivaluedMap<String, String> pathParams, final Integer pageSize) {
+        if (StringUtils.isNumeric(pathParams.getFirst("page"))) {
+            Integer page = Integer.valueOf(pathParams.getFirst("page"));
+            return new LimitParam(pageSize, (page - 1) * pageSize);
+        }
+
+        return LimitParam.valueOf(pathParams);
+    }
+
     /**
      * From the received parameters, try to obtain a LimitParam object. By default, the LimitParam
      * always has a limit of 25 and an offset (start) in 0.

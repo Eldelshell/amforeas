@@ -10,7 +10,7 @@
  * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package amforeas.rest.xstream;
+package amforeas.client.model;
 
 import java.util.List;
 import javax.ws.rs.core.Response;

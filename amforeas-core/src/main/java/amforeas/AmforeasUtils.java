@@ -15,10 +15,10 @@ package amforeas;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -28,6 +28,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import amforeas.exceptions.AmforeasBadRequestException;
@@ -54,7 +55,7 @@ public class AmforeasUtils {
         try {
             ret = f.parseDateTime(arg);
         } catch (IllegalArgumentException e) {
-            l.debug(arg + " is not a valid ISO DateTime");
+            l.debug("{} is not a valid ISO DateTime", arg);
         }
         return ret;
     }
@@ -79,7 +80,7 @@ public class AmforeasUtils {
         try {
             ret = df.parseDateTime(arg);
         } catch (IllegalArgumentException e) {
-            l.debug(arg + " is not a valid ISO date");
+            l.debug("{} is not a valid ISO date", arg);
         }
 
         return ret;
@@ -105,7 +106,7 @@ public class AmforeasUtils {
         try {
             ret = df.parseDateTime(arg);
         } catch (IllegalArgumentException e) {
-            l.debug(arg + " is not a valid ISO time");
+            l.debug("{} is not a valid ISO time", arg);
         }
 
         return ret;
@@ -128,13 +129,7 @@ public class AmforeasUtils {
      * @return a vararg of java.sql Objects
      */
     public static Object[] parseValues (List<String> values) {
-        List<Object> res = new ArrayList<Object>();
-
-        for (String val : values) {
-            res.add(parseValue(val));
-        }
-
-        return res.toArray();
+        return values.stream().map(AmforeasUtils::parseValue).collect(Collectors.toList()).toArray();
     }
 
     /**
@@ -150,6 +145,7 @@ public class AmforeasUtils {
      */
     public static Object parseValue (String val) {
         Object ret = null;
+        // TODO: REFACTOR THIS!!!!!
         if (!StringUtils.isWhitespace(val) && StringUtils.isNumeric(val)) {
             try {
                 ret = Integer.valueOf(val);
@@ -159,17 +155,17 @@ public class AmforeasUtils {
         } else {
             DateTime date = AmforeasUtils.isDateTime(val);
             if (date != null) {
-                l.debug("Got a DateTime " + date.toString(ISODateTimeFormat.dateTime()));
+                l.debug("Got a DateTime {}", date.toString(ISODateTimeFormat.dateTime()));
                 ret = new java.sql.Timestamp(date.getMillis());
             } else {
                 date = AmforeasUtils.isDate(val);
                 if (date != null) {
-                    l.debug("Got a Date " + date.toString(ISODateTimeFormat.date()));
+                    l.debug("Got a Date {}", date.toString(ISODateTimeFormat.date()));
                     ret = new java.sql.Date(date.getMillis());
                 } else {
                     date = AmforeasUtils.isTime(val);
                     if (date != null) {
-                        l.debug("Got a Time " + date.toString(ISODateTimeFormat.time()));
+                        l.debug("Got a Time {}", date.toString(ISODateTimeFormat.time()));
                         ret = new java.sql.Time(date.getMillis());
                     }
                 }
@@ -331,5 +327,16 @@ public class AmforeasUtils {
 
     public static String getHashedPassword (final String password) {
         return DigestUtils.sha256Hex(password);
+    }
+
+    /**
+     * Convert an object to JSON
+     * @param obj - the object to convert
+     * @return a string
+     * @throws JsonProcessingException 
+     */
+    public static String writeAsJSON (final Object obj) throws JsonProcessingException {
+        final ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(obj);
     }
 }

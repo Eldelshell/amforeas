@@ -9,8 +9,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
-
-package amforeas.rest.xstream;
+package amforeas.client.model;
 
 import java.util.List;
 import javax.ws.rs.core.Response;
@@ -22,56 +21,30 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * Represent that an operation has succeeded. 
+ * Amforeas Response for HTTP HEAD requests for the resources metadata. Currently it only supports tables & views.
+ * @author Alejandro Ayuso 
  */
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SuccessResponse implements AmforeasResponse {
-
+public class HeadResponse implements AmforeasResponse {
     private boolean success = true;
     private Response.Status status;
     private List<Row> rows;
     private String resource;
-    private Pagination pagination;
 
-    public SuccessResponse() {
+    public HeadResponse() {
         this.status = Response.Status.OK;
     }
 
-    /**
-     * Instantiates a new success response for the given resource and results with the
-     * given HTTP code.
-     * @param resource the name of the resource being accessed
-     * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
-     * @param status a HTTP code to give to the client
-     */
-    public SuccessResponse(String resource, List<Row> results, Response.Status status) {
+    public HeadResponse(String resource, List<Row> results, Response.Status status) {
         this.resource = resource;
         this.rows = results;
         this.status = status;
     }
 
-    /**
-     * Instantiates a new success response for the given resource and results with a 200 HTTP code.
-     * @param resource the name of the resource being accessed
-     * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
-     */
-    public SuccessResponse(String resource, List<Row> results) {
+    public HeadResponse(String resource, List<Row> results) {
         this.resource = resource;
         this.rows = results;
-        this.status = Response.Status.OK;
-    }
-
-    /**
-     * Instantiates a new success response for the given resource and results with a 200 HTTP code.
-     * @param resource the name of the resource being accessed
-     * @param results a list of {@link amforeas.rest.xstream.Row} with the results of the operation
-     * @param pagination - the {@link amforeas.rest.xstream.Pagination} object
-     */
-    public SuccessResponse(String resource, List<Row> results, Pagination pagination) {
-        this.resource = resource;
-        this.rows = results;
-        this.pagination = pagination;
         this.status = Response.Status.OK;
     }
 
@@ -92,7 +65,7 @@ public class SuccessResponse implements AmforeasResponse {
     }
 
     @Override
-    public Status getStatus () {
+    public Response.Status getStatus () {
         return status;
     }
 
@@ -116,13 +89,4 @@ public class SuccessResponse implements AmforeasResponse {
     public void setSuccess (boolean success) {
         this.success = success;
     }
-
-    public Pagination getPagination () {
-        return pagination;
-    }
-
-    public void setPagination (Pagination pagination) {
-        this.pagination = pagination;
-    }
-
 }

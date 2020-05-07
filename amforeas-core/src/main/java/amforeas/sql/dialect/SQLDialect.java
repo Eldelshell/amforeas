@@ -18,6 +18,7 @@ import amforeas.sql.Delete;
 import amforeas.sql.DynamicFinder;
 import amforeas.sql.Insert;
 import amforeas.sql.Select;
+import amforeas.sql.Table;
 import amforeas.sql.Update;
 
 import org.apache.commons.lang3.StringUtils;
@@ -136,6 +137,11 @@ public class SQLDialect implements Dialect {
     @Override
     public String listOfTablesStatement () {
         throw new UnsupportedOperationException("Operation not supported");
+    }
+
+    @Override
+    public String rowCountStatement (final Table table) {
+        return "SELECT COUNT(*) AS total FROM " + table.getName();
     }
 
     protected StringBuilder appendWhereClause (final StringBuilder b, Select select) {
