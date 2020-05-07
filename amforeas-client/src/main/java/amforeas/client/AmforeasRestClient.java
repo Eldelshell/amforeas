@@ -43,11 +43,12 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import amforeas.AmforeasUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import amforeas.client.handler.AmforeasResponseHandler;
-import amforeas.jdbc.StoredProcedureParam;
-import amforeas.rest.xstream.AmforeasResponse;
-import amforeas.rest.xstream.ErrorResponse;
+import amforeas.client.model.AmforeasResponse;
+import amforeas.client.model.ErrorResponse;
+import amforeas.client.model.StoredProcedureParam;
 
 public class AmforeasRestClient implements AmforeasClient<AmforeasResponse> {
 
@@ -246,7 +247,7 @@ public class AmforeasRestClient implements AmforeasClient<AmforeasResponse> {
         req.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
 
         try {
-            req.setEntity(new StringEntity(AmforeasUtils.writeAsJSON(params)));
+            req.setEntity(new StringEntity(writeAsJSON(params)));
         } catch (Exception e) {
             final String msg = "Failed to encode JSON body " + e.getMessage();
             l.error(msg);
@@ -380,6 +381,17 @@ public class AmforeasRestClient implements AmforeasClient<AmforeasResponse> {
         if (l.isDebugEnabled()) {
             l.debug("Performing request {}", uri.toASCIIString());
         }
+    }
+
+    /**
+     * Convert an object to JSON
+     * @param obj - the object to convert
+     * @return a string
+     * @throws JsonProcessingException 
+     */
+    private String writeAsJSON (final Object obj) throws JsonProcessingException {
+        final ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(obj);
     }
 
 }

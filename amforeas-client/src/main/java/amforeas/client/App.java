@@ -22,9 +22,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import amforeas.jdbc.StoredProcedureParam;
-import amforeas.rest.xstream.AmforeasResponse;
-import amforeas.rest.xstream.SuccessResponse;
+import amforeas.client.model.AmforeasResponse;
+import amforeas.client.model.StoredProcedureParam;
+import amforeas.client.model.SuccessResponse;
 
 public class App {
 
@@ -36,7 +36,7 @@ public class App {
 
         l.info("Running Amforeas Application on http://localhost:8080/amforeas/demo1");
 
-        AmforeasClient demo = new AmforeasRestClient("http", "localhost", 8080, "amforeas", "demo1");
+        AmforeasClient<AmforeasResponse> demo = new AmforeasRestClient("http", "localhost", 8080, "amforeas", "demo1");
         demo.meta();
         demo.meta(table);
 

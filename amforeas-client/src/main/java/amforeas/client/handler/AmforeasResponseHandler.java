@@ -21,9 +21,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import amforeas.rest.xstream.AmforeasResponse;
-import amforeas.rest.xstream.ErrorResponse;
-import amforeas.rest.xstream.SuccessResponse;
+import amforeas.client.model.AmforeasResponse;
+import amforeas.client.model.ErrorResponse;
+import amforeas.client.model.SuccessResponse;
 
 public class AmforeasResponseHandler implements ResponseHandler<AmforeasResponse> {
 

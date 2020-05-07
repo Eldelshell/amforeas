@@ -3,7 +3,7 @@ package amforeas.client;
 import java.util.List;
 import java.util.Optional;
 import org.apache.http.NameValuePair;
-import amforeas.jdbc.StoredProcedureParam;
+import amforeas.client.model.StoredProcedureParam;
 
 public interface AmforeasClient<T> {
 
