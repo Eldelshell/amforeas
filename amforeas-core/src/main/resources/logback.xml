@@ -64,7 +64,7 @@
     <appender-ref ref="MAIN"/>
   </logger>
   
-  <logger name="amforeas.PerformanceLogger" level="DEBUG">
+  <logger name="amforeas.PerformanceLogger" level="${amforeas.logs.level}">
     <appender-ref ref="PERFORMANCE"/>
   </logger>
   
