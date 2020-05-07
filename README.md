@@ -20,15 +20,17 @@ Amforeas is based on the premise that you love your database, hence there's no a
 
 ## Features
 
-* Easy installation & configuration.
+* [Easy installation & configuration.](https://github.com/Eldelshell/amforeas/wiki/Installation)
 * Support for any RDBMS with a JDBC Driver.
 * Support for multiple databases on a single instance.
 * Tested for security and performance.
 * No administration.
-* Grails style Dynamic Finders
-* Model/Store API for Python.
+* [Grails style Dynamic Finders.](https://github.com/Eldelshell/amforeas/wiki/Dynamic-Finders)
+* Model/Store API for Python 2 (Python 3 planned)
+* Java client library
 * Convention over configuration.
 * Call functions and stored procedures.
+* [Access control list (ACL)](https://github.com/Eldelshell/amforeas/wiki/Access-Control-Lists)
 
 You can
 
@@ -36,7 +38,7 @@ You can
 * Run as a standalone server.
 * Deploy in your favorite JEE application server (Wildfly, Tomcat, Glassfish).
 
-##Usages
+## Usages
 This are some projects where Amforeas is ideal:
 
 * Microservices access to data.
@@ -46,15 +48,25 @@ This are some projects where Amforeas is ideal:
 * Data-warehousing.
 * Cron jobs.
 * Provide restricted access to a database server.
-* Mock server
+* Stubs server.
+
+### Currently supported databases
+
+* PostgreSQL
+* MySQL/MariaDB
+* Derby
+* HSQLDB (in-memory & file)
+* H2 (in-memory, file & remote)
+* MSSQL
+* Oracle
 
 ## Future
 
-* GraphQL
 * JWT authorization
 * More RDBMS dialects
 * NoSQL database dialects
 * First Level Cache
+* GraphQL
 
 ## Installation
 
@@ -63,7 +75,7 @@ For installation instructions check the [Wiki](https://github.com/Eldelshell/amf
 * * *
 
 ## Examples
-This examples are from data when running Amforeas en demo mode.
+This examples are from data when running Amforeas with a demo application.
 
 ### Read (GET) a resource
 To read (GET) a user with id 1 from its table, we perform the following:
