@@ -73,7 +73,7 @@ public class Select {
     }
 
     public Select addColumn (String column) {
-        this.columns.add(column);
+        this.columns.add(column.strip());
         return this;
     }
 
