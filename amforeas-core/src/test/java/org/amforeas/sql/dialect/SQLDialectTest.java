@@ -161,6 +161,25 @@ public class SQLDialectTest {
         assertEquals(sql, d.rowCountStatement(table));
     }
 
+    @Test
+    public void testSelect_columns () {
+        doTest("SELECT t.a FROM demo1.a_table t", new Select(table).addColumn("a"));
+        doTest("SELECT t.a,t.b FROM demo1.a_table t", new Select(table).addColumn("a").addColumn("b"));
+
+        var sql = "SELECT t.a FROM demo1.a_table t WHERE t.tableId IS NULL";
+        var sel = new Select(table).setParameter(new SelectParam(table.getPrimaryKey(), Operator.ISNULL)).addColumn("a");
+        doTest(sql, sel);
+
+        sql = "SELECT * FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY t.name DESC ) AS ROW_NUMBER, t.a FROM demo1.a_table t WHERE t.tableId = ?) WHERE ROW_NUMBER BETWEEN 0 AND 25";
+        sel = new Select(table)
+            .setParameter(new SelectParam(table.getPrimaryKey(), Operator.EQUALS, "1"))
+            .setLimitParam(l)
+            .setOrderParam(new OrderParam("name", "DESC"))
+            .addColumn("a");
+
+        doTest(sql, sel);
+    }
+
     public void doTest (String expected, Object obj) {
         if (obj instanceof Select) {
             assertEquals(expected, d.toStatementString((Select) obj));

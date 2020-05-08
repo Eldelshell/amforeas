@@ -123,88 +123,100 @@ public class RestControllerTest {
 
     @Test
     public void testReadResource () {
-
-        SuccessResponse r = (SuccessResponse) controller.getResource("users", "id", "0", limit, order);
-        testSuccessResponse(r, Response.Status.OK, 1);
-
-        r = (SuccessResponse) controller.getResource("users", "name", "foo", limit, order);
-        testSuccessResponse(r, Response.Status.OK, 1);
-
-        r = (SuccessResponse) controller.getResource("users", "birthday", "1992-01-15", limit, order);
-        testSuccessResponse(r, Response.Status.OK, 1);
-
-        r = (SuccessResponse) controller.getResource("users", "age", "33", limit, order);
-        testSuccessResponse(r, Response.Status.OK, 1);
-
-        r = (SuccessResponse) controller.getResource("users", "credit", "32.5", limit, order);
-        testSuccessResponse(r, Response.Status.OK, 1);
-
-        ErrorResponse err = (ErrorResponse) controller.getResource("", "id", "0", limit, order);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
-
-        err = (ErrorResponse) controller.getResource(null, null, null, limit, order);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
-
-        // fails if we try for a non-existing resource.
-        err = (ErrorResponse) controller.getResource("users", "id", "1999", limit, order);
-        testErrorResponse(err, Response.Status.NOT_FOUND, null, null);
-
-        err = (ErrorResponse) controller.getResource("users", "id", "not an integer", limit, order);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", -3438);
-
-        err = (ErrorResponse) controller.getResource("users", "name", "1999", limit, order);
-        testErrorResponse(err, Response.Status.NOT_FOUND, null, null);
-
-        err = (ErrorResponse) controller.getResource("users", "id", "", limit, order);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
-
-        err = (ErrorResponse) controller.getResource("users", "id", null, limit, order);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
-
-        err = (ErrorResponse) controller.getResource("users", "", null, limit, order);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
-
-        err = (ErrorResponse) controller.getResource("users", null, null, limit, order);
-        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
+        doTestRead(null);
 
         // test a table with a custom column
         order.setColumn("cid");
-        r = (SuccessResponse) controller.getResource("car", "cid", "1", limit, order);
+        var r = (SuccessResponse) controller.getResource("car", "cid", "1", limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 1);
 
-        r = (SuccessResponse) controller.getResource("car", "transmission", "Automatic", limit, order);
+        r = (SuccessResponse) controller.getResource("car", "transmission", "Automatic", limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 1);
+    }
+
+    @Test
+    public void testReadResource_withCols () {
+        doTestRead("name");
+        doTestRead("name, age");
+        doTestRead("name,age");
+    }
+
+    private void doTestRead (String cols) {
+        var r = (SuccessResponse) controller.getResource("users", "id", "0", limit, order, cols);
+        testSuccessResponse(r, Response.Status.OK, 1);
+
+        r = (SuccessResponse) controller.getResource("users", "name", "foo", limit, order, cols);
+        testSuccessResponse(r, Response.Status.OK, 1);
+
+        r = (SuccessResponse) controller.getResource("users", "birthday", "1992-01-15", limit, order, cols);
+        testSuccessResponse(r, Response.Status.OK, 1);
+
+        r = (SuccessResponse) controller.getResource("users", "age", "33", limit, order, cols);
+        testSuccessResponse(r, Response.Status.OK, 1);
+
+        r = (SuccessResponse) controller.getResource("users", "credit", "32.5", limit, order, cols);
+        testSuccessResponse(r, Response.Status.OK, 1);
+
+        var err = (ErrorResponse) controller.getResource("", "id", "0", limit, order, cols);
+        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
+
+        err = (ErrorResponse) controller.getResource(null, null, null, limit, order, cols);
+        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
+
+        // fails if we try for a non-existing resource.
+        err = (ErrorResponse) controller.getResource("users", "id", "1999", limit, order, cols);
+        testErrorResponse(err, Response.Status.NOT_FOUND, null, null);
+
+        err = (ErrorResponse) controller.getResource("users", "id", "not an integer", limit, order, cols);
+        testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", -3438);
+
+        err = (ErrorResponse) controller.getResource("users", "name", "1999", limit, order, cols);
+        testErrorResponse(err, Response.Status.NOT_FOUND, null, null);
+
+        err = (ErrorResponse) controller.getResource("users", "id", "", limit, order, cols);
+        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
+
+        err = (ErrorResponse) controller.getResource("users", "id", null, limit, order, cols);
+        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
+
+        err = (ErrorResponse) controller.getResource("users", "", null, limit, order, cols);
+        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
+
+        err = (ErrorResponse) controller.getResource("users", null, null, limit, order, cols);
+        testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
+
+
     }
 
     @Test
     public void testReadAllResources () {
         limit = new LimitParam();
         order = new OrderParam();
-        SuccessResponse r = (SuccessResponse) controller.getAllResources("maker", limit, order);
+        var r = (SuccessResponse) controller.getAllResources("maker", limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 25);
         testPagination(r, Pagination.of(limit, 25, 62));
 
         order.setColumn("cid");
-        r = (SuccessResponse) controller.getAllResources("car", limit, order);
+        r = (SuccessResponse) controller.getAllResources("car", limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 3);
         testPagination(r, Pagination.of(limit, 3, 3));
 
         order.setColumn("id");
-        ErrorResponse err = (ErrorResponse) controller.getAllResources("no_exists", limit, order);
+        var err = (ErrorResponse) controller.getAllResources("no_exists", limit, order, null);
         testErrorResponse(err, Response.Status.BAD_REQUEST, "42501", Integer.valueOf(-5501));
 
-        err = (ErrorResponse) controller.getAllResources("", limit, order);
+        err = (ErrorResponse) controller.getAllResources("", limit, order, null);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
-        err = (ErrorResponse) controller.getAllResources(null, limit, order);
+        err = (ErrorResponse) controller.getAllResources(null, limit, order, null);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
-        r = (SuccessResponse) controller.getAllResources("empty", limit, order);
+        r = (SuccessResponse) controller.getAllResources("empty", limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 0);
         testPagination(r, Pagination.of(limit, 0, 0));
 
         // test a view
-        r = (SuccessResponse) controller.getAllResources("maker_stats_2010", new LimitParam(1000), new OrderParam("month"));
+        r = (SuccessResponse) controller.getAllResources("maker_stats_2010", new LimitParam(1000), new OrderParam("month"), null);
         testSuccessResponse(r, Response.Status.OK, 744);
         testPagination(r, Pagination.of(new LimitParam(1000), 744, 744));
     }
@@ -224,7 +236,7 @@ public class RestControllerTest {
         testDynamicFinder("users", "findAllByCreditLessThanEquals", "0");
         testDynamicFinder("sales_stats", "findAllByLast_updateBetween", 6, "2000-01-01T00:00:00.000Z", "2000-06-01T23:55:00.000Z");
 
-        ErrorResponse err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThan", Arrays.asList(new String[] {"0"}), limit, order);
+        var err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThan", Arrays.asList(new String[] {"0"}), limit, order);
         testErrorResponse(err, Response.Status.NOT_FOUND, null, null);
 
         err = (ErrorResponse) controller.findByDynamicFinder("users", "findAllByCreditLessThhhhan", Arrays.asList(new String[] {"0"}), limit, order);
@@ -267,21 +279,21 @@ public class RestControllerTest {
 
     @Test
     public void testCreateResource () {
-        UserMock newMock = UserMock.getRandomInstance();
-        SuccessResponse r = (SuccessResponse) controller.insertResource("users", "id", newMock.toJSON());
+        var newMock = UserMock.getRandomInstance();
+        var r = (SuccessResponse) controller.insertResource("users", "id", newMock.toJSON());
         testSuccessResponse(r, Response.Status.CREATED, 1);
 
-        r = (SuccessResponse) controller.getResource("users", "name", newMock.name, limit, order);
+        r = (SuccessResponse) controller.getResource("users", "name", newMock.name, limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 1);
 
         newMock = UserMock.getRandomInstance();
         r = (SuccessResponse) controller.insertResource("users", "id", newMock.toMap());
         testSuccessResponse(r, Response.Status.CREATED, 1);
 
-        r = (SuccessResponse) controller.getResource("users", "name", newMock.name, limit, order);
+        r = (SuccessResponse) controller.getResource("users", "name", newMock.name, limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 1);
 
-        ErrorResponse err = (ErrorResponse) controller.insertResource("users", "id", "");
+        var err = (ErrorResponse) controller.insertResource("users", "id", "");
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
         err = (ErrorResponse) controller.insertResource("users", "id", new HashMap<String, String>());
@@ -324,16 +336,16 @@ public class RestControllerTest {
         wrongUserParams.put("name", ""); // name can be empty
         r = (SuccessResponse) controller.insertResource("users", "id", wrongUserParams);
         testSuccessResponse(r, Response.Status.CREATED, 1);
-        r = (SuccessResponse) controller.getResource("users", "name", newMock.name, limit, order);
+        r = (SuccessResponse) controller.getResource("users", "name", newMock.name, limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 1);
     }
 
     @Test
     public void testUpdateResource () {
-        SuccessResponse r = (SuccessResponse) controller.updateResource("users", "id", "0", "{\"age\":\"90\"}");
+        var r = (SuccessResponse) controller.updateResource("users", "id", "0", "{\"age\":\"90\"}");
         testSuccessResponse(r, Response.Status.OK, 1);
 
-        ErrorResponse err = (ErrorResponse) controller.updateResource("users", "id", "0", "{\"age\":\"\"}"); // age can't be empty
+        var err = (ErrorResponse) controller.updateResource("users", "id", "0", "{\"age\":\"\"}"); // age can't be empty
         testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", Integer.valueOf(-3438));
 
         err = (ErrorResponse) controller.updateResource("users", "id", "0", "{\"age\":}"); // invalid json
@@ -360,20 +372,20 @@ public class RestControllerTest {
 
     @Test
     public void testRemoveResource () {
-        UserMock newMock = UserMock.getRandomInstance();
-        SuccessResponse r = (SuccessResponse) controller.insertResource("users", "id", newMock.toJSON());
+        var newMock = UserMock.getRandomInstance();
+        var r = (SuccessResponse) controller.insertResource("users", "id", newMock.toJSON());
         testSuccessResponse(r, Response.Status.CREATED, 1);
 
-        r = (SuccessResponse) controller.getResource("users", "name", newMock.name, limit, order);
+        r = (SuccessResponse) controller.getResource("users", "name", newMock.name, limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 1);
 
-        String id = getId(r, "id");
+        var id = getId(r, "id");
         assertNotNull(id);
 
         r = (SuccessResponse) controller.deleteResource("users", "id", id);
         testSuccessResponse(r, Response.Status.OK, 1);
 
-        ErrorResponse err = (ErrorResponse) controller.deleteResource("users", "id", "");
+        var err = (ErrorResponse) controller.deleteResource("users", "id", "");
         testErrorResponse(err, Response.Status.BAD_REQUEST, "22018", Integer.valueOf(-3438));
 
         err = (ErrorResponse) controller.deleteResource("users", "id", null);
@@ -388,55 +400,55 @@ public class RestControllerTest {
 
     @Test
     public void testFindResources () {
-        SuccessResponse r = (SuccessResponse) controller.findResources("comments", "car_id", "0", limit, order);
+        var r = (SuccessResponse) controller.findResources("comments", "car_id", "0", limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 2);
         testPagination(r, Pagination.of(limit, 2, 4));
 
-        r = (SuccessResponse) controller.findResources("comments", "car_id", "2", limit, order);
+        r = (SuccessResponse) controller.findResources("comments", "car_id", "2", limit, order, null);
         testSuccessResponse(r, Response.Status.OK, 1);
         testPagination(r, Pagination.of(limit, 1, 4));
 
-        r = (SuccessResponse) controller.findResources("maker_stats_2010", "maker", "FIAT", limit, new OrderParam("month"));
+        r = (SuccessResponse) controller.findResources("maker_stats_2010", "maker", "FIAT", limit, new OrderParam("month"), null);
         testSuccessResponse(r, Response.Status.OK, 12);
         testPagination(r, Pagination.of(limit, 12, 744));
 
-        ErrorResponse err = (ErrorResponse) controller.findResources("comments", "car_id", "1", limit, order);
+        var err = (ErrorResponse) controller.findResources("comments", "car_id", "1", limit, order, null);
         testErrorResponse(err, Response.Status.NOT_FOUND, null, null);
 
-        err = (ErrorResponse) controller.findResources("comments", "car_id_grrr", "2", limit, order);
+        err = (ErrorResponse) controller.findResources("comments", "car_id_grrr", "2", limit, order, null);
         testErrorResponse(err, Response.Status.BAD_REQUEST, "42501", Integer.valueOf(-5501));
 
-        err = (ErrorResponse) controller.findResources("comments", "car_id", "", limit, order);
+        err = (ErrorResponse) controller.findResources("comments", "car_id", "", limit, order, null);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
-        err = (ErrorResponse) controller.findResources("comments", "", "0", limit, order);
+        err = (ErrorResponse) controller.findResources("comments", "", "0", limit, order, null);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
 
-        err = (ErrorResponse) controller.findResources("", "id", "0", limit, order);
+        err = (ErrorResponse) controller.findResources("", "id", "0", limit, order, null);
         testErrorResponse(err, Response.Status.BAD_REQUEST, null, null);
     }
 
     @Test
     public void testSimpleFunction () throws AmforeasBadRequestException {
-        SuccessResponse r = (SuccessResponse) controller.executeStoredProcedure("simpleStoredProcedure", "[]");
+        var r = (SuccessResponse) controller.executeStoredProcedure("simpleStoredProcedure", "[]");
         testSuccessResponse(r, Response.Status.OK, 1);
     }
 
     @Test
     public void testSimpleStoredProcedure () throws AmforeasBadRequestException {
-        String json =
+        var json =
             "[{\"value\":4,\"name\":\"car_id\",\"outParameter\":false,\"type\":\"INTEGER\",\"index\":1},{\"value\":\"This is a comment\",\"name\":\"comment\",\"outParameter\":false,\"type\":\"VARCHAR\",\"index\":2}]";
         AmforeasUtils.getStoredProcedureParamsFromJSON(json);
-        SuccessResponse r = (SuccessResponse) controller.executeStoredProcedure("insert_comment", json);
+        var r = (SuccessResponse) controller.executeStoredProcedure("insert_comment", json);
         testSuccessResponse(r, Response.Status.OK, 0);
     }
 
     @Test
     public void testComplexStoredProcedure () throws AmforeasBadRequestException {
-        String json =
+        var json =
             "[{\"value\":2010,\"name\":\"in_year\",\"outParameter\":false,\"type\":\"INTEGER\",\"index\":1},{\"name\":\"out_total\",\"outParameter\":true,\"type\":\"INTEGER\",\"index\":2}]";
         AmforeasUtils.getStoredProcedureParamsFromJSON(json);
-        SuccessResponse r = (SuccessResponse) controller.executeStoredProcedure("get_year_sales", json);
+        var r = (SuccessResponse) controller.executeStoredProcedure("get_year_sales", json);
         testSuccessResponse(r, Response.Status.OK, 1);
         assertEquals("12", r.getRows().get(0).getCells().get("out_total"));
     }
@@ -472,12 +484,12 @@ public class RestControllerTest {
     }
 
     private void testDynamicFinder (String resource, String finder, String... arr) {
-        SuccessResponse r = (SuccessResponse) controller.findByDynamicFinder(resource, finder, Arrays.asList(arr), limit, order);
+        var r = (SuccessResponse) controller.findByDynamicFinder(resource, finder, Arrays.asList(arr), limit, order);
         testSuccessResponse(r, Response.Status.OK);
     }
 
     private void testDynamicFinder (String resource, String finder, int expectedResults, String... arr) {
-        SuccessResponse r = (SuccessResponse) controller.findByDynamicFinder(resource, finder, Arrays.asList(arr), limit, order);
+        var r = (SuccessResponse) controller.findByDynamicFinder(resource, finder, Arrays.asList(arr), limit, order);
         testSuccessResponse(r, Response.Status.OK, expectedResults);
     }
 

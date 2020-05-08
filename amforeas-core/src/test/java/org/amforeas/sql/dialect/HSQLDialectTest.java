@@ -29,15 +29,11 @@ public class HSQLDialectTest extends SQLDialectTest {
 
     @Test
     @Override
-    public void testDelete () {
-        // TODO Implement
-    }
+    public void testDelete () {}
 
     @Test
     @Override
-    public void testInsert () {
-        // TODO Implement
-    }
+    public void testInsert () {}
 
     @Test
     @Override
@@ -88,7 +84,13 @@ public class HSQLDialectTest extends SQLDialectTest {
 
     @Test
     @Override
-    public void testUpdate () {
-        // TODO Implement
-    }
+    public void testUpdate () {}
+
+    @Test
+    @Override
+    public void test_rowCountStatement () {}
+
+    @Test
+    @Override
+    public void testSelect_columns () {}
 }

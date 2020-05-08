@@ -65,7 +65,7 @@ public class DefaultRestService implements RestService {
             return new ErrorResponse(resource, Response.Status.METHOD_NOT_ALLOWED).getResponse();
         }
 
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.RSMETA);
+        var p = PerformanceLogger.start(PerformanceLogger.Code.RSMETA);
 
         try {
             return factory.getRESTController(alias).getResourceMetadata(resource).getResponse();
@@ -81,14 +81,15 @@ public class DefaultRestService implements RestService {
             return new ErrorResponse(resource, Response.Status.METHOD_NOT_ALLOWED).getResponse();
         }
 
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
+        var p = PerformanceLogger.start(PerformanceLogger.Code.READ);
 
-        LimitParam limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
-        OrderParam order = OrderParam.valueOf(queryParams, pk);
+        var limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
+        var order = OrderParam.valueOf(queryParams, pk);
+        var columns = queryParams.getFirst("columns");
 
         Response response = null;
         try {
-            response = factory.getRESTController(alias).getResource(resource, pk, id, limit, order).getResponse();
+            response = factory.getRESTController(alias).getResource(resource, pk, id, limit, order, columns).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
@@ -104,14 +105,15 @@ public class DefaultRestService implements RestService {
             return new ErrorResponse(resource, Response.Status.METHOD_NOT_ALLOWED).getResponse();
         }
 
-        PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READALL);
+        var p = PerformanceLogger.start(PerformanceLogger.Code.READALL);
 
-        LimitParam limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
-        OrderParam order = OrderParam.valueOf(queryParams, pk);
+        var limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
+        var order = OrderParam.valueOf(queryParams, pk);
+        var columns = queryParams.getFirst("columns");
 
         Response response = null;
         try {
-            response = factory.getRESTController(alias).getAllResources(resource, limit, order).getResponse();
+            response = factory.getRESTController(alias).getAllResources(resource, limit, order, columns).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } catch (Exception e) {
@@ -131,12 +133,13 @@ public class DefaultRestService implements RestService {
 
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
 
-        LimitParam limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
-        OrderParam order = OrderParam.valueOf(queryParams);
+        var limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
+        var order = OrderParam.valueOf(queryParams);
+        var columns = queryParams.getFirst("columns");
 
         Response response = null;
         try {
-            response = factory.getRESTController(alias).findResources(resource, col, arg, limit, order).getResponse();
+            response = factory.getRESTController(alias).findResources(resource, col, arg, limit, order, columns).getResponse();
         } catch (IllegalArgumentException e) {
             response = new ErrorResponse(alias, Response.Status.BAD_REQUEST, e.getMessage()).getResponse();
         } finally {
