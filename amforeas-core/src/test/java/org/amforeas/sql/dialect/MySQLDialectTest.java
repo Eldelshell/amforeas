@@ -29,15 +29,11 @@ public class MySQLDialectTest extends SQLDialectTest {
 
     @Test
     @Override
-    public void testDelete () {
-        // TODO Implement
-    }
+    public void testDelete () {}
 
     @Test
     @Override
-    public void testInsert () {
-        // TODO Implement
-    }
+    public void testInsert () {}
 
     @Test
     @Override
@@ -114,7 +110,29 @@ public class MySQLDialectTest extends SQLDialectTest {
 
     @Test
     @Override
-    public void testUpdate () {
-        // TODO Implement
+    public void testUpdate () {}
+
+    @Test
+    @Override
+    public void test_rowCountStatement () {}
+
+    @Test
+    @Override
+    public void testSelect_columns () {
+        doTest("SELECT t.a FROM demo1.a_table t", new Select(table).addColumn("a"));
+        doTest("SELECT t.a,t.b FROM demo1.a_table t", new Select(table).addColumn("a").addColumn("b"));
+
+        var sql = "SELECT t.a FROM demo1.a_table t WHERE t.tableId IS NULL";
+        var sel = new Select(table).setParameter(new SelectParam(table.getPrimaryKey(), Operator.ISNULL)).addColumn("a");
+        doTest(sql, sel);
+
+        sql = "SELECT t.a FROM demo1.a_table t WHERE t.tableId = ? ORDER BY t.name DESC LIMIT 0,25";
+        sel = new Select(table)
+            .setParameter(new SelectParam(table.getPrimaryKey(), Operator.EQUALS, "1"))
+            .setLimitParam(l)
+            .setOrderParam(new OrderParam("name", "DESC"))
+            .addColumn("a");
+
+        doTest(sql, sel);
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011, 2012 Alejandro Ayuso
+ * Copyright (C) Alejandro Ayuso
  *
  * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -24,49 +24,41 @@ public class MSSQLDialectTest extends SQLDialectTest {
 
     @Test
     @Override
-    public void testDelete () {
-        // TODO Implement
-    }
+    public void testDelete () {}
 
     @Test
     @Override
-    public void testInsert () {
-        // TODO Implement
-    }
+    public void testInsert () {}
 
     @Test
     @Override
-    public void testSelect () {
-        // TODO Implement
-    }
+    public void testSelect () {}
 
     @Test
     @Override
-    public void testUpdate () {
-        // TODO Implement
-    }
+    public void testUpdate () {}
 
     @Test
     @Override
-    public void testSelect_between () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_between () {}
 
     @Test
     @Override
-    public void testSelect_like () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_like () {}
 
     @Test
     @Override
-    public void testSelect_isNull () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_isNull () {}
 
     @Test
     @Override
-    public void testSelect_isNotNull () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_isNotNull () {}
+
+    @Test
+    @Override
+    public void test_rowCountStatement () {}
+
+    @Test
+    @Override
+    public void testSelect_columns () {}
 }

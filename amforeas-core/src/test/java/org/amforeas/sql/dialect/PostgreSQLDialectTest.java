@@ -24,51 +24,43 @@ public class PostgreSQLDialectTest extends SQLDialectTest {
 
     @Test
     @Override
-    public void testDelete () {
-        // TODO Implement
-    }
+    public void testDelete () {}
 
     @Test
     @Override
-    public void testInsert () {
-        // TODO Implement
-    }
+    public void testInsert () {}
 
     @Test
     @Override
-    public void testSelect () {
-        // TODO Implement
-    }
+    public void testSelect () {}
 
     @Test
     @Override
-    public void testUpdate () {
-        // TODO Implement
-    }
+    public void testUpdate () {}
 
     @Test
     @Override
-    public void testSelect_between () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_between () {}
 
     @Test
     @Override
-    public void testSelect_like () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_like () {}
 
     @Test
     @Override
-    public void testSelect_isNull () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_isNull () {}
 
     @Test
     @Override
-    public void testSelect_isNotNull () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_isNotNull () {}
+
+    @Test
+    @Override
+    public void test_rowCountStatement () {}
+
+    @Test
+    @Override
+    public void testSelect_columns () {}
 
 
 }

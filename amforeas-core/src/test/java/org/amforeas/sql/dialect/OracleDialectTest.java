@@ -92,31 +92,28 @@ public class OracleDialectTest extends SQLDialectTest {
 
     @Test
     @Override
-    public void testSelect_between () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_between () {}
 
     @Test
     @Override
-    public void testSelect_like () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_like () {}
 
     @Test
     @Override
-    public void testSelect_isNull () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_isNull () {}
 
     @Test
     @Override
-    public void testSelect_isNotNull () {
-        // TODO Auto-generated method stub
-    }
+    public void testSelect_isNotNull () {}
 
     @Test
+    @Override
     public void test_rowCountStatement () {
         String sql = "SELECT COUNT(*) AS total FROM demo1.a_table";
         assertEquals(sql, d.rowCountStatement(table));
     }
+
+    @Test
+    @Override
+    public void testSelect_columns () {}
 }
