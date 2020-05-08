@@ -155,24 +155,24 @@ public class AmforeasUtils {
         } else {
             DateTime date = AmforeasUtils.isDateTime(val);
             if (date != null) {
-                l.debug("Got a DateTime {}", date.toString(ISODateTimeFormat.dateTime()));
+                l.trace("Got a DateTime {}", date.toString(ISODateTimeFormat.dateTime()));
                 ret = new java.sql.Timestamp(date.getMillis());
             } else {
                 date = AmforeasUtils.isDate(val);
                 if (date != null) {
-                    l.debug("Got a Date {}", date.toString(ISODateTimeFormat.date()));
+                    l.trace("Got a Date {}", date.toString(ISODateTimeFormat.date()));
                     ret = new java.sql.Date(date.getMillis());
                 } else {
                     date = AmforeasUtils.isTime(val);
                     if (date != null) {
-                        l.debug("Got a Time {}", date.toString(ISODateTimeFormat.time()));
+                        l.trace("Got a Time {}", date.toString(ISODateTimeFormat.time()));
                         ret = new java.sql.Time(date.getMillis());
                     }
                 }
             }
 
             if (ret == null && val != null) {
-                l.debug("Not a datetime. Try someting else. ");
+                l.trace("Not a datetime. Try someting else. ");
                 try {
                     ret = new BigDecimal(val);
                 } catch (NumberFormatException e) {
