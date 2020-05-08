@@ -109,7 +109,7 @@ public class DefaultRestServiceTest {
 
     @Test
     public void test_get_acl () {
-        when(controller.getResource(anyString(), anyString(), anyString(), any(LimitParam.class), any(OrderParam.class))).thenReturn(new SuccessResponse());
+        when(controller.getResource(anyString(), anyString(), anyString(), any(LimitParam.class), any(OrderParam.class), anyString())).thenReturn(new SuccessResponse());
 
         when(configuration.getResourceRules("alias1", "foo")).thenReturn(ACLRule.of("alias1", "foo", "all"));
         when(configuration.getResourceRules("alias1", "bar")).thenReturn(ACLRule.of("alias1", "bar", "none"));
@@ -123,7 +123,7 @@ public class DefaultRestServiceTest {
 
     @Test
     public void test_get_errors () {
-        doThrow(new IllegalArgumentException()).when(controller).getResource(anyString(), anyString(), anyString(), any(LimitParam.class), any(OrderParam.class));
+        doThrow(new IllegalArgumentException()).when(controller).getResource(anyString(), anyString(), anyString(), any(LimitParam.class), any(OrderParam.class), anyString());
         when(configuration.getResourceRules(anyString(), anyString())).thenReturn(ACLRule.of("alias1", "all"));
 
         MultivaluedMap<String, String> queryParams = new MultivaluedHashMap<>();
