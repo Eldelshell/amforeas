@@ -13,6 +13,7 @@ package amforeas;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Response;
@@ -140,10 +141,11 @@ public class RestController {
      * @param table the table or view to query
      * @param limit a LimitParam object with the limit values
      * @param order order an OrderParam object with the ordering values.
+     * @param columns - comma separated string of columns
      * @return Returns a AmforeasResponse with the values of the resource. If the resource is not available an error
      * if the table is empty, we return a SuccessResponse with no values.
      */
-    public AmforeasResponse getAllResources (final String table, final LimitParam limit, final OrderParam order) {
+    public AmforeasResponse getAllResources (final String table, final LimitParam limit, final OrderParam order, final String columns) {
         l.debug("Geting all resources from {}.{}", alias, table);
 
         Table t;
@@ -155,6 +157,10 @@ public class RestController {
         }
 
         final Select s = new Select(t).setLimitParam(limit).setOrderParam(order);
+
+        if (StringUtils.isNotEmpty(columns)) {
+            Arrays.asList(columns.split(",")).forEach(s::addColumn);
+        }
 
         AmforeasResponse response = null;
         List<Row> results = null;
@@ -183,9 +189,10 @@ public class RestController {
      * @param arg the value of the col.
      * @param limit a LimitParam object with the limit values
      * @param order an OrderParam object with the ordering values.
+     * @param columns - comma separated string of columns
      * @return Returns a AmforeasResponse with the values of the resource. If the resource is not available an error is returned.
      */
-    public AmforeasResponse getResource (final String table, final String col, final String arg, final LimitParam limit, final OrderParam order) {
+    public AmforeasResponse getResource (final String table, final String col, final String arg, final LimitParam limit, final OrderParam order, final String columns) {
         l.debug("Geting resource from {}.{}  with id {}", alias, table, arg);
 
         Table t;
@@ -200,6 +207,11 @@ public class RestController {
         List<Row> results = null;
         try {
             Select select = new Select(t).setParameter(new SelectParam(col, arg)).setLimitParam(limit).setOrderParam(order);
+
+            if (StringUtils.isNotEmpty(columns)) {
+                Arrays.asList(columns.split(",")).forEach(select::addColumn);
+            }
+
             results = this.getExecutor().get(select, false);
         } catch (Throwable ex) {
             response = handleException(ex, table);
@@ -224,9 +236,10 @@ public class RestController {
      * @param arg the value of the col.
      * @param limit a LimitParam object with the limit values
      * @param order an OrderParam object with the ordering values.
+     * @param columns - comma separated string of columns
      * @return Returns a AmforeasResponse with the values of the resources. If the resources are not available an error is returned.
      */
-    public AmforeasResponse findResources (final String table, final String col, final String arg, final LimitParam limit, final OrderParam order) {
+    public AmforeasResponse findResources (final String table, final String col, final String arg, final LimitParam limit, final OrderParam order, final String columns) {
         l.debug("Geting resource from {}.{} with id {}", alias, table, arg);
 
         if (StringUtils.isEmpty(arg) || StringUtils.isEmpty(col))
@@ -241,6 +254,10 @@ public class RestController {
         }
 
         Select select = new Select(t).setParameter(new SelectParam(col, arg)).setLimitParam(limit).setOrderParam(order);
+
+        if (StringUtils.isNotEmpty(columns)) {
+            Arrays.asList(columns.split(",")).forEach(select::addColumn);
+        }
 
         AmforeasResponse response = null;
         List<Row> results = null;
