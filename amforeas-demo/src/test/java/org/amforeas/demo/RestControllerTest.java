@@ -104,7 +104,7 @@ public class RestControllerTest {
         HeadResponse r = (HeadResponse) controller.getResourceMetadata("users");
         assertEquals(Response.Status.OK, r.getStatus());
         assertTrue(r.isSuccess());
-        assertEquals(6, r.getRows().size());
+        assertEquals(7, r.getRows().size());
 
         r = (HeadResponse) controller.getResourceMetadata("MAKER_STATS_2010");
         assertEquals(Response.Status.OK, r.getStatus());
@@ -497,7 +497,7 @@ public class RestControllerTest {
         for (Row row : response.getRows()) {
             for (String k : row.getCells().keySet()) {
                 if (k.equalsIgnoreCase(id)) {
-                    return row.getCells().get(k);
+                    return row.getCells().get(k).toString();
                 }
             }
         }

@@ -196,7 +196,7 @@ public class XmlXstreamTest {
     }
 
     private List<Row> getBasicRows () {
-        Map<String, String> m1 = new HashMap<String, String>();
+        Map<String, Object> m1 = new HashMap<>();
         List<Row> rows = new ArrayList<Row>();
 
         m1.put("id", "1");
@@ -204,7 +204,7 @@ public class XmlXstreamTest {
         m1.put("age", "56");
         rows.add(new Row(1, m1));
 
-        m1 = new HashMap<String, String>();
+        m1 = new HashMap<>();
         m1.put("id", "2");
         m1.put("name", "test2");
         m1.put("age", "526");

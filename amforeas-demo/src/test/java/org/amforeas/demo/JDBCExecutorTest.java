@@ -155,16 +155,16 @@ public class JDBCExecutorTest {
 
             List<Row> rs = executor.get(s, true);
             Row row = rs.get(0);
-            assertEquals(String.valueOf(u.age), row.getCells().get("age"));
+            assertEquals(u.age, (int) row.getCells().get("age"));
 
             Update up = new Update(t);
-            up.addColumn("name", "foo1").setId(row.getCells().get("id"));
+            up.addColumn("name", "foo1").setId(row.getCells().get("id").toString());
 
             rs = executor.update(up);
             row = rs.get(0);
-            assertEquals(String.valueOf(u.age), row.getCells().get("age"));
+            assertEquals(u.age, (int) row.getCells().get("age"));
 
-            Delete d = new Delete(t).setId(row.getCells().get("id"));
+            Delete d = new Delete(t).setId(row.getCells().get("id").toString());
             r = executor.delete(d);
             assertEquals(1, r);
         }
@@ -209,30 +209,35 @@ public class JDBCExecutorTest {
         Table t = new Table("my_demo_db", "users");
         Select s = new Select(t).setParameter(new SelectParam(t.getPrimaryKey(), Operator.EQUALS, "0"));
         Row row = executor.get(s, false).get(0);
-        assertEquals("0", row.getCells().get("id"));
+        assertEquals(0, (int) row.getCells().get("id"));
+        assertTrue(row.getCells().containsKey("age"));
+        assertFalse(row.getCells().containsKey("photo"));
 
         List<Row> rs = executor.update(new Update(t).setId("0").addColumn("age", "60"));
         row = rs.get(0);
-        assertEquals("0", row.getCells().get("id"));
+        assertEquals(0, (int) row.getCells().get("id"));
         assertEquals("foo", row.getCells().get("name"));
-        assertEquals("60", row.getCells().get("age"));
+        assertEquals(60, (int) row.getCells().get("age"));
+        assertFalse(row.getCells().containsKey("photo"));
 
         rs = executor.update(new Update(t).setId("0").addColumn("age", "70").addColumn("name", "foooer"));
         row = rs.get(0);
-        assertEquals("0", row.getCells().get("id"));
+        assertEquals(0, (int) row.getCells().get("id"));
         assertEquals("foooer", row.getCells().get("name"));
-        assertEquals("70", row.getCells().get("age"));
+        assertEquals(70, (int) row.getCells().get("age"));
+        assertFalse(row.getCells().containsKey("photo"));
 
         // test for empty value
         rs = executor.update(new Update(t).setId("0").addColumn("name", ""));
         row = rs.get(0);
-        assertEquals("0", row.getCells().get("id"));
+        assertEquals(0, (int) row.getCells().get("id"));
         assertEquals("", row.getCells().get("name"));
+        assertFalse(row.getCells().containsKey("photo"));
 
         // test for null value
         rs = executor.update(new Update(t).setId("0").addColumn("age", null));
         row = rs.get(0);
-        assertEquals("0", row.getCells().get("id"));
+        assertEquals(0, (int) row.getCells().get("id"));
         assertEquals(null, row.getCells().get("age"));
         assertTrue(row.getCells().containsKey("age"));
     }
@@ -285,7 +290,7 @@ public class JDBCExecutorTest {
         Table t = new Table("my_demo_db", "users");
         Select s = new Select(t);
         List<Row> rs = executor.getTableMetaData(s);
-        assertEquals(6, rs.size());
+        assertEquals(7, rs.size());
 
         rs = executor.getListOfTables("my_demo_db");
         assertEquals(9, rs.size());
