@@ -293,7 +293,7 @@ public class JDBCExecutor {
                 rows = handler.handle(rs);
             } else if (!outParams.isEmpty()) {
                 l.debug("No result set, but we are expecting OUT values from {}", queryName);
-                Map<String, String> results = new HashMap<String, String>();
+                Map<String, Object> results = new HashMap<>();
                 for (StoredProcedureParam p : outParams) {
                     results.put(p.getName(), cs.getString(p.getIndex())); // thank $deity we only return strings
                 }
