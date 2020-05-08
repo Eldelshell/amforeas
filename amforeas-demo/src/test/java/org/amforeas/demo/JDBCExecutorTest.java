@@ -27,14 +27,15 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import amforeas.SingletonFactoryImpl;
 import amforeas.SingletonFactory;
+import amforeas.SingletonFactoryImpl;
 import amforeas.demo.Demo;
 import amforeas.demo.DemoSingletonFactory;
 import amforeas.enums.Operator;
 import amforeas.exceptions.AmforeasBadRequestException;
 import amforeas.exceptions.StartupException;
 import amforeas.jdbc.JDBCExecutor;
+import amforeas.jdbc.OrderParam;
 import amforeas.jdbc.StoredProcedureParam;
 import amforeas.rest.xstream.Row;
 import amforeas.sql.Delete;
@@ -112,6 +113,12 @@ public class JDBCExecutorTest {
         rs = executor.get(new Select(t).addColumn("birthday"), true);
         assertEquals(6, rs.size());
         assertFalse(rs.get(0).getCells().containsKey("credit"));
+        assertTrue(rs.get(0).getCells().containsKey("birthday"));
+
+        // select birthday from users and order by age
+        rs = executor.get(new Select(t).addColumn("birthday").setOrderParam(new OrderParam("age", "desc")), true);
+        assertEquals(6, rs.size());
+        assertFalse(rs.get(0).getCells().containsKey("age"));
         assertTrue(rs.get(0).getCells().containsKey("birthday"));
     }
 
