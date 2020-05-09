@@ -6,9 +6,9 @@ The Greek word for ‘amphora’, a type of container usually found on ancient s
 
 ## A RESTful Interface to your database
 
-Amforeas is a Java server which provides CRUD operations over any JDBC supported RDBMS using REST.
+Amforeas is a server which allows CRUD operations over any of the supported RDBMS using REST.
 
-By REST we basically mean that the different CRUD operations are performed by different HTTP methods:
+By using REST, different CRUD operations are performed by different HTTP methods:
 
 * POST to create a resource
 * GET to read a resource
@@ -16,7 +16,9 @@ By REST we basically mean that the different CRUD operations are performed by di
 * DELETE to delete a resource
 * HEAD to describe a resource
 
-Amforeas is based on the premise that you love your database, hence there's no administration. If there's something missing in Amforeas, it probably means you have to do it in your database (roles, triggers, stored procedures, views, etc.)
+Where a resources is a table or a view.
+
+Amforeas is based on the premise that you love your database, hence there's no administration. If there's something missing in Amforeas, it probably means you have to do it in your database (roles, triggers, stored procedures, views, etc.) or build a more suitable backend solution.
 
 ## Features
 
@@ -28,9 +30,10 @@ Amforeas is based on the premise that you love your database, hence there's no a
 * [Grails style Dynamic Finders.](https://github.com/Eldelshell/amforeas/wiki/Dynamic-Finders)
 * Model/Store API for Python 2 (Python 3 planned)
 * Java client library
-* Convention over configuration.
-* Call functions and stored procedures.
+* Easy configuration.
+* Functions and stored procedures support.
 * [Access control list (ACL)](https://github.com/Eldelshell/amforeas/wiki/Access-Control-Lists)
+* HTTP and HTTPS
 
 You can
 
@@ -42,7 +45,7 @@ You can
 This are some projects where Amforeas is ideal:
 
 * Microservices access to data.
-* JavaScript applications without any server-side coding (Reach, Angular, AJAX).
+* JavaScript applications without any server-side coding (React, Angular, AJAX).
 * Python, Perl and Bash scripts without any database driver.
 * ETL & KPIs.
 * Data-warehousing.
@@ -263,22 +266,6 @@ Content-Length: 2337
    "success":true,
    "cells":[
       {
-         "table_name":"CAR",
-         "type_cat":"null",
-         "remarks":"null",
-         "type_schem":"null",
-         "hsqldb_type":"MEMORY",
-         "commit_action":"null",
-         "table_schem":"PUBLIC",
-         "table_cat":"PUBLIC",
-         "self_referencing_col_name":"null",
-         "type_name":"null",
-         "ref_generation":"null",
-         "table_type":"TABLE",
-         "read_only":"FALSE"
-      },
-      ...
-      {
          "table_name":"USER",
          "type_cat":"null",
          "remarks":"null",
@@ -344,7 +331,7 @@ As you can see, you call your stored procedure `/amforeas/demo1/call/get_year_sa
 
 * * *
 
-### Amforeas also provides DynamicFinders inspired by Grails
+### DynamicFinders inspired by Grails
 
 ```
 $ curl -i -X GET -H "Accept: application/json" "http://localhost:8080/amforeas/demo1/user/dynamic/findAllByIdBetween?args=0&args=4"
@@ -370,9 +357,7 @@ Here we are telling Amforeas to find all `demo1.user` entities where id is betwe
          "name":"foo",
          "age":30,
          "id":0
-      },
-      ...
-      {
+      },{
          "birthday":"2012-03-27",
          "credit":"45.00",
          "lastupdate":"2012-03-27T14:34:50.145+02:00",
@@ -382,6 +367,39 @@ Here we are telling Amforeas to find all `demo1.user` entities where id is betwe
       }
    ]
 }
+```
+
+## Paging and sorting
+
+Amforeas supports paging and sorting arguments when retrieving resources. Some responses from Amforeas include a pagination object which can be used for easy pagination:
+
+```
+$ curl "http://localhost:8080/amforeas/demo1/user/age/30?page=1&pageSize=50"
+HTTP/1.1 200 OK
+```
+
+
+```json
+{
+  "success":true,
+  "status":"OK",
+  "rows":[
+  ],
+  "resource":"users",
+  "pagination":{
+    "page":1,
+    "size":50,
+    "pages":4,
+    "total":97
+  }
+}
+```
+
+To sort the data use the `sort` and `dir` parameters:
+
+```
+$ curl "http://localhost:8080/amforeas/demo1/user/age/30?page=1&pageSize=50&sort=age&dir=desc"
+HTTP/1.1 200 OK
 ```
 
 ## Date, Timestamp, Time
@@ -417,6 +435,23 @@ For example, a user table with a birthday field of type DATE, and a lastupdate T
 | HSQLDB | Yes | Yes |
 | H2 | Yes | Yes |
 | Derby | Yes | Yes |
+
+### Limitations
+
+The following SQL types are **not** supported and will be ignored:
+
+* BLOB
+* ARRAY
+* BINARY
+* CLOB
+* STRUCT
+* VARBINARY
+* REF /REF_CURSOR
+* LONGVARBINARY
+* JAVA_OBJECT
+* DATALINK
+
+Fields of numeric types will be transformed to numeric when possible. All other types will be transformed to strings.
 
 ## Technology
 
