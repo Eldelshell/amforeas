@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -61,6 +63,7 @@ public class Demo {
         update(run, getCreateSalesStatsTable());
         update(run, getCreateSalesByMakerAndModelStatsTable());
         update(run, getCreateEmptyTable());
+        update(run, getCompositePKTable());
 
         l.info("Generating Demo Data in database {}", database);
 
@@ -126,6 +129,11 @@ public class Demo {
         update(run, "CREATE PROCEDURE insert_comment (IN car_id INTEGER, IN car_comment VARCHAR(255)) MODIFIES SQL DATA INSERT INTO comments VALUES (DEFAULT, car_id, car_comment)");
         update(run, "CREATE PROCEDURE get_year_sales (IN in_year INTEGER, OUT out_total INTEGER) READS SQL DATA SELECT COUNT(sales) INTO out_total FROM sales_stats WHERE year = in_year");
         update(run, getCreateView());
+
+        var insertComposite = "INSERT INTO composite_t (id_1, id_2, name) VALUES (?,?,?)";
+        for (int i = 1; i <= 10; i++) {
+            update(run, insertComposite, i, i + 1, RandomStringUtils.randomAlphabetic(10));
+        }
 
     }
 
@@ -224,6 +232,16 @@ public class Demo {
         return b.toString();
     }
 
+    private static String getCompositePKTable () {
+        StringBuilder b = new StringBuilder();
+        b.append("CREATE TABLE composite_t (");
+        b.append("id_1 INTEGER, ");
+        b.append("id_2 INTEGER, ");
+        b.append("name VARCHAR(50), ");
+        b.append("PRIMARY KEY (id_1, id_2)) ");
+        return b.toString();
+    }
+
     private static String getCreateView () {
         return "CREATE VIEW MAKER_STATS_2010 AS SELECT month, sales, maker FROM maker_stats WHERE year = 2010";
     }
@@ -261,7 +279,7 @@ public class Demo {
         try {
             run.update(stmt, args);
         } catch (Exception ex) {
-            l.error("Failed to update database", ex.getMessage());
+            l.error("Failed to update database", ex);
         }
     }
 }
