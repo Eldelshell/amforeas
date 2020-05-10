@@ -96,7 +96,7 @@ public class RestControllerTest {
     @Test
     public void testGetDatabaseMetadata () {
         SuccessResponse r = (SuccessResponse) controller.getDatabaseMetadata();
-        testSuccessResponse(r, Response.Status.OK, 9);
+        testSuccessResponse(r, Response.Status.OK, 10);
     }
 
     @Test
