@@ -1,19 +1,13 @@
 /**
  * Copyright (C) 2011, 2012 Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package amforeas;
@@ -67,12 +61,13 @@ public interface AmforeasWS {
     /**
      * Finds a record from the given resource which matches the given argument in the given column.
      * @param alias name of the database the resource belongs to
-     * @param resource name of the resource we want to access
+     * @param resource name of the resource we want to access7
+     * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param col name of the column the record must match
      * @param arg value in the column the record must match.
      * @return the record if it's found, or a 404 if it's not.
      */
-    public Response find (String alias, String resource, String col, String arg);
+    public Response find (String alias, String resource, String pk, String col, String arg);
 
     /**
      * Finds all records from the given resource which matches the given query with the given list of arguments.
