@@ -1,19 +1,13 @@
 /**
  * Copyright (C) Alejandro Ayuso
  *
- * This file is part of Amforeas.
- * Amforeas is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This file is part of Amforeas. Amforeas is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
  * 
- * Amforeas is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Amforeas is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with Amforeas.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with Amforeas. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package amforeas.rest;
@@ -144,10 +138,11 @@ public class AmforeasResource implements AmforeasWS {
     public Response find (
         @PathParam("alias") String alias,
         @PathParam("resource") String resource,
+        @DefaultValue("id") @HeaderParam("Primary-Key") String pk,
         @PathParam("column") final String col,
         @PathParam("arg") final String arg) {
 
-        return restService.find(alias, resource, col, arg, ui.getQueryParameters());
+        return restService.find(alias, resource, pk, col, arg, ui.getQueryParameters());
     }
 
     @GET
@@ -156,10 +151,11 @@ public class AmforeasResource implements AmforeasWS {
     public Response findBy (
         @PathParam("alias") String alias,
         @PathParam("resource") final String resource,
+        @DefaultValue("id") @HeaderParam("Primary-Key") String pk,
         @PathParam("query") String query,
         @QueryParam("args") List<String> args) {
 
-        return restService.findBy(alias, resource, query, args, ui.getQueryParameters());
+        return restService.findBy(alias, resource, pk, query, args, ui.getQueryParameters());
     }
 
     @POST

@@ -126,7 +126,7 @@ public class DefaultRestService implements RestService {
         return response;
     }
 
-    public Response find (String alias, String resource, String col, String arg, MultivaluedMap<String, String> queryParams) {
+    public Response find (String alias, String resource, String pk, String col, String arg, MultivaluedMap<String, String> queryParams) {
         if (!aclManager.validate(alias, resource, ACLFilter.READ)) {
             return new ErrorResponse(resource, Response.Status.METHOD_NOT_ALLOWED).getResponse();
         }
@@ -134,7 +134,7 @@ public class DefaultRestService implements RestService {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
 
         var limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
-        var order = OrderParam.valueOf(queryParams);
+        var order = OrderParam.valueOf(queryParams, pk);
         var columns = queryParams.getFirst("columns");
 
         Response response = null;
@@ -150,7 +150,7 @@ public class DefaultRestService implements RestService {
         return response;
     }
 
-    public Response findBy (String alias, String resource, String query, List<String> args, MultivaluedMap<String, String> queryParams) {
+    public Response findBy (String alias, String resource, String pk, String query, List<String> args, MultivaluedMap<String, String> queryParams) {
         if (!aclManager.validate(alias, resource, ACLFilter.READ)) {
             return new ErrorResponse(resource, Response.Status.METHOD_NOT_ALLOWED).getResponse();
         }
@@ -158,7 +158,7 @@ public class DefaultRestService implements RestService {
         PerformanceLogger p = PerformanceLogger.start(PerformanceLogger.Code.READ);
 
         LimitParam limit = LimitParam.valueOf(queryParams, this.getPageSize(queryParams));
-        OrderParam order = OrderParam.valueOf(queryParams);
+        OrderParam order = OrderParam.valueOf(queryParams, pk);
 
         Response response = null;
         try {

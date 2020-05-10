@@ -293,7 +293,7 @@ public class JDBCExecutorTest {
         assertEquals(7, rs.size());
 
         rs = executor.getListOfTables("my_demo_db");
-        assertEquals(9, rs.size());
+        assertEquals(10, rs.size());
 
     }
 
