@@ -73,11 +73,12 @@ public interface AmforeasWS {
      * Finds all records from the given resource which matches the given query with the given list of arguments.
      * @param alias name of the database the resource belongs to
      * @param resource name of the resource we want to access
+     * @param pk optional field which indicates the primary key column name. Defaults to "id"
      * @param query a {@link org.amforeas.jdbc.DynamicFinder} query
      * @param args a list of arguments to be given to the {@link org.amforeas.jdbc.DynamicFinder}
      * @return all the records which match the given {@link org.amforeas.jdbc.DynamicFinder}
      */
-    public Response findBy (String alias, String resource, String query, List<String> args);
+    public Response findBy (String alias, String resource, String pk, String query, List<String> args);
 
     /**
      * Creates a record in the given resource with values from a JSON representation.

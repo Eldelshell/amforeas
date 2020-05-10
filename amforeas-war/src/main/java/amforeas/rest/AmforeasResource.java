@@ -151,10 +151,11 @@ public class AmforeasResource implements AmforeasWS {
     public Response findBy (
         @PathParam("alias") String alias,
         @PathParam("resource") final String resource,
+        @DefaultValue("id") @HeaderParam("Primary-Key") String pk,
         @PathParam("query") String query,
         @QueryParam("args") List<String> args) {
 
-        return restService.findBy(alias, resource, query, args, ui.getQueryParameters());
+        return restService.findBy(alias, resource, pk, query, args, ui.getQueryParameters());
     }
 
     @POST

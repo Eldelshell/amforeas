@@ -31,7 +31,7 @@ public interface RestService {
 
     public Response find (String alias, String resource, String pk, String col, String arg, MultivaluedMap<String, String> queryParams);
 
-    public Response findBy (String alias, String resource, String query, List<String> args, MultivaluedMap<String, String> queryParams);
+    public Response findBy (String alias, String resource, String pk, String query, List<String> args, MultivaluedMap<String, String> queryParams);
 
     public Response insert (String alias, String resource, String pk, String jsonRequest);
 
