@@ -17,6 +17,7 @@
  */
 package amforeas.sql.dialect;
 
+import amforeas.sql.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,5 +33,27 @@ public class PostgreSQLDialect extends SQLDialect {
     public String listOfTablesStatement() {
         return "SELECT * FROM information_schema.tables WHERE table_schema = 'public'";
     }
-    
+
+    @Override
+    public String toStatementString (Select select) {
+        final StringBuilder b = new StringBuilder("SELECT ");
+        if (select.isAllColumns()) {
+            b.append("t.*");
+        } else {
+            appendColumns(b, select, "t");
+        }
+        b.append(" FROM ");
+        b.append(select.getTable().getName()).append(" t");
+        if (!select.isAllRecords()) {
+            super.appendWhereClause(b, select);
+        }
+        if (select.getOrderParam() != null)
+            b.append(" ORDER BY t.").append(select.getOrderParam().getColumn()).append(" ").append(select.getOrderParam().getDirection());
+
+        if (select.getLimitParam() != null)
+            b.append(" LIMIT ").append(select.getLimitParam().getLimit()).append(" offset ").append(select.getLimitParam().getStart());
+
+        l.debug(b.toString());
+        return b.toString();
+    }
 }
